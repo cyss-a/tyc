@@ -2420,8 +2420,8 @@ function openSettings(){
     + '</div>'
     + '<div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg2)">'
     + '<div style="font-size:13px;font-weight:600;margin-bottom:8px">Supabase 云同步</div>'
-    + '<div class="fld"><label>Project URL</label><input type="text" id="sbUrl" placeholder="https://xxxx.supabase.co" value="'+esc(c.sbUrl||'')+'"></div>'
-    + '<div class="fld"><label>Anon Key</label><input type="password" id="sbKey" placeholder="eyJ..." value="'+esc(c.sbKey||'')+'"></div>'
+    + '<div class="fld"><label>Project URL</label><input type="text" id="sbUrl" placeholder="https://xxxx.supabase.co" value="'+esc(c.sbUrl||SB_DEFAULT_URL)+'"></div>'
+    + '<div class="fld"><label>Anon Key</label><input type="password" id="sbKey" placeholder="eyJ..." value="'+esc(c.sbKey||SB_DEFAULT_KEY)+'"></div>'
     + '<div class="fld"><label>表名（默认 study_desk_sync）</label><input type="text" id="sbTable" placeholder="study_desk_sync" value="'+esc(c.sbTable||'')+'"></div>'
     + '<label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--tx2);margin:6px 0"><input type="checkbox" id="autoSb" '+(c.autoSb?'checked':'')+'> 自动同步</label>'
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn sm" onclick="App.saveCloudCfg()">保存配置</button><button class="btn sm pri" onclick="App.syncNow()">立即同步</button><button class="btn sm" onclick="App.pullFromSupabase()">从云端恢复</button></div>'
@@ -2527,6 +2527,8 @@ function reallyClear(){
    部署在公网后防本机数据丢失。配置存本机，不随学习数据一起导出。
    ========================================================= */
 var SYNC_KEY = 'wb_tyc4_sync_v1';
+var SB_DEFAULT_URL = 'https://yvwbwqahljgwvycfdyxs.supabase.co';
+var SB_DEFAULT_KEY = 'sb_publishable_h_qgjmcA8v5YaD7ujPfRsg_1hIQj7sX';
 function getSyncCfg(){
   try { return JSON.parse(localStorage.getItem(SYNC_KEY) || '{}'); } catch(e){ return {}; }
 }
@@ -2813,6 +2815,10 @@ window.App = {
   }
   isSetMode = false;
   showLockScreen('enter'); // 始终进入“输入密码”界面，密码为 5200817（或用户已修改的密码）
+  // 部署预设：若本机未配置过云同步，预填 Supabase（URL+key 由部署时写入，publishable key 可公开）并开启自动同步
+  if (!localStorage.getItem(SYNC_KEY)) {
+    setSyncCfg({ sbUrl: SB_DEFAULT_URL, sbKey: SB_DEFAULT_KEY, autoSb: true });
+  }
 })();
 
 })();
