@@ -1,0 +1,2822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="四年级学习台">
+<meta name="theme-color" content="#2F6FEB">
+<title>四年级学习台 · 太阳城小学</title>
+<style>
+:root{
+  --bg:#F4F6FA; --card:#FFFFFF; --line:#E6EAF2; --line2:#EFF2F7;
+  --tx:#1E2532; --tx2:#5B6577; --tx3:#8A93A6;
+  --main:#2F6FEB; --main-l:#EAF1FE; --main-d:#2358C4;
+  --yw:#E8663D; --yw-l:#FDF0EB;
+  --sx:#2F6FEB; --sx-l:#EAF1FE;
+  --yy:#12A150; --yy-l:#E8F7EE;
+  --red:#DC2626; --red-l:#FDECEC;
+  --green:#12A150; --green-l:#E8F7EE;
+  --amber:#D97706; --amber-l:#FEF3E2;
+  --r:14px; --r2:10px;
+  --sh:0 1px 2px rgba(23,35,62,.05), 0 4px 14px rgba(23,35,62,.05);
+  --sh2:0 6px 24px rgba(23,35,62,.10);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Roboto,sans-serif;
+  background:var(--bg); color:var(--tx); font-size:15px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
+button{cursor:pointer;border:none;background:none;padding:0}
+svg{display:block}
+.hide{display:none !important}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+header.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:60}
+.top-in{display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;min-width:0}
+.logo-ico{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2F6FEB,#57A0F5);display:flex;align-items:center;justify-content:center;flex:none}
+.logo-tx b{display:block;font-size:17px;font-weight:700;letter-spacing:.2px;line-height:1.25}
+.logo-tx span{display:block;font-size:12px;color:var(--tx3);line-height:1.3}
+.top-sp{flex:1}
+.top-acts{display:flex;gap:8px;flex-wrap:wrap}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 14px;border-radius:10px;font-size:14px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--tx2);transition:.15s}
+.btn:hover{background:#F7F9FC;border-color:#D6DDEA}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--main);color:#fff;border-color:var(--main)}
+.btn.pri:hover{background:var(--main-d);border-color:var(--main-d)}
+.btn.ok{background:var(--green);color:#fff;border-color:var(--green)}
+.btn.dgr{color:var(--red);border-color:#F3C9C9;background:#fff}
+.btn.dgr:hover{background:var(--red-l)}
+.btn.sm{min-height:34px;padding:0 11px;font-size:13px;border-radius:9px}
+.btn.blk{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Tab 导航 */
+nav.tabs{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:63px;z-index:55}
+.tabs-in{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs-in::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:7px;padding:13px 15px;font-size:15px;font-weight:600;color:var(--tx2);border-bottom:2.5px solid transparent;white-space:nowrap;position:relative}
+.tab.on{color:var(--main);border-bottom-color:var(--main)}
+.tab .dot{position:absolute;top:9px;right:6px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1}
+
+main{padding:18px 0 30px}
+.view{display:none}
+.view.on{display:block;animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* 卡片 */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:14px;overflow:hidden}
+.card-h{display:flex;align-items:center;gap:9px;padding:14px 16px;border-bottom:1px solid var(--line2)}
+.card-h h2{margin:0;font-size:16px;font-weight:700;letter-spacing:.2px}
+.card-h .sub{font-size:12.5px;color:var(--tx3);font-weight:500}
+.card-b{padding:14px 16px}
+.card-b.tight{padding:10px 12px}
+.sp{flex:1}
+
+.banner{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--r2);font-size:13.5px;margin-bottom:14px;line-height:1.5}
+.banner.tip{background:var(--amber-l);color:#8A5308;border:1px solid #F6DFB8}
+.banner.info{background:var(--main-l);color:#1E4FA8;border:1px solid #CFE0FC}
+
+/* ---------- 今日 ---------- */
+.hero{background:linear-gradient(135deg,#2F6FEB 0%,#4F86F0 55%,#6FA3FA 100%);border-radius:var(--r);padding:18px;color:#fff;margin-bottom:14px;box-shadow:0 8px 22px rgba(47,111,235,.22)}
+.hero-top{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.hero h1{margin:0 0 3px;font-size:19px;font-weight:700}
+.hero p{margin:0;font-size:13px;opacity:.9}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:15px}
+.hs{background:rgba(255,255,255,.16);border-radius:11px;padding:9px 8px;text-align:center;backdrop-filter:blur(4px)}
+.hs b{display:block;font-size:20px;font-weight:800;line-height:1.2}
+.hs span{display:block;font-size:11.5px;opacity:.88;margin-top:1px}
+
+.todo{display:flex;align-items:flex-start;gap:11px;padding:12px;border:1px solid var(--line);border-radius:var(--r2);margin-bottom:9px;background:#fff;transition:.15s}
+.todo:last-child{margin-bottom:0}
+.todo.late{border-color:#F5C6C6;background:#FFFBFB}
+.todo.done{opacity:.55}
+.todo.done .todo-t{text-decoration:line-through}
+.todo-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.todo-m{flex:1;min-width:0}
+.todo-t{font-size:14.5px;font-weight:600;margin-bottom:2px}
+.todo-s{font-size:12.5px;color:var(--tx3);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.todo-a{display:flex;gap:6px;flex:none;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;padding:1px 8px;border-radius:20px;font-size:11.5px;font-weight:700;line-height:1.7}
+.pill.late{background:var(--red-l);color:var(--red)}
+.pill.today{background:var(--main-l);color:var(--main)}
+.pill.yw{background:var(--yw-l);color:var(--yw)}
+.pill.sx{background:var(--sx-l);color:var(--sx)}
+.pill.yy{background:var(--yy-l);color:var(--yy)}
+.pill.ok{background:var(--green-l);color:var(--green)}
+.pill.gray{background:#F1F3F8;color:var(--tx3)}
+
+.empty{text-align:center;padding:26px 14px;color:var(--tx3)}
+.empty svg{margin:0 auto 8px;opacity:.4}
+.empty p{margin:0;font-size:13.5px}
+
+/* ---------- 科目/册次切换 ---------- */
+.segs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.seg{padding:8px 15px;border-radius:10px;font-size:14px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--tx2);min-height:40px}
+.seg.on{color:#fff;border-color:transparent}
+.seg.on[data-s="yw"]{background:var(--yw)}
+.seg.on[data-s="sx"]{background:var(--sx)}
+.seg.on[data-s="yy"]{background:var(--yy)}
+.seg.on.plain{background:var(--main)}
+
+/* 单元卡 */
+.unit{border:1px solid var(--line);border-radius:var(--r2);margin-bottom:10px;overflow:hidden;background:#fff}
+.unit-h{display:flex;align-items:center;gap:11px;padding:13px 14px;cursor:pointer}
+.unit-h:hover{background:#FAFBFD}
+.unit-n{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex:none;color:#fff}
+.unit-m{flex:1;min-width:0}
+.unit-t{font-size:14.5px;font-weight:600;line-height:1.4}
+.unit-f{font-size:12.5px;color:var(--tx3);margin-top:1px}
+.unit-r{display:flex;align-items:center;gap:8px;flex:none}
+.chev{transition:.2s;color:var(--tx3)}
+.unit.open .chev{transform:rotate(180deg)}
+.unit-b{display:none;border-top:1px solid var(--line2);padding:12px 14px;background:#FBFCFE}
+.unit.open .unit-b{display:block}
+.pt{display:flex;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.pt:last-of-type{border-bottom:none}
+.pt-chk{width:22px;height:22px;border-radius:6px;border:1.8px solid #C9D2E2;background:#fff;flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.pt-chk.on{background:var(--green);border-color:var(--green)}
+.pt-m{flex:1;min-width:0}
+.pt-t{font-size:13px;font-weight:700;color:var(--main);margin-bottom:2px}
+.pt-c{font-size:14px;color:var(--tx);line-height:1.75;word-break:break-word}
+.unit-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+
+.prog{height:6px;border-radius:4px;background:#EDF0F6;overflow:hidden;flex:none;width:56px}
+.prog i{display:block;height:100%;border-radius:4px;background:var(--green);transition:width .4s}
+
+/* ---------- 测试 ---------- */
+.q{border:1px solid var(--line);border-radius:var(--r2);padding:14px;margin-bottom:11px;background:#fff}
+.q-h{display:flex;gap:9px;margin-bottom:11px}
+.q-no{width:26px;height:26px;border-radius:8px;background:var(--main-l);color:var(--main);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.q-t{flex:1;font-size:15.5px;line-height:1.65;font-weight:500;word-break:break-word}
+.q-tp{font-size:11px;font-weight:700;padding:1px 7px;border-radius:6px;background:#F1F3F8;color:var(--tx3);height:20px;line-height:18px;flex:none}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:15px;line-height:1.55;transition:.13s;min-height:46px;cursor:pointer;background:#fff}
+.opt:hover{border-color:#BFD2F5;background:#FAFCFF}
+.opt.sel{border-color:var(--main);background:var(--main-l)}
+.opt.right{border-color:var(--green);background:var(--green-l)}
+.opt.wrong{border-color:var(--red);background:var(--red-l)}
+.opt-r{width:20px;height:20px;border-radius:50%;border:2px solid #C9D2E2;flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center}
+.opt.sel .opt-r{border-color:var(--main)}
+.opt.sel .opt-r::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--main)}
+.opt.right .opt-r{border-color:var(--green)}
+.opt.right .opt-r::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--green)}
+.opt.wrong .opt-r{border-color:var(--red)}
+.opt.wrong .opt-r::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--red)}
+.fill-in{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;font-size:16px;outline:none;background:#fff;min-height:46px}
+.fill-in:focus{border-color:var(--main);background:#FAFCFF}
+.jd{display:flex;gap:9px}
+.jd .opt{flex:1;justify-content:center;align-items:center;font-weight:600}
+.res{margin-top:11px;padding:11px 12px;border-radius:10px;font-size:14px;line-height:1.7}
+.res.ok{background:var(--green-l);color:#0A6B36;border:1px solid #BFE6CE}
+.res.no{background:var(--red-l);color:#9B1C1C;border:1px solid #F3C9C9}
+.res b{font-weight:700}
+
+.score-box{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center;text-align:center;padding:6px 0}
+.score-tx b{display:block;font-size:32px;font-weight:800;line-height:1.1}
+.score-tx span{font-size:13px;color:var(--tx3)}
+
+/* ---------- 错题本 ---------- */
+.wr{border:1px solid var(--line);border-radius:var(--r2);padding:13px;margin-bottom:10px;background:#fff}
+.wr-h{display:flex;align-items:center;gap:7px;margin-bottom:9px;flex-wrap:wrap}
+.wr-q{font-size:15px;line-height:1.65;font-weight:500;margin-bottom:9px;word-break:break-word}
+.wr-o{font-size:13.5px;color:var(--tx2);line-height:1.9;padding-left:2px}
+.wr-a{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;padding-top:10px;border-top:1px solid var(--line2)}
+
+/* ---------- 报告图表 ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px;text-align:center;box-shadow:var(--sh)}
+.stat b{display:block;font-size:26px;font-weight:800;line-height:1.2}
+.stat span{display:block;font-size:12.5px;color:var(--tx3);margin-top:2px}
+.legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:10px;font-size:12.5px;color:var(--tx2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.cal{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.cal-col{display:flex;flex-direction:column;gap:4px}
+.cal-d{width:15px;height:15px;border-radius:4px;background:#EDF0F6}
+
+/* ---------- 弹窗 ---------- */
+.mask{position:fixed;inset:0;background:rgba(20,28,45,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(2px)}
+.modal{background:#fff;border-radius:16px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden;max-height:88vh;display:flex;flex-direction:column}
+.modal-h{padding:16px 18px 0;font-size:17px;font-weight:700}
+.modal-b{padding:12px 18px;font-size:14.5px;color:var(--tx2);line-height:1.7;overflow-y:auto}
+.modal-f{padding:12px 18px 16px;display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;background:rgba(28,36,54,.94);color:#fff;padding:11px 18px;border-radius:11px;font-size:14px;z-index:300;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:88vw;text-align:center}
+
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:5px}
+.fld input,.fld select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:16px;outline:none;background:#fff;min-height:44px}
+.fld input:focus,.fld select:focus{border-color:var(--main)}
+
+/* 底部导航（移动端） */
+.mnav{display:none}
+
+/* ---------- 响应式 ---------- */
+@media (max-width:900px){
+  .grid2{grid-template-columns:1fr}
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:768px){
+  body{padding-bottom:calc(62px + env(safe-area-inset-bottom))}
+  .wrap{padding:0 12px}
+  nav.tabs{display:none}
+  header.top{position:static}
+  .top-in{padding:10px 0}
+  .logo-tx b{font-size:16px}
+  .top-acts{width:100%}
+  .top-acts .btn{flex:1;min-height:42px}
+  main{padding:14px 0 20px}
+  .card-b{padding:12px 13px}
+  .card-h{padding:12px 13px}
+  .hero{padding:15px}
+  .hero h1{font-size:17px}
+  .todo{flex-wrap:wrap}
+  .todo-a{width:100%;margin-top:2px}
+  .todo-a .btn{flex:1;min-height:40px}
+  .grid3{grid-template-columns:1fr 1fr}
+  .unit-acts .btn{flex:1;min-width:calc(50% - 4px)}
+  .wr-a .btn{flex:1;min-width:calc(50% - 4px)}
+  .mnav{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:80;background:#fff;
+    border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);
+    box-shadow:0 -2px 14px rgba(23,35,62,.07)
+  }
+  .mnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 7px;font-size:11px;font-weight:600;color:var(--tx3);position:relative;min-height:56px}
+  .mnav button.on{color:var(--main)}
+  .mnav .dot{position:absolute;top:5px;right:calc(50% - 20px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--red);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .score-tx b{font-size:28px}
+}
+@media (max-width:400px){
+  .grid3{grid-template-columns:1fr}
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+}
+/* ====== 锁屏密码 ====== */
+#lockScreen{
+  position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#1B2A4E 0%,#2B4178 50%,#3A5A9E 100%);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  transition:opacity .4s
+}
+#lockScreen.hide{opacity:0;pointer-events:none}
+.lock-card{
+  background:rgba(255,255,255,.97);border-radius:20px;padding:30px 26px;max-width:360px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center
+}
+.lock-logo{
+  width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#2F6FEB,#57A0F5);
+  margin:0 auto 16px;display:flex;align-items:center;justify-content:center
+}
+.lock-card h2{margin:0 0 4px;font-size:19px;font-weight:700;color:#1E2532}
+.lock-card .lk-sub{font-size:13px;color:#8A93A6;margin-bottom:22px;line-height:1.5}
+.lock-input-grp{position:relative;margin-bottom:14px}
+.lock-input-grp svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#8A93A6}
+.lock-input{
+  width:100%;padding:13px 13px 13px 44px;border:2px solid #E6EAF2;border-radius:12px;
+  font-size:18px;letter-spacing:6px;text-align:center;outline:none;background:#F9FAFC;
+  min-height:50px;font-weight:600;color:#1E2532;transition:.15s
+}
+.lock-input:focus{border-color:#2F6FEB;background:#fff}
+.lock-input::placeholder{letter-spacing:2px;font-weight:400;color:#C2C9D6}
+.lock-btn{
+  width:100%;padding:14px;border:none;border-radius:12px;background:#2F6FEB;color:#fff;
+  font-size:16px;font-weight:700;cursor:pointer;transition:.15s;min-height:50px
+}
+.lock-btn:active{transform:scale(.97);background:#2358C4}
+.lock-btn:disabled{opacity:.5}
+.lock-err{color:#DC2626;font-size:13px;margin-top:8px;min-height:18px;line-height:1.4}
+.lock-hint{margin-top:16px;font-size:12px;color:#8A93A6;line-height:1.6}
+.lock-hint b{color:#5B6577}
+.lock-toggle{margin-top:10px;font-size:13px;color:#2F6FEB;cursor:pointer;background:none;border:none;font-weight:600;padding:6px}
+
+/* ====== 打印试卷 A4 ====== */
+#printArea{display:none}
+@media print{
+  @page{ size:A4; margin:14mm 16mm }
+  body{ background:#fff !important; padding:0 !important; font-size:12pt }
+  body *{ visibility:hidden !important }
+  #printArea,#printArea *{ visibility:visible !important }
+  #printArea{ display:block !important; position:absolute; left:0; top:0; width:100% }
+  .pp{ page-break-after:always; padding:0 0 4mm }
+  .pp:last-child{ page-break-after:auto }
+  .pp-h{ text-align:center; border-bottom:2px solid #333; padding-bottom:5mm; margin-bottom:6mm }
+  .pp-h h1{ font-size:16pt; margin:0 0 2mm; font-weight:700 }
+  .pp-h .pp-sub{ font-size:10pt; color:#555 }
+  .pp-info{ display:flex; justify-content:space-between; font-size:10.5pt; margin-bottom:5mm; border:1px solid #999; padding:2.5mm 4mm; border-radius:2px }
+  .pp-info span{ display:inline-block; min-width:30% }
+  .pp-info b{ font-weight:400 }
+  .pp-sec{ margin-bottom:5mm }
+  .pp-sec-h{ font-size:12pt; font-weight:700; margin-bottom:3mm; border-left:3px solid #333; padding-left:2mm }
+  .pp-q{ font-size:11.5pt; line-height:2; margin-bottom:2.5mm; page-break-inside:avoid }
+  .pp-q-n{ font-weight:700; margin-right:1mm }
+  .pp-opts{ margin-left:6mm; margin-top:0.5mm; line-height:1.9 }
+  .pp-opt{ display:inline-block; margin-right:8mm; white-space:nowrap }
+  .pp-fill-line{ display:inline-block; min-width:30mm; border-bottom:1px solid #666; height:1em; vertical-align:bottom }
+  .pp-judge-box{ display:inline-block; width:8mm; border-bottom:1px solid #666; text-align:center; margin-left:2mm }
+  .pp-ans{ margin-left:4mm; font-size:10.5pt; color:#c0392b; border:1px dashed #c0392b; padding:1mm 3mm; border-radius:2px; margin-top:1mm; display:inline-block }
+  .pp-ans b{ font-weight:700 }
+  .pp-note{ font-size:9.5pt; color:#888; margin-top:1mm }
+  .no-print{ display:none !important }
+  header.top,nav.tabs,.mnav,#modalHost,#toastHost{ display:none !important }
+}
+@media screen{
+  .pp-screen{ display:none }
+}
+</style>
+</head>
+<body>
+
+<div id="lockScreen" class="hide"></div>
+<header class="top">
+  <div class="wrap top-in">
+    <div class="logo">
+      <div class="logo-ico">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <div class="logo-tx">
+        <b id="appTitle">四年级学习台</b>
+        <span id="appSub">天津市河东区太阳城小学 · 四年级</span>
+      </div>
+    </div>
+    <div class="top-sp"></div>
+    <div class="top-acts">
+      <button class="btn sm" onclick="App.exportJSON()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        导出备份
+      </button>
+      <button class="btn sm" onclick="document.getElementById('impFile').click()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        导入恢复
+      </button>
+      <button class="btn sm" onclick="App.openSettings()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        设置
+      </button>
+      <input type="file" id="impFile" accept="application/json,.json" style="display:none" onchange="App.importJSON(this)">
+    </div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="wrap tabs-in" id="tabBar"></div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <div id="backupTip"></div>
+    <section class="view on" id="v-today"></section>
+    <section class="view" id="v-learn"></section>
+    <section class="view" id="v-test"></section>
+    <section class="view" id="v-wrong"></section>
+    <section class="view" id="v-report"></section>
+  </div>
+</main>
+
+<div class="mnav" id="mnav"></div>
+<div id="modalHost"></div>
+<div id="toastHost"></div>
+<div id="printArea"></div>
+
+<script>
+/* ====== 教材数据（内联，无任何外部依赖） ====== */
+window.DATA_CHINESE = {
+  units: [
+    {
+      id: 'yw-u-1',
+      book: 'up',
+      no: 1,
+      name: '第一单元 自然之美',
+      focus: '边读边想象画面，感受自然之美',
+      points: [
+        { t: '课文清单', c: '《观潮》《走月亮》《现代诗二首》（秋晚的江上、花牛歌）《繁星》' },
+        { t: '必背内容', c: '《观潮》第3—4自然段；《繁星》全文（一、二、四段）' },
+        { t: '易错字词', c: '盐（yán）屹立（yì）昂首 鼎沸（dǐng）横贯 山崩地裂 霎时（shà）鹅卵石 稻穗 风俗' },
+        { t: '重点句式', c: '比喻句：浪潮犹如千万匹白色战马齐头并进；夸张句：那声音如同山崩地裂，好像大地都被震得颤动起来。' },
+        { t: '考点提示', c: '背诵默写《观潮》潮来时片段；能边读边想象画面并描述潮来时的景象。' }
+      ]
+    },
+    {
+      id: 'yw-u-2',
+      book: 'up',
+      no: 2,
+      name: '第二单元 提问策略',
+      focus: '阅读时尝试从不同角度去思考，提出自己的问题',
+      points: [
+        { t: '课文清单', c: '《一个豆荚里的五粒豆》《夜间飞行的秘密》《呼风唤雨的世纪》《蝴蝶的家》' },
+        { t: '必背内容', c: '本单元以提问策略为主，无统一背诵要求；熟读《呼风唤雨的世纪》第3—4自然段。' },
+        { t: '易错字词', c: '豌豆 按 舒适 恐怕 僵硬 证明 揭示 障碍 荧光 驾驶员 探索 哲理 旺盛' },
+        { t: '重点写法', c: '学习从内容、写法、联系生活等多个角度提问；问题要具体、有思考价值。' },
+        { t: '考点提示', c: '能针对课文内容提出有价值的问题，并尝试通过阅读、查找资料解决问题。' }
+      ]
+    },
+    {
+      id: 'yw-u-3',
+      book: 'up',
+      no: 3,
+      name: '第三单元 连续观察',
+      focus: '体会文章准确生动的表达，感受作者连续细致的观察',
+      points: [
+        { t: '课文清单', c: '《古诗三首》（暮江吟、题西林壁、雪梅）《爬山虎的脚》《蟋蟀的住宅》' },
+        { t: '必背内容', c: '《暮江吟》《题西林壁》《雪梅》三首古诗全部默写。' },
+        { t: '易错字词', c: '暮（mù）吟（yín）侧（cè）峰 庐（lú）缘（yuán）降（xiáng）费 逊 操 占 嫩（nèn）茎 柄 蜗 痕' },
+        { t: '重点写法', c: '学习作者连续观察的方法：观察要细致、要有顺序、要长期坚持记录。' },
+        { t: '考点提示', c: '背诵默写三首古诗；理解古诗意思；能说出爬山虎是怎样爬墙的。' }
+      ]
+    },
+    {
+      id: 'yw-u-4',
+      book: 'up',
+      no: 4,
+      name: '第四单元 神话世界',
+      focus: '了解故事的起因、经过、结果，学习把握文章的主要内容',
+      points: [
+        { t: '课文清单', c: '《盘古开天地》《精卫填海》《普罗米修斯》《女娲补天》' },
+        { t: '必背内容', c: '《精卫填海》全文默写：炎帝之少女，名曰女娃。女娃游于东海，溺而不返，故为精卫，常衔西山之木石，以堙于东海。' },
+        { t: '易错字词', c: '睁 斧 劈 浊 丈 撑 竭 液 躯 辽阔 血 奔流不息 精卫 填海 帝 溺水 返 衔' },
+        { t: '重点写法', c: '把握神话故事的主要内容：理清起因、经过、结果；感受神话中神奇的想象。' },
+        { t: '考点提示', c: '默写《精卫填海》；能讲述盘古开天地的故事；了解中外神话的特点。' }
+      ]
+    },
+    {
+      id: 'yw-u-5',
+      book: 'up',
+      no: 5,
+      name: '第五单元 习作单元·把事情写清楚',
+      focus: '了解作者是怎样把一件事情写清楚的',
+      points: [
+        { t: '课文清单', c: '《麻雀》《爬天都峰》' },
+        { t: '必背内容', c: '本单元为习作单元，无背诵要求；重点学习把事情写清楚的方法。' },
+        { t: '易错字词', c: '嗅（xiù）奈何 绒 身躯 掩护 拯救 嘶哑 庞大 搏斗 攀着 鲫鱼 辫子 犹豫' },
+        { t: '重点写法', c: '把事情写清楚：交代清楚时间、地点、人物、起因、经过、结果；写清楚看到的、听到的和想到的。' },
+        { t: '考点提示', c: '能按一定顺序把一件事写清楚；学习作者通过动作、神态描写表现人物。' }
+      ]
+    },
+    {
+      id: 'yw-u-6',
+      book: 'up',
+      no: 6,
+      name: '第六单元 童年生活',
+      focus: '学习用批注的方法阅读',
+      points: [
+        { t: '课文清单', c: '《牛和鹅》《一只窝囊的大老虎》《陀螺》' },
+        { t: '必背内容', c: '本单元重点学习批注式阅读，无统一背诵要求。' },
+        { t: '易错字词', c: '谓 拳 捶 扳 掐 逃 吁 堂 惹 笨 拙 砸 屁股 晃 甚至 机敏 荣誉 旋转 椅子' },
+        { t: '重点写法', c: '学习用批注的方法阅读：可以从写得好的地方、有疑问的地方、有启发的地方作批注。' },
+        { t: '考点提示', c: '能对课文作批注；理解"我"对牛和鹅态度变化的原因；体会童年的快乐。' }
+      ]
+    },
+    {
+      id: 'yw-u-7',
+      book: 'up',
+      no: 7,
+      name: '第七单元 家国情怀',
+      focus: '关注主要人物和事件，学习把握文章的主要内容',
+      points: [
+        { t: '课文清单', c: '《古诗三首》（出塞、凉州词、夏日绝句）《为中华之崛起而读书》《梅兰芳蓄须》《延安，我把你追寻》' },
+        { t: '必背内容', c: '《出塞》《凉州词》《夏日绝句》三首古诗全部默写。' },
+        { t: '易错字词', c: '塞（sài）秦 征 还（huán）辞 葡萄 催 醉 杰 亦 雄 项 怀 疑 形容 晰 振 胸 赞 效' },
+        { t: '重点写法', c: '把握文章主要内容：先了解每个事件讲了什么，再把几个事件连起来归纳。' },
+        { t: '考点提示', c: '默写三首古诗；理解少年周恩来立下"为中华之崛起而读书"的志向；感受家国情怀。' }
+      ]
+    },
+    {
+      id: 'yw-u-8',
+      book: 'up',
+      no: 8,
+      name: '第八单元 历史传说人物',
+      focus: '了解故事情节，感受人物形象',
+      points: [
+        { t: '课文清单', c: '《王戎不取道旁李》《西门豹治邺》《故事二则》（扁鹊治病、纪昌学射）' },
+        { t: '必背内容', c: '《王戎不取道旁李》全文默写：王戎七岁，尝与诸小儿游。看道边李树多子折枝，诸儿竞走取之，唯戎不动。人问之，答曰：「树在道边而多子，此必苦李。」取之，信然。' },
+        { t: '易错字词', c: '戎 尝 诸 竞 唯 豹 派 娶 媳妇 淹 逼 荒 灾 旱 绸 吊 睬 虱 标 刺' },
+        { t: '重点写法', c: '了解故事情节，通过人物言行感受人物形象；简要复述故事。' },
+        { t: '考点提示', c: '默写《王戎不取道旁李》；能复述西门豹治邺的故事；明白扁鹊治病、纪昌学射的道理。' }
+      ]
+    },
+    {
+      id: 'yw-d-1',
+      book: 'down',
+      no: 1,
+      name: '第一单元 乡村生活',
+      focus: '抓住关键句，初步体会课文表达的思想感情',
+      points: [
+        { t: '课文清单', c: '《古诗词三首》（宿新市徐公店、四时田园杂兴其二十五、清平乐·村居）《乡下人家》《天窗》《三月桃花水》' },
+        { t: '必背内容', c: '《宿新市徐公店》《四时田园杂兴·其二十五》《清平乐·村居》三首古诗词全部默写。' },
+        { t: '易错字词', c: '徐 篱 疏 锄 剥 构 芍 冠 朴 素 率 倘 附 捣 绘 谐 饰 滩 帐 烁 蝙蝠 猫头鹰' },
+        { t: '重点写法', c: '抓住关键句体会思想感情；学习作者通过描写乡村景物表达喜爱之情的方法。' },
+        { t: '考点提示', c: '默写三首古诗词；能抓住关键句说出乡下人家的特点；体会作者对乡村生活的喜爱。' }
+      ]
+    },
+    {
+      id: 'yw-d-2',
+      book: 'down',
+      no: 2,
+      name: '第二单元 自然科学',
+      focus: '阅读时能提出不懂的问题，并试着解决',
+      points: [
+        { t: '课文清单', c: '《琥珀》《飞向蓝天的恐龙》《纳米技术就在我们身边》《千年梦圆在今朝》' },
+        { t: '必背内容', c: '本单元以阅读提问为主，无统一背诵要求。' },
+        { t: '易错字词', c: '珀 嗥 吼 脂 拭 渗 挣 番 埋 澎湃 冲刷 悬 毫不松懈 迟钝 鸽子 凌 仅 描 隧 态 吨 颅' },
+        { t: '重点写法', c: '阅读科普文章能提出不懂的问题，并尝试通过查资料、联系上下文解决。' },
+        { t: '考点提示', c: '了解琥珀形成的过程；理解恐龙飞向蓝天的演化过程；感受科技的进步。' }
+      ]
+    },
+    {
+      id: 'yw-d-3',
+      book: 'down',
+      no: 3,
+      name: '第三单元 现代诗',
+      focus: '初步了解现代诗的一些特点，体会诗歌的情感',
+      points: [
+        { t: '课文清单', c: '《短诗三首》（繁星七一、繁星一三一、繁星一五九）《绿》《白桦》《在天晴了的时候》' },
+        { t: '必背内容', c: '《短诗三首》三首诗背诵；《绿》背诵。' },
+        { t: '易错字词', c: '漫 涛 灭 藤 萝 膝 朦胧 交叉 拥挤 墨 瓶 挤 叉 绣 潇洒 花穗 寂静 霞 抹' },
+        { t: '重点写法', c: '了解现代诗的特点：朗朗上口有节奏，富有想象力，表达强烈情感。' },
+        { t: '考点提示', c: '背诵《短诗三首》和《绿》；能体会诗歌表达的情感；尝试仿写现代诗。' }
+      ]
+    },
+    {
+      id: 'yw-d-4',
+      book: 'down',
+      no: 4,
+      name: '第四单元 作家笔下的动物',
+      focus: '体会作家是如何表达对动物的感情的',
+      points: [
+        { t: '课文清单', c: '《猫》《母鸡》《白鹅》' },
+        { t: '必背内容', c: '本单元无统一背诵要求；熟读课文体会作者情感。' },
+        { t: '易错字词', c: '忧 虑 贪 职 屏（bǐng）蹭 稿 腔 解闷 蛇 遭 殃 盆 勃 怨 抗 绩 孵 警戒 歪 咕 掘 伏 凄 吠 侍 脾' },
+        { t: '重点写法', c: '体会作家通过明贬实褒、对比、具体事例等表达对动物感情的方法。' },
+        { t: '考点提示', c: '体会老舍对猫的喜爱之情；理解作者对母鸡态度的变化及原因；感受丰子恺笔下白鹅的高傲。' }
+      ]
+    },
+    {
+      id: 'yw-d-5',
+      book: 'down',
+      no: 5,
+      name: '第五单元 习作单元·游记',
+      focus: '了解课文按一定顺序写景物的方法',
+      points: [
+        { t: '课文清单', c: '《海上日出》《记金华的双龙洞》' },
+        { t: '必背内容', c: '本单元为习作单元，重点学习按游览顺序写景物，无统一背诵要求。' },
+        { t: '易错字词', c: '镶 纵 刹那 夺目 烂 光彩 紫 范围 浙江 罗 簇 杜鹃 油桐 臀部 稍微 额角 擦 蜿蜒 乳' },
+        { t: '重点写法', c: '按游览顺序写景物（移步换景）；抓住景物特点描写；写清游览的过程和感受。' },
+        { t: '考点提示', c: '了解《海上日出》按日出前、日出时、日出后的顺序写；能按游览顺序复述双龙洞的游览过程。' }
+      ]
+    },
+    {
+      id: 'yw-d-6',
+      book: 'down',
+      no: 6,
+      name: '第六单元 成长故事',
+      focus: '学习把握长文章的主要内容',
+      points: [
+        { t: '课文清单', c: '《小英雄雨来》《我们家的男子汉》《芦花鞋》' },
+        { t: '必背内容', c: '本单元无统一背诵要求；学习用列小标题的方法把握长文章主要内容。' },
+        { t: '易错字词', c: '晋 冀 絮 扭 咧 磕 绑 柜 栓 拈 包袱 嘟 囊 鬼 劫 尸 趁 慌 唇 婶 嘱咐 沮丧 轮 妨 矩 桔 嗑 绽 兜 履' },
+        { t: '重点写法', c: '把握长文章主要内容：用列小标题的方法把每部分内容概括出来，再连起来。' },
+        { t: '考点提示', c: '能给《小英雄雨来》每部分列小标题；感受雨来的机智勇敢；理解"男子汉"的含义。' }
+      ]
+    },
+    {
+      id: 'yw-d-7',
+      book: 'down',
+      no: 7,
+      name: '第七单元 人物品质',
+      focus: '从人物的语言、动作等描写中感受人物的品质',
+      points: [
+        { t: '课文清单', c: '《古诗三首》（芙蓉楼送辛渐、塞下曲、墨梅）《文言文二则》（囊萤夜读、铁杵成针）《「诺曼底号」遇难记》《黄继光》' },
+        { t: '必背内容', c: '《芙蓉楼送辛渐》《塞下曲》《墨梅》三首古诗全部默写。' },
+        { t: '易错字词', c: '芙 蓉 洛 壶 孤 雁 单 砚 乾 坤 囊 萤 恭 勤 焉 杵 伪 咸 卒 脉 剖 秩序 岗 醒 骸 违 惨 牺牲' },
+        { t: '重点写法', c: '从人物语言、动作描写中感受人物品质；学习通过具体事例表现人物品质的方法。' },
+        { t: '考点提示', c: '默写三首古诗；背诵《囊萤夜读》《铁杵成针》；感受哈尔威船长和黄继光的崇高品质。' }
+      ]
+    },
+    {
+      id: 'yw-d-8',
+      book: 'down',
+      no: 8,
+      name: '第八单元 中外童话',
+      focus: '感受童话的奇妙，想象人物的形象和故事情节',
+      points: [
+        { t: '课文清单', c: '《宝葫芦的秘密》《巨人的花园》《海的女儿》' },
+        { t: '必背内容', c: '本单元以阅读童话为主，无统一背诵要求。' },
+        { t: '易错字词', c: '妖 矩 乖 撵 拽 烫 丫 抠 瘦 罢 长 斥 缕 颊 啸 奢 豫 抚 矢 睫 帜 蔚 瑰 肪 蜂 砖 舰' },
+        { t: '重点写法', c: '感受童话奇妙的想象；学习通过丰富的想象塑造人物形象、推动故事情节。' },
+        { t: '考点提示', c: '了解童话想象丰富的特点；能讲述宝葫芦的秘密、巨人的花园的故事；感受童话的美好情感。' }
+      ]
+    }
+  ],
+  questions: [
+    { id: 'yw-u1-1', u: 'yw-u-1', type: 'choice', q: '下面加点字读音全部正确的一项是（　）', o: ['A. 屹立（yì） 霎时（shà）', 'B. 屹立（qì） 鼎沸（dǐng）', 'C. 霎时（chà） 山崩地裂（bēng）', 'D. 鼎沸（dìng） 横贯（guàn）'], a: 0, ex: '屹读yì，霎读shà，鼎读dǐng，A项全部正确。' },
+    { id: 'yw-u1-2', u: 'yw-u-1', type: 'choice', q: '《观潮》一文的叙述顺序是（　）', o: ['A. 潮来前—潮来时—潮头过后', 'B. 潮来时—潮来前—潮头过后', 'C. 潮头过后—潮来时—潮来前', 'D. 潮来前—潮头过后—潮来时'], a: 0, ex: '课文按潮来前、潮来时、潮头过后的顺序描写钱塘江大潮。' },
+    { id: 'yw-u1-3', u: 'yw-u-1', type: 'fill', q: '巴金《繁星》中描写海上夜色：海上的夜是____的，是静寂的，是梦幻的。', a: '柔和', ex: '出自巴金《繁星》，海上夜的特点是柔和、静寂、梦幻。' },
+    { id: 'yw-u1-4', u: 'yw-u-1', type: 'fill', q: '《观潮》中形容潮来时声音巨大的四字词语是____。', a: '山崩地裂', ex: '课文原句"那声音如同山崩地裂，好像大地都被震得颤动起来"。' },
+    { id: 'yw-u1-5', u: 'yw-u-1', type: 'judge', q: '《走月亮》写的是"我"和阿妈在月光下散步的故事。', a: true, ex: '课文写"我"和阿妈在溪边、村道、果园走月亮，感受月下的宁静美好。' },
+    { id: 'yw-u1-6', u: 'yw-u-1', type: 'judge', q: '《观潮》中"浪潮犹如千万匹白色战马齐头并进"是拟人句。', a: false, ex: '这是比喻句，把浪潮比作白色战马，不是拟人。' },
+    { id: 'yw-u2-1', u: 'yw-u-2', type: 'choice', q: '下列词语书写全部正确的一项是（　）', o: ['A. 豌豆 舒适 揭示', 'B. 弯豆 恐具 揭示', 'C. 豌豆 舒适 揭矢', 'D. 弯豆 恐具 揭矢'], a: 0, ex: '应为"豌豆""恐惧""揭示"，A项全对。' },
+    { id: 'yw-u2-2', u: 'yw-u-2', type: 'choice', q: '《一个豆荚里的五粒豆》中，最后落得最远的那粒豆结局是（　）', o: ['A. 被一个男孩射了出去', 'B. 长成了绿色植物', 'C. 被鸽子吃掉了', 'D. 落到水沟里涨大了'], a: 0, ex: '课文写"被一个男孩射了出去"，落到了顶楼窗台下的裂缝里。' },
+    { id: 'yw-u2-3', u: 'yw-u-2', type: 'fill', q: '《夜间飞行的秘密》一文中，科学家通过反复实验，证明蝙蝠夜间飞行靠的是____。', a: '嘴和耳朵', ex: '蝙蝠夜里飞行靠嘴和耳朵配合探路，不是靠眼睛。' },
+    { id: 'yw-u2-4', u: 'yw-u-2', type: 'fill', q: '《呼风唤雨的世纪》一文中，20世纪是一个____的世纪。', a: '呼风唤雨', ex: '课文标题即点明20世纪是呼风唤雨的世纪，科技改变了人类生活。' },
+    { id: 'yw-u2-5', u: 'yw-u-2', type: 'judge', q: '《蝴蝶的家》一文最后找到了蝴蝶避雨的家在哪里。', a: false, ex: '课文结尾作者仍未找到蝴蝶的家，留下疑问让读者思考。' },
+    { id: 'yw-u2-6', u: 'yw-u-2', type: 'judge', q: '阅读《夜间飞行的秘密》时，可以从内容、写法、联系生活等多个角度提问。', a: true, ex: '本单元语文要素就是从不同角度提问，培养思考能力。' },
+    { id: 'yw-u3-1', u: 'yw-u-3', type: 'choice', q: '《题西林壁》中蕴含人生哲理的诗句是（　）', o: ['A. 横看成岭侧成峰，远近高低各不同', 'B. 不识庐山真面目，只缘身在此山中', 'C. 梅雪争春未肯降，骚人搁笔费评章', 'D. 一道残阳铺水中，半江瑟瑟半江红'], a: 1, ex: '"不识庐山真面目，只缘身在此山中"告诉我们要客观全面地看问题，不能身陷其中。' },
+    { id: 'yw-u3-2', u: 'yw-u-3', type: 'choice', q: '下面加点字读音正确的一项是（　）', o: ['A. 暮（mù）吟（yín）', 'B. 暮（mù）吟（yǐn）', 'C. 暮（mǔ）吟（yín）', 'D. 暮（mǔ）吟（yǐn）'], a: 0, ex: '暮读mù，吟读yín，A项正确。' },
+    { id: 'yw-u3-3', u: 'yw-u-3', type: 'fill', q: '补写《暮江吟》：一道残阳铺水中，半江瑟瑟半江红。____，____。', a: '可怜九月初三夜|露似真珠月似弓', ex: '原诗后两句为"可怜九月初三夜，露似真珠月似弓"。' },
+    { id: 'yw-u3-4', u: 'yw-u-3', type: 'fill', q: '补写《题西林壁》：横看成岭侧成峰，____。不识庐山真面目，只缘身在此山中。', a: '远近高低各不同', ex: '第二句为"远近高低各不同"，写庐山从不同角度看形态各异。' },
+    { id: 'yw-u3-5', u: 'yw-u-3', type: 'judge', q: '《爬山虎的脚》一文中，爬山虎的脚长在茎上，是细丝状的。', a: true, ex: '课文写爬山虎的脚长在茎上，是枝状的细丝，像蜗牛的触角。' },
+    { id: 'yw-u3-6', u: 'yw-u-3', type: 'judge', q: '《蟋蟀的住宅》一文中，蟋蟀的住宅是随便找的一个洞。', a: false, ex: '蟋蟀的住宅是它自己一点一点挖掘出来的，选址讲究、设计合理。' },
+    { id: 'yw-u4-1', u: 'yw-u-4', type: 'choice', q: '下列神话中属于中国神话的是（　）', o: ['A. 《普罗米修斯》', 'B. 《女娲补天》', 'C. 《宙斯的故事》', 'D. 《潘多拉的盒子》'], a: 1, ex: '《女娲补天》《盘古开天地》《精卫填海》是中国神话；普罗米修斯是古希腊神话。' },
+    { id: 'yw-u4-2', u: 'yw-u-4', type: 'choice', q: '《盘古开天地》中，盘古倒下后，他的双眼变成了（　）', o: ['A. 太阳和月亮', 'B. 大地和高山', 'C. 江河和湖海', 'D. 花草和树木'], a: 0, ex: '课文写盘古左眼变成太阳，右眼变成月亮，滋润万物。' },
+    { id: 'yw-u4-3', u: 'yw-u-4', type: 'fill', q: '默写《精卫填海》：炎帝之少女，名曰女娃。女娃游于东海，____，故为精卫，常衔西山之木石，以堙于东海。', a: '溺而不返', ex: '原句为"溺而不返"，意为淹死没有回来。' },
+    { id: 'yw-u4-4', u: 'yw-u-4', type: 'fill', q: '《盘古开天地》中，盘古用神斧劈开混沌，轻而清的东西变成了____，重而浊的东西变成了大地。', a: '天', ex: '课文原句"轻而清的东西，缓缓上升，变成了天"。' },
+    { id: 'yw-u4-5', u: 'yw-u-4', type: 'judge', q: '《精卫填海》中的精卫是炎帝的小女儿女娃化成的鸟。', a: true, ex: '女娃游东海溺死后化为精卫鸟，常衔木石填海。' },
+    { id: 'yw-u4-6', u: 'yw-u-4', type: 'judge', q: '《普罗米修斯》中，普罗米修斯因为偷取火种被宙斯惩罚，最后赫拉克勒斯救了他。', a: true, ex: '普罗米修斯盗火被锁高加索山上，大力神赫拉克勒斯射死鹫鹰救了他。' },
+    { id: 'yw-u5-1', u: 'yw-u-5', type: 'choice', q: '《麻雀》一文的作者是（　）', o: ['A. 巴金', 'B. 屠格涅夫', 'C. 老舍', 'D. 丰子恺'], a: 1, ex: '《麻雀》选自俄国作家屠格涅夫的《猎人笔记》。' },
+    { id: 'yw-u5-2', u: 'yw-u-5', type: 'choice', q: '《爬天都峰》一文中，"我"和谁一起爬天都峰？（　）', o: ['A. 爸爸', 'B. 妈妈', 'C. 老爷爷', 'D. 同学'], a: 2, ex: '课文写"我"和一位老爷爷互相激励一起爬上天都峰。' },
+    { id: 'yw-u5-3', u: 'yw-u-5', type: 'fill', q: '《麻雀》中，老麻雀为了掩护小麻雀，表现出一种强大的力量，这种力量来自____。', a: '母爱|父爱|父母的爱', ex: '课文写这种强大的力量就是父母对子女的爱。' },
+    { id: 'yw-u5-4', u: 'yw-u-5', type: 'fill', q: '《爬天都峰》中，"我"和老爷爷在____和____中互相汲取力量，一起爬上了天都峰。', a: '攀登|互相鼓舞', ex: '课文写"我"和老爷爷互相鼓舞，终于都爬上了峰顶。' },
+    { id: 'yw-u5-5', u: 'yw-u-5', type: 'judge', q: '《麻雀》一文中，猎狗最终叼走了小麻雀。', a: false, ex: '猎狗被老麻雀的勇气怔住了，慢慢后退，没有伤害小麻雀。' },
+    { id: 'yw-u5-6', u: 'yw-u-5', type: 'judge', q: '写一件事时，要写清楚时间、地点、人物、起因、经过、结果。', a: true, ex: '把事情写清楚，就要交代六要素，让读者了解事情的全过程。' },
+    { id: 'yw-u6-1', u: 'yw-u-6', type: 'choice', q: '《牛和鹅》一文中，"我"对牛和鹅的态度变化是（　）', o: ['A. 都害怕', 'B. 都不害怕', 'C. 怕鹅不怕牛，后来不再怕鹅', 'D. 怕牛不怕鹅，后来不再怕牛'], a: 2, ex: '课文写"我"原怕鹅不怕牛，金奎叔帮"我"赶鹅后，"我"不再怕鹅。' },
+    { id: 'yw-u6-2', u: 'yw-u-6', type: 'choice', q: '《一只窝囊的大老虎》中，"我"演老虎最后演得（　）', o: ['A. 很精彩', 'B. 博得满堂喝彩', 'C. 很笨拙，被嘲笑', 'D. 没上场'], a: 2, ex: '"我"演的老虎没露脸、不会豁虎跳，被观众嘲笑，但"我"已尽力。' },
+    { id: 'yw-u6-3', u: 'yw-u-6', type: 'fill', q: '《陀螺》一文中，"我"获得了一只____的陀螺，并在比赛中大获全胜。', a: '鸭蛋', ex: '"我"得到一只像鸭蛋的陀螺，因转动灵活而战胜对手，"得心应手"。' },
+    { id: 'yw-u6-4', u: 'yw-u-6', type: 'fill', q: '《陀螺》中作者说："人不可貌相，____。"这句话告诉我们要看本质，不能只看外表。', a: '海水不可斗量', ex: '这句俗语告诉我们不能只看外表，要看内在本领。' },
+    { id: 'yw-u6-5', u: 'yw-u-6', type: 'judge', q: '《牛和鹅》一文中，金奎叔帮"我"赶鹅，让"我"明白了不能盲目怕鹅的道理。', a: true, ex: '金奎叔的举动改变了"我"对鹅的看法，也改变了"我"看问题的角度。' },
+    { id: 'yw-u6-6', u: 'yw-u-6', type: 'judge', q: '《一只窝囊的大老虎》中，"我"演技很好，得到大家的称赞。', a: false, ex: '"我"演得很笨拙，没豁虎跳，被观众嘲笑，但是"我"已经尽力了。' },
+    { id: 'yw-u7-1', u: 'yw-u-7', type: 'choice', q: '《出塞》的作者是（　）', o: ['A. 王昌龄', 'B. 王之涣', 'C. 李清照', 'D. 王翰'], a: 0, ex: '《出塞》作者是唐代诗人王昌龄，被誉为"七绝圣手"。' },
+    { id: 'yw-u7-2', u: 'yw-u-7', type: 'choice', q: '《夏日绝句》中"生当作人杰，死亦为鬼雄"表达了诗人怎样的情怀？（　）', o: ['A. 思念家乡', 'B. 崇尚英雄、渴望收复失地', 'C. 赞美夏天', 'D. 怀念古人'], a: 1, ex: '李清照借赞项羽宁死不屈，表达对南宋朝廷偏安一隅的不满和爱国情怀。' },
+    { id: 'yw-u7-3', u: 'yw-u-7', type: 'fill', q: '默写《出塞》：____，万里长征人未还。但使龙城飞将在，不教胡马度阴山。', a: '秦时明月汉时关', ex: '首句"秦时明月汉时关"互文见义，写出边疆的苍凉。' },
+    { id: 'yw-u7-4', u: 'yw-u-7', type: 'fill', q: '默写《凉州词》：葡萄美酒夜光杯，欲饮琵琶马上催。____，____？', a: '醉卧沙场君莫笑|古来征战几人回', ex: '后两句为"醉卧沙场君莫笑，古来征战几人回"。' },
+    { id: 'yw-u7-5', u: 'yw-u-7', type: 'judge', q: '《为中华之崛起而读书》中，少年周恩来是在沈阳读书时立下这一志向的。', a: true, ex: '周恩来在沈阳东关模范学校读书时，看到租界里中国人受欺负，立下此志。' },
+    { id: 'yw-u7-6', u: 'yw-u-7', type: 'judge', q: '《梅兰芳蓄须》一文中，梅兰芳为了演出，把胡子剃掉了。', a: false, ex: '梅兰芳为拒绝给日本人演出，蓄须明志，宁可卖房度日也不登台。' },
+    { id: 'yw-u8-1', u: 'yw-u-8', type: 'choice', q: '《王戎不取道旁李》中，王戎判断李子是苦李的依据是（　）', o: ['A. 李子颜色不好看', 'B. 李子长在道边而多子，没人摘', 'C. 李子树太高', 'D. 别人说李子苦'], a: 1, ex: '王戎推理"树在道边而多子，此必苦李"，体现了善于观察思考。' },
+    { id: 'yw-u8-2', u: 'yw-u-8', type: 'choice', q: '《扁鹊治病》中，扁鹊最后为什么不再给蔡桓侯治病？（　）', o: ['A. 蔡桓侯病好了', 'B. 蔡桓侯病入膏肓，无法医治', 'C. 扁鹊不会治了', 'D. 蔡桓侯不想治'], a: 1, ex: '蔡桓侯讳疾忌医，小病拖成大病，扁鹊看出已无法医治就跑了。' },
+    { id: 'yw-u8-3', u: 'yw-u-8', type: 'fill', q: '默写《王戎不取道旁李》：王戎七岁，____。看道边李树多子折枝，诸儿竞走取之，唯戎不动。', a: '尝与诸小儿游', ex: '原句"尝与诸小儿游"，意为曾经和小孩子们一起游玩。' },
+    { id: 'yw-u8-4', u: 'yw-u-8', type: 'fill', q: '《纪昌学射》中，飞卫告诉纪昌学射箭要先练____，盯住一个目标不眨眼。', a: '眼力|视力', ex: '飞卫要求纪昌先练眼力，盯住不眨眼，再练把小东西看成大东西。' },
+    { id: 'yw-u8-5', u: 'yw-u-8', type: 'judge', q: '《西门豹治邺》中，西门豹把巫婆和官绅的头子投进了漳河。', a: true, ex: '西门豹借"送新娘"惩治了巫婆和官绅头子，破除了迷信，教育了百姓。' },
+    { id: 'yw-u8-6', u: 'yw-u-8', type: 'judge', q: '《扁鹊治病》告诉我们有了病要及时治疗，不能讳疾忌医。', a: true, ex: '蔡桓侯讳疾忌医最终病死，告诉我们要虚心听取意见、及时改正错误。' },
+    { id: 'yw-d1-1', u: 'yw-d-1', type: 'choice', q: '《宿新市徐公店》的作者是（　）', o: ['A. 杨万里', 'B. 范成大', 'C. 辛弃疾', 'D. 翁卷'], a: 0, ex: '《宿新市徐公店》作者是宋代诗人杨万里。' },
+    { id: 'yw-d1-2', u: 'yw-d-1', type: 'choice', q: '下列对《乡下人家》理解正确的是（　）', o: ['A. 乡下人家生活单调', 'B. 乡下人家有一道独特、迷人的风景', 'C. 乡下人家不欢迎客人', 'D. 乡下人家生活很苦'], a: 1, ex: '课文结尾点明"乡下人家，不论什么时候，不论什么季节，都有一道独特、迷人的风景"。' },
+    { id: 'yw-d1-3', u: 'yw-d-1', type: 'fill', q: '默写《宿新市徐公店》：篱落疏疏一径深，____。儿童急走追黄蝶，飞入菜花无处寻。', a: '树头新绿未成阴', ex: '第二句"树头新绿未成阴"，写树上新叶尚未形成浓阴。' },
+    { id: 'yw-d1-4', u: 'yw-d-1', type: 'fill', q: '默写《清平乐·村居》：茅檐低小，溪上青青草。____，白发谁家翁媪？', a: '醉里吴音相媚好', ex: '原句"醉里吴音相媚好"，写一对老夫妇用吴音亲热地聊天。' },
+    { id: 'yw-d1-5', u: 'yw-d-1', type: 'judge', q: '《天窗》一文中，天窗是孩子们在雨天和夜晚唯一的慰藉。', a: true, ex: '茅盾在《天窗》中写道，天窗是孩子们雨天和夜晚想象世界的窗口，是唯一的慰藉。' },
+    { id: 'yw-d1-6', u: 'yw-d-1', type: 'judge', q: '《四时田园杂兴·其二十五》中"日长篱落无人过"是因为村里的人都去城里了。', a: false, ex: '是因为农忙季节农民都下地干活了，村里只有老人小孩，所以篱边无人经过。' },
+    { id: 'yw-d2-1', u: 'yw-d-2', type: 'choice', q: '《琥珀》一文中，琥珀形成需要的时间是（　）', o: ['A. 几十年', 'B. 几百年', 'C. 几千年', 'D. 几万年甚至更久'], a: 3, ex: '课文写松脂球要经过几万年甚至更长时间，地壳运动后才形成琥珀。' },
+    { id: 'yw-d2-2', u: 'yw-d-2', type: 'choice', q: '《飞向蓝天的恐龙》一文中，恐龙演化成鸟儿是科学家们经过研究后得出的结论，证据主要来自（　）', o: ['A. 化石', 'B. 照片', 'C. 录像', 'D. 传说'], a: 0, ex: '科学家通过研究恐龙化石，特别是带羽毛的恐龙化石，提出恐龙演化成鸟的假说。' },
+    { id: 'yw-d2-3', u: 'yw-d-2', type: 'fill', q: '《琥珀》一文中，那只小苍蝇和蜘蛛被包裹在____里，最终形成了琥珀。', a: '松脂', ex: '松脂滴下来把苍蝇和蜘蛛一起包裹住，经漫长岁月变成琥珀。' },
+    { id: 'yw-d2-4', u: 'yw-d-2', type: 'fill', q: '《纳米技术就在我们身边》一文中，纳米是非常非常小的长度单位，1纳米等于____分之一米。', a: '十亿', ex: '1纳米等于十亿分之一米，即10的负9次方米。' },
+    { id: 'yw-d2-5', u: 'yw-d-2', type: 'judge', q: '《千年梦圆在今朝》中，2003年神舟五号载人飞船成功发射，杨利伟成为我国第一位进入太空的航天员。', a: true, ex: '2003年10月15日神舟五号发射，杨利伟实现中华民族飞天梦想。' },
+    { id: 'yw-d2-6', u: 'yw-d-2', type: 'judge', q: '《琥珀》是一篇童话故事，写的是两只小动物神奇的冒险。', a: false, ex: '《琥珀》是一篇科普说明文，介绍琥珀形成的过程和科学价值。' },
+    { id: 'yw-d3-1', u: 'yw-d-3', type: 'choice', q: '《短诗三首·繁星》的作者是（　）', o: ['A. 巴金', 'B. 冰心', 'C. 艾青', 'D. 叶圣陶'], a: 1, ex: '《繁星》是冰心的诗集《繁星》中的作品，冰心原名谢婉莹。' },
+    { id: 'yw-d3-2', u: 'yw-d-3', type: 'choice', q: '下列对现代诗特点描述错误的一项是（　）', o: ['A. 朗朗上口有节奏', 'B. 富有想象力', 'C. 表达强烈情感', 'D. 必须严格押韵、字数相同'], a: 3, ex: '现代诗不要求严格押韵和字数相同，比古诗更自由。' },
+    { id: 'yw-d3-3', u: 'yw-d-3', type: 'fill', q: '《绿》一文中，作者艾青写道："所有的绿集中起来，____在一起，重叠在一起，静静地交叉在一起。"', a: '挤', ex: '原句"挤在一起，重叠在一起，静静地交叉在一起"，写绿的浓密。' },
+    { id: 'yw-d3-4', u: 'yw-d-3', type: 'fill', q: '《繁星（一三一）》中："哪一星没有光？哪一朵花没有香？____没有波涛的清响？"', a: '哪一次我的思潮里', ex: '冰心借大海抒发对母亲的思念，反问"哪一次我的思潮里没有波涛的清响"。' },
+    { id: 'yw-d3-5', u: 'yw-d-3', type: 'judge', q: '《白桦》一诗中，白桦象征着高洁、挺拔的品质。', a: true, ex: '诗人叶赛宁以白桦为意象，赞美它的高洁挺拔，表达对白桦的喜爱与敬意。' },
+    { id: 'yw-d3-6', u: 'yw-d-3', type: 'judge', q: '现代诗和古诗一样，都要求对仗工整、字数完全相同。', a: false, ex: '现代诗形式自由，不强求对仗和字数相同，更注重情感与想象。' },
+    { id: 'yw-d4-1', u: 'yw-d-4', type: 'choice', q: '《猫》和《母鸡》的作者是（　）', o: ['A. 老舍', 'B. 丰子恺', 'C. 巴金', 'D. 冰心'], a: 0, ex: '《猫》《母鸡》都是老舍先生的作品，老舍原名舒庆春。' },
+    { id: 'yw-d4-2', u: 'yw-d-4', type: 'choice', q: '《白鹅》一文中，作者写鹅的高傲主要表现在（　）', o: ['A. 叫声、步态、吃相', 'B. 羽毛、眼睛、嘴巴', 'C. 体型、声音、动作', 'D. 走路、睡觉、觅食'], a: 0, ex: '丰子恺写白鹅高傲，从叫声、步态、吃相三个方面展开描写。' },
+    { id: 'yw-d4-3', u: 'yw-d-4', type: 'fill', q: '老舍在《猫》中写道："它要是高兴，能比谁都____：用身子蹭你的腿，把脖子伸出来让你给它抓痒。"', a: '温柔可亲', ex: '原句"能比谁都温柔可亲"，写猫高兴时对人的亲热。' },
+    { id: 'yw-d4-4', u: 'yw-d-4', type: 'fill', q: '《母鸡》一文中，作者对母鸡的态度由原来的____变成了____。', a: '讨厌|尊敬|喜欢|敬佩', ex: '作者原讨厌母鸡吵闹，后见它细心护小鸡，心生尊敬。' },
+    { id: 'yw-d4-5', u: 'yw-d-4', type: 'judge', q: '老舍在《猫》中明贬实褒，表面写猫的缺点，实际表达对猫的喜爱。', a: true, ex: '如"可是，它决定要出去玩玩"等句，看似埋怨实则喜爱，是明贬实褒。' },
+    { id: 'yw-d4-6', u: 'yw-d-4', type: 'judge', q: '《白鹅》一文中，白鹅的吃相三眼一板，一点也不苟，体现它高傲的特点。', a: true, ex: '丰子恺写白鹅吃饭"三眼一板，一丝不苟"，傲气十足。' },
+    { id: 'yw-d5-1', u: 'yw-d-5', type: 'choice', q: '《海上日出》的作者是（　）', o: ['A. 老舍', 'B. 巴金', 'C. 冰心', 'D. 叶圣陶'], a: 1, ex: '《海上日出》是巴金先生写的一篇著名散文。' },
+    { id: 'yw-d5-2', u: 'yw-d-5', type: 'choice', q: '《记金华的双龙洞》一文的游览顺序是（　）', o: ['A. 路上—洞口—外洞—孔隙—内洞—出洞', 'B. 洞口—路上—外洞—内洞—孔隙', 'C. 外洞—孔隙—内洞—路上—洞口', 'D. 路上—外洞—洞口—内洞—孔隙'], a: 0, ex: '作者按路上—洞口—外洞—孔隙—内洞的游览顺序写，是典型的移步换景。' },
+    { id: 'yw-d5-3', u: 'yw-d-5', type: 'fill', q: '《海上日出》中描写太阳升起："这不是伟大的奇观吗？"这句话是____句（填修辞）。', a: '反问', ex: '用反问句强调海上日出是伟大的奇观，增强语气。' },
+    { id: 'yw-d5-4', u: 'yw-d-5', type: 'fill', q: '《记金华的双龙洞》中，从外洞到内洞要通过一条____，要躺在小船里才能通过。', a: '孔隙', ex: '孔隙又窄又小，人要仰卧在小船里，由工人拉绳进出。' },
+    { id: 'yw-d5-5', u: 'yw-d-5', type: 'judge', q: '《海上日出》按日出前、日出时、日出后的顺序描写。', a: true, ex: '作者按时间顺序写日出过程，层次清晰。' },
+    { id: 'yw-d5-6', u: 'yw-d-5', type: 'judge', q: '写游记时可以随意安排顺序，不需要按游览顺序写。', a: false, ex: '写游记一般要按游览顺序写，这样读者才能跟随作者的足迹看景物。' },
+    { id: 'yw-d6-1', u: 'yw-d-6', type: 'choice', q: '《小英雄雨来》的背景是（　）', o: ['A. 解放战争时期', 'B. 抗日战争时期', 'C. 抗美援朝时期', 'D. 辛亥革命时期'], a: 1, ex: '《小英雄雨来》写的是抗日战争时期晋察冀边区少年雨来的故事。' },
+    { id: 'yw-d6-2', u: 'yw-d-6', type: 'choice', q: '把握长文章主要内容的好方法是（　）', o: ['A. 一字一句背诵', 'B. 列小标题再连接', 'C. 只看开头结尾', 'D. 跳着读'], a: 1, ex: '用列小标题的方法概括每部分内容，再连起来就是长文章的主要内容。' },
+    { id: 'yw-d6-3', u: 'yw-d-6', type: 'fill', q: '《小英雄雨来》中，雨来在夜校读到的一句话："____，乃天下之雄。"激励了他。', a: '我们是中国人，我们爱自己的祖国', ex: '雨来在夜校念到"我们是中国人，我们爱自己的祖国"，这句话深深印在他心里。' },
+    { id: 'yw-d6-4', u: 'yw-d-6', type: 'fill', q: '《我们家的男子汉》通过对小男子汉____、独立、坚强等特点的描写，展现了他的成长。', a: '沉着|勇敢', ex: '课文通过吃饭、买东西、独自上车等事例，写出小男子汉的独立、沉着、坚强。' },
+    { id: 'yw-d6-5', u: 'yw-d-6', type: 'judge', q: '《小英雄雨来》中，雨来被鬼子打死在还乡河里了。', a: false, ex: '雨来没死，他凭游泳本领从水底游走，大家以为他死了，其实他还活着。' },
+    { id: 'yw-d6-6', u: 'yw-d-6', type: 'judge', q: '《芦花鞋》选自曹文轩的《青铜葵花》，写的是青铜卖芦花鞋的故事。', a: true, ex: '《芦花鞋》选自曹文轩《青铜葵花》，写青铜在大雪天卖芦花鞋的感人故事。' },
+    { id: 'yw-d7-1', u: 'yw-d-7', type: 'choice', q: '《芙蓉楼送辛渐》的作者是（　）', o: ['A. 王昌龄', 'B. 王之涣', 'C. 卢纶', 'D. 王冕'], a: 0, ex: '《芙蓉楼送辛渐》是唐代诗人王昌龄的送别诗。' },
+    { id: 'yw-d7-2', u: 'yw-d-7', type: 'choice', q: '《囊萤夜读》讲的是谁的故事？（　）', o: ['A. 车胤', 'B. 李白', 'C. 孙康', 'D. 匡衡'], a: 0, ex: '车胤家贫，夏夜捉萤火虫装在练囊里照明读书，这就是"囊萤夜读"。' },
+    { id: 'yw-d7-3', u: 'yw-d-7', type: 'fill', q: '默写《芙蓉楼送辛渐》：寒雨连江夜入吴，平明送客楚山孤。____，____。', a: '洛阳亲友如相问|一片冰心在玉壶', ex: '后两句"洛阳亲友如相问，一片冰心在玉壶"，表达诗人高洁的品格。' },
+    { id: 'yw-d7-4', u: 'yw-d-7', type: 'fill', q: '默写《墨梅》：吾家洗砚池头树，朵朵花开淡墨痕。____，____。', a: '不要人夸好颜色|只留清气满乾坤', ex: '后两句"不要人夸好颜色，只留清气满乾坤"，借梅花表达高洁志向。' },
+    { id: 'yw-d7-5', u: 'yw-d-7', type: 'judge', q: '《铁杵成针》讲的是李白小时候看到老妇人磨铁杵后发奋读书的故事。', a: true, ex: '李白看到老妇人在磨针，深受启发，从此发奋读书，成为大诗人。' },
+    { id: 'yw-d7-6', u: 'yw-d-7', type: 'judge', q: '《「诺曼底号」遇难记》中，哈尔威船长在救出所有人后自己也获救了。', a: false, ex: '哈尔威船长忠于职守，随船沉入大海，英勇牺牲。' },
+    { id: 'yw-d8-1', u: 'yw-d-8', type: 'choice', q: '《巨人的花园》的作者是（　）', o: ['A. 安徒生', 'B. 王尔德', 'C. 格林兄弟', 'D. 夏尔·贝洛'], a: 1, ex: '《巨人的花园》是英国作家王尔德的童话作品。' },
+    { id: 'yw-d8-2', u: 'yw-d-8', type: 'choice', q: '《海的女儿》的作者是（　）', o: ['A. 王尔德', 'B. 安徒生', 'C. 格林兄弟', 'D. 卡罗尔'], a: 1, ex: '《海的女儿》是丹麦作家安徒生的童话代表作。' },
+    { id: 'yw-d8-3', u: 'yw-d-8', type: 'fill', q: '《宝葫芦的秘密》中，主人公____得到一个宝葫芦，发生了一系列奇妙的故事。', a: '王葆', ex: '《宝葫芦的秘密》作者是张天翼，主人公王葆得到宝葫芦后引发许多烦恼。' },
+    { id: 'yw-d8-4', u: 'yw-d-8', type: 'fill', q: '童话的特点是想象____，人物形象鲜明，故事情节生动有趣。', a: '丰富|奇妙', ex: '童话以丰富的想象、奇妙的情节和鲜明的人物形象吸引读者。' },
+    { id: 'yw-d8-5', u: 'yw-d-8', type: 'judge', q: '《巨人的花园》中，巨人把孩子们赶走后，花园里一直保持着美丽的春天。', a: false, ex: '巨人赶走孩子后，花园里没有了春天，常年是寒冬，直到孩子们回来才恢复春天。' },
+    { id: 'yw-d8-6', u: 'yw-d-8', type: 'judge', q: '《海的女儿》中的小人鱼为了救王子，最后化成了海上的泡沫。', a: true, ex: '小人鱼为成全王子和别人，自己投入大海化为泡沫，展现了无私的爱。' }
+  ]
+};
+
+window.DATA_MATH = {
+  units: [
+    {
+      id: 'sx-u-1',
+      book: 'up',
+      no: 1,
+      name: '第一单元 大数的认识',
+      focus: '认识亿以内和亿以上的数，会读写、比大小、求近似数',
+      points: [
+        { t: '数位顺序表', c: '从右往左：个位、十位、百位、千位、万位、十万位、百万位、千万位、亿位……每四位一级：个级、万级、亿级。' },
+        { t: '读数口诀', c: '先分级，从最高级读起，每级末尾的0都不读，其他数位连续几个0都只读一个零。' },
+        { t: '写数方法', c: '从高位写起，哪一位上一个单位也没有就写0占位。' },
+        { t: '四舍五入', c: '看省略尾数的最高位（如省略万位后面看千位），小于5舍去，等于或大于5向前一位进1。结果用约等号≈，并写"万"或"亿"字。' },
+        { t: '改写', c: '改写成"万"作单位：去掉末尾4个0，加"万"字；改写成"亿"作单位：去掉末尾8个0，加"亿"字。改写用等号=。' },
+        { t: '易错提醒', c: '改写用"="，求近似数用"≈"，两者不能混淆。最小的自然数是0，没有最大的自然数。' }
+      ]
+    },
+    {
+      id: 'sx-u-2',
+      book: 'up',
+      no: 2,
+      name: '第二单元 公顷和平方千米',
+      focus: '认识土地面积单位公顷和平方千米，会单位换算',
+      points: [
+        { t: '单位进率', c: '1公顷=10000平方米，1平方千米=100公顷=1000000平方米。' },
+        { t: '公顷的意义', c: '边长100米的正方形面积是1公顷，即100×100=10000平方米。' },
+        { t: '平方千米的意义', c: '边长1000米（1千米）的正方形面积是1平方千米。' },
+        { t: '适用场合', c: '测量土地面积常用公顷和平方千米，如操场、果园、省区面积。' },
+        { t: '易错提醒', c: '公顷与平方米之间进率是10000，不是100；平方千米与公顷之间进率是100。' }
+      ]
+    },
+    {
+      id: 'sx-u-3',
+      book: 'up',
+      no: 3,
+      name: '第三单元 角的度量',
+      focus: '认识线段直线射线，会量角、画角，掌握角的分类',
+      points: [
+        { t: '三种线', c: '线段有两个端点，能量长度；射线有一个端点，向一方无限延伸；直线没有端点，向两方无限延伸。' },
+        { t: '角的定义', c: '从一点引出两条射线组成的图形叫角，用符号∠表示，单位是度（°）。' },
+        { t: '量角器使用', c: '中心对顶点，0刻度线对一条边，看另一条边所对刻度。注意分清内圈外圈。' },
+        { t: '角的分类', c: '锐角小于90°，直角等于90°，钝角大于90°且小于180°，平角等于180°，周角等于360°。' },
+        { t: '关系', c: '1周角=2平角=4直角=360°。' },
+        { t: '易错提醒', c: '钝角必须小于180°且大于90°；大于90°的角不一定是钝角（可能是平角或周角）。' }
+      ]
+    },
+    {
+      id: 'sx-u-4',
+      book: 'up',
+      no: 4,
+      name: '第四单元 三位数乘两位数',
+      focus: '掌握笔算乘法，理解积的变化规律和常见数量关系',
+      points: [
+        { t: '笔算方法', c: '用两位数个位和十位分别去乘三位数，乘积末尾与个位、十位对齐，再相加。' },
+        { t: '因数末尾有0', c: '先把0前面的数相乘，再看两个因数末尾共有几个0，就在积的末尾添几个0。' },
+        { t: '积的变化规律', c: '一个因数不变，另一个因数乘几，积也乘几；一个因数不变，另一个因数除以几（0除外），积也除以几。' },
+        { t: '数量关系', c: '单价×数量=总价；速度×时间=路程。' },
+        { t: '易错提醒', c: '因数中间有0时仍要乘，不能漏乘；0与任何数相乘都得0。' }
+      ]
+    },
+    {
+      id: 'sx-u-5',
+      book: 'up',
+      no: 5,
+      name: '第五单元 平行四边形和梯形',
+      focus: '认识平行垂直，掌握平行四边形和梯形的特征',
+      points: [
+        { t: '平行与垂直', c: '同一平面内不相交的两条直线叫平行线；相交成直角的两条直线叫互相垂直，交点叫垂足。' },
+        { t: '点到直线距离', c: '从直线外一点到这条直线所画的垂直线段最短，这条线段的长度叫点到直线的距离。' },
+        { t: '平行四边形', c: '两组对边分别平行的四边形叫平行四边形。具有不稳定性（易变形），对边平行且相等。' },
+        { t: '梯形', c: '只有一组对边平行的四边形叫梯形。互相平行的一组边叫底，不平行的一组边叫腰。两腰相等的梯形叫等腰梯形。' },
+        { t: '四边形关系', c: '长方形和正方形是特殊的平行四边形；正方形是特殊的长方形。' },
+        { t: '易错提醒', c: '梯形的"高"是两底之间的距离，有无数条；平行四边形的高与底对应。' }
+      ]
+    },
+    {
+      id: 'sx-u-6',
+      book: 'up',
+      no: 6,
+      name: '第六单元 除数是两位数的除法',
+      focus: '掌握口算笔算除法，会用四舍五入试商，理解商的变化规律',
+      points: [
+        { t: '口算除法', c: '整十数除整十数、几百几十数，可想乘法做除法，如60÷20想几乘20得60。' },
+        { t: '笔算方法', c: '从被除数高位除起，先用除数试除被除数前两位，不够除看前三位；除到哪位商就写在那位上面；每次余数必须比除数小。' },
+        { t: '四舍五入试商', c: '把除数看作与它接近的整十数来试商。"四舍"试商可能偏大要调小，"五入"试商可能偏小要调大。' },
+        { t: '商的变化规律', c: '被除数和除数同时乘或除以相同的数（0除外），商不变。这叫商不变规律。' },
+        { t: '易错提醒', c: '余数必须比除数小；除到被除数某位不够商1要商0占位。' }
+      ]
+    },
+    {
+      id: 'sx-u-7',
+      book: 'up',
+      no: 7,
+      name: '第七单元 条形统计图',
+      focus: '认识条形统计图，会看图分析和制作',
+      points: [
+        { t: '特点', c: '条形统计图用直条的高低表示数量的多少，能清楚地看出各种数量的多少。' },
+        { t: '制图步骤', c: '写标题和日期；画纵轴横轴；确定纵轴一格表示多少；画直条（宽度相同，间隔相等）；标数据。' },
+        { t: '一格表示多少', c: '根据数据大小灵活确定，可以一格表示1、2、5、10或更大单位。' },
+        { t: '看图分析', c: '直条越高数量越多，越低数量越少；可比较多少、求总和、求相差。' },
+        { t: '易错提醒', c: '画直条时宽度要一致，间隔要均匀；纵轴起始刻度要看清。' }
+      ]
+    },
+    {
+      id: 'sx-u-8',
+      book: 'up',
+      no: 8,
+      name: '第八单元 数学广角——优化',
+      focus: '通过沏茶、烙饼、田忌赛马问题体会优化思想',
+      points: [
+        { t: '沏茶问题', c: '合理安排时间，找出能同时进行的事情并行做，节省总时间。' },
+        { t: '烙饼问题', c: '每次最多烙2张饼，两面都要烙。烙3张饼最少3次：第一次正1正2，第二次反1正3，第三次反2反3。' },
+        { t: '烙饼公式', c: '每次烙2面、饼数n≥2时，最少时间=n×每面时间。饼数×2÷每次烙的面数×每面时间。' },
+        { t: '田忌赛马', c: '用下等马对对方上等马，上等马对中等马，中等马对下等马，以弱胜强的策略。' },
+        { t: '易错提醒', c: '烙1张饼要2次，烙2张及以上才优化；同时进行的事情必须互不冲突。' }
+      ]
+    },
+    {
+      id: 'sx-d-1',
+      book: 'down',
+      no: 1,
+      name: '第一单元 四则运算',
+      focus: '理解四则运算意义，掌握运算顺序和0的运算',
+      points: [
+        { t: '加减法关系', c: '加法：把两个数合并成一个数。减法：已知和与一个加数求另一个加数。加数+加数=和，和-加数=另一个加数。' },
+        { t: '乘除法关系', c: '乘法：求几个相同加数的和。除法：已知积与一个因数求另一个因数。因数×因数=积，积÷因数=另一个因数。' },
+        { t: '运算顺序', c: '只有加减或只有乘除，从左到右；既有乘除又有加减，先乘除后加减；有括号先算小括号，再算中括号。' },
+        { t: '0的运算', c: 'a+0=a，a-0=a，a-a=0，a×0=0，0÷a=0（a≠0）。0不能作除数。' },
+        { t: '租船问题', c: '尽量租单价便宜的船，且尽量坐满不留空位；用总人数÷每船人数，余数决定是否调整。' },
+        { t: '易错提醒', c: '0作除数无意义，如5÷0不行；同级运算要从左到右，不能随意换序。' }
+      ]
+    },
+    {
+      id: 'sx-d-2',
+      book: 'down',
+      no: 2,
+      name: '第二单元 观察物体（二）',
+      focus: '从前面、上面、左面观察由小正方体搭成的物体',
+      points: [
+        { t: '三个方向', c: '从前面、上面、左面观察物体，看到的形状可能是不同的图形。' },
+        { t: '最多看到面数', c: '从一个方向观察由小正方体搭成的物体，最多能看到3个面。' },
+        { t: '视图相同', c: '不同的物体从同一方向看可能形状相同，需要结合多个方向才能确定形状。' },
+        { t: '正方体视图', c: '一个正方体从任意一个面看都是正方形；长方体从一个方向最多能看到3个面。' },
+        { t: '易错提醒', c: '判断物体形状要综合三个方向视图；左右方向要注意观察者站立方向。' }
+      ]
+    },
+    {
+      id: 'sx-d-3',
+      book: 'down',
+      no: 3,
+      name: '第三单元 运算定律',
+      focus: '掌握加法和乘法的运算定律，会简便计算',
+      points: [
+        { t: '加法交换律', c: 'a+b=b+a。两个数相加，交换加数的位置，和不变。' },
+        { t: '加法结合律', c: '(a+b)+c=a+(b+c)。三个数相加，先把前两个数相加或先把后两个数相加，和不变。' },
+        { t: '减法的性质', c: 'a-b-c=a-(b+c)。一个数连续减去两个数，等于减去这两个数的和。' },
+        { t: '乘法交换律结合律', c: 'a×b=b×a；(a×b)×c=a×(b×c)。' },
+        { t: '乘法分配律', c: '(a+b)×c=a×c+b×c。两个数的和与一个数相乘，等于两个数分别与这个数相乘再相加。' },
+        { t: '除法的性质', c: 'a÷b÷c=a÷(b×c)（b、c≠0）。一个数连续除以两个数，等于除以这两个数的积。' },
+        { t: '易错提醒', c: '乘法分配律与结合律易混：分配律是"乘进去"，结合律是"重新分组"。' }
+      ]
+    },
+    {
+      id: 'sx-d-4',
+      book: 'down',
+      no: 4,
+      name: '第四单元 小数的意义和性质',
+      focus: '理解小数的意义、性质，会读写、比大小、单位换算、求近似数',
+      points: [
+        { t: '小数的意义', c: '分母是10、100、1000……的分数可以用小数表示。一位小数表示十分之几，两位小数表示百分之几，三位小数表示千分之几。' },
+        { t: '数位顺序表', c: '小数点左边是整数部分，右边是小数部分：十分位、百分位、千分位……每相邻两个计数单位间进率是10。' },
+        { t: '小数的性质', c: '小数的末尾添上"0"或去掉"0"，小数的大小不变。如0.5=0.50。' },
+        { t: '小数点移动', c: '小数点向右移动一位、两位、三位，小数扩大到原来的10倍、100倍、1000倍；向左移动则缩小到原来的十分之一、百分之一、千分之一。' },
+        { t: '大小比较', c: '先比较整数部分，整数部分大的小数大；整数部分相同就比较十分位，依此类推。' },
+        { t: '易错提醒', c: '单位换算：高级单位化低级单位乘进率，低级单位化高级单位除以进率。求近似数用"四舍五入"，保留几位小数要看下一位。' }
+      ]
+    },
+    {
+      id: 'sx-d-5',
+      book: 'down',
+      no: 5,
+      name: '第五单元 三角形',
+      focus: '认识三角形的特性、分类，掌握内角和及三边关系',
+      points: [
+        { t: '三角形定义', c: '由三条线段围成的图形叫三角形。三角形具有稳定性。' },
+        { t: '三边关系', c: '三角形任意两边之和大于第三边；任意两边之差小于第三边。' },
+        { t: '按角分类', c: '锐角三角形（三个角都是锐角）、直角三角形（有一个直角）、钝角三角形（有一个钝角）。' },
+        { t: '按边分类', c: '不等边三角形、等腰三角形（两条边相等）、等边三角形（三条边都相等，是特殊的等腰三角形，每个角60°）。' },
+        { t: '内角和', c: '三角形内角和等于180°；四边形内角和等于360°。' },
+        { t: '易错提醒', c: '判断能否围成三角形只要把最短两边之和与最长边比较即可。' }
+      ]
+    },
+    {
+      id: 'sx-d-6',
+      book: 'down',
+      no: 6,
+      name: '第六单元 小数的加法和减法',
+      focus: '掌握小数加减法笔算和简便计算',
+      points: [
+        { t: '笔算方法', c: '小数点对齐（即相同数位对齐），按整数加减法计算，得数的小数点要与上面的小数点对齐。' },
+        { t: '位数不同', c: '小数位数不同时，可在末尾添0使位数相同再算，得数末尾有0一般要去掉。' },
+        { t: '简便计算', c: '运用加法交换律、结合律和减法的性质进行简算；将能凑整的数结合在一起。' },
+        { t: '验算方法', c: '加减法互为逆运算，可用减法验算加法（和-加数=另一个加数），用加法验算减法（差+减数=被减数）。' },
+        { t: '混合运算', c: '小数加减混合运算顺序与整数相同：从左到右依次计算，有括号先算括号里面的。' },
+        { t: '易错提醒', c: '得数末尾有0要化简去掉；整数减小数时要把整数看作小数（如8=8.00）再算。' }
+      ]
+    },
+    {
+      id: 'sx-d-7',
+      book: 'down',
+      no: 7,
+      name: '第七单元 图形的运动（二）',
+      focus: '认识轴对称图形和平移，会数对称轴和画平移',
+      points: [
+        { t: '轴对称图形', c: '如果一个图形沿一条直线对折，两侧能完全重合，这个图形就是轴对称图形，这条直线叫对称轴。' },
+        { t: '常见对称轴数量', c: '正方形4条，长方形2条，等腰三角形1条，等边三角形3条，等腰梯形1条，圆无数条。' },
+        { t: '平移', c: '在平面内，将图形沿某个方向移动一定距离，这种运动叫平移。平移不改变图形的形状、大小和方向。' },
+        { t: '平移要素', c: '平移要确定方向和距离。图形平移后对应点之间的距离就是平移距离。' },
+        { t: '利用平移求面积', c: '不规则图形可通过平移转化为规则图形再求面积。' },
+        { t: '易错提醒', c: '平行四边形不是轴对称图形；平移只改变位置，不改变方向（与旋转区别）。' }
+      ]
+    },
+    {
+      id: 'sx-d-8',
+      book: 'down',
+      no: 8,
+      name: '第八单元 平均数与条形统计图',
+      focus: '理解平均数的意义和求法，认识复式条形统计图',
+      points: [
+        { t: '平均数意义', c: '平均数能反映一组数据的总体情况，它是一组数据的代表值。' },
+        { t: '求平均数', c: '平均数=总数量÷总份数。也可以用"移多补少"的方法。' },
+        { t: '平均数特点', c: '平均数介于最大值与最小值之间；一组数据中可能有数大于、等于或小于平均数。' },
+        { t: '复式条形统计图', c: '用两种或两种以上不同颜色（或图案）的直条表示不同数据的条形统计图，便于比较。' },
+        { t: '易错提醒', c: '平均数不一定是这组数据中的某一个数；求平均数时总数和份数要对应。' }
+      ]
+    },
+    {
+      id: 'sx-d-9',
+      book: 'down',
+      no: 9,
+      name: '第九单元 数学广角——鸡兔同笼',
+      focus: '会用假设法和列表法解决鸡兔同笼问题',
+      points: [
+        { t: '假设全是鸡', c: '假设全是鸡，脚数=头数×2，实际脚数-假设脚数=多算脚数（每只兔少算2只），多算脚数÷2=兔的只数。' },
+        { t: '假设全是兔', c: '假设全是兔，脚数=头数×4，假设脚数-实际脚数=多算脚数（每只鸡多算2只），多算脚数÷2=鸡的只数。' },
+        { t: '列方程法', c: '设鸡x只，兔（头数-x）只，列方程2x+4×（头数-x）=脚数，解方程。' },
+        { t: '列表法', c: '按鸡从0开始逐个列表，直到脚数与题意相符。数据较小时适用。' },
+        { t: '易错提醒', c: '假设全是鸡求出的是兔，假设全是兔求出的是鸡；注意算的是哪种动物。' }
+      ]
+    }
+  ],
+  questions: [
+    { id:'sx-u1-1', u:'sx-u-1', type:'choice', q:'读作"四千零五十万零六"的数写作（　）。', o:['A. 40500006', 'B. 4050006', 'C. 405000006', 'D. 40050006'], a:0, ex:'四千零五十万=4050万=40500000，加个位6得40500006。' },
+    { id:'sx-u1-2', u:'sx-u-1', type:'fill', q:'386420省略万位后面的尾数约是____万。', a:'39', ex:'看千位6≥5，向万位进1，38万+1=39万。' },
+    { id:'sx-u1-3', u:'sx-u-1', type:'judge', q:'一个数的近似数是8万，这个数最大是84999。', a:true, ex:'四舍五入到万位得8万，最大为84999（千位4舍去）。' },
+    { id:'sx-u1-4', u:'sx-u-1', type:'choice', q:'下面各数中，最大的是（　）。', o:['A. 99999999', 'B. 100000000', 'C. 99990000', 'D. 10000000'], a:1, ex:'100000000是九位数，其余是八位数，九位数大于八位数。' },
+    { id:'sx-u1-5', u:'sx-u-1', type:'fill', q:'7800000000改写成用"亿"作单位的数是____亿。', a:'78', ex:'去掉末尾8个0，加"亿"字，得78亿。' },
+    { id:'sx-u1-6', u:'sx-u-1', type:'judge', q:'最小的自然数是1。', a:false, ex:'最小的自然数是0，没有最大的自然数。' },
+
+    { id:'sx-u2-1', u:'sx-u-2', type:'choice', q:'1公顷等于（　）平方米。', o:['A. 100', 'B. 1000', 'C. 10000', 'D. 100000'], a:2, ex:'边长100米的正方形面积是100×100=10000平方米，即1公顷。' },
+    { id:'sx-u2-2', u:'sx-u-2', type:'fill', q:'5公顷=____平方米。', a:'50000', ex:'1公顷=10000平方米，5公顷=5×10000=50000平方米。' },
+    { id:'sx-u2-3', u:'sx-u-2', type:'fill', q:'3000000平方米=____平方千米。', a:'3', ex:'1平方千米=1000000平方米，3000000÷1000000=3平方千米。' },
+    { id:'sx-u2-4', u:'sx-u-2', type:'judge', q:'1平方千米比1公顷大。', a:true, ex:'1平方千米=100公顷，所以1平方千米大于1公顷。' },
+    { id:'sx-u2-5', u:'sx-u-2', type:'choice', q:'测量一个操场的面积，通常用（　）作单位。', o:['A. 平方米', 'B. 公顷', 'C. 平方千米', 'D. 平方厘米'], a:0, ex:'操场面积约几千平方米，用平方米作单位较合适。' },
+    { id:'sx-u2-6', u:'sx-u-2', type:'judge', q:'1平方千米=100公顷。', a:true, ex:'1平方千米=1000×1000=1000000平方米，1公顷=10000平方米，1000000÷10000=100公顷。' },
+
+    { id:'sx-u3-1', u:'sx-u-3', type:'choice', q:'一个周角等于（　）度。', o:['A. 90', 'B. 180', 'C. 270', 'D. 360'], a:3, ex:'周角=360°，平角=180°，直角=90°。' },
+    { id:'sx-u3-2', u:'sx-u-3', type:'fill', q:'1平角=____度。', a:'180', ex:'平角是180°，等于2个直角。' },
+    { id:'sx-u3-3', u:'sx-u-3', type:'judge', q:'大于90°的角叫钝角。', a:false, ex:'钝角是大于90°且小于180°的角，平角和周角也大于90°但不是钝角。' },
+    { id:'sx-u3-4', u:'sx-u-3', type:'fill', q:'∠1和∠2组成一个平角，∠1=60°，那么∠2=____°。', a:'120', ex:'平角=180°，∠2=180-60=120°。' },
+    { id:'sx-u3-5', u:'sx-u-3', type:'choice', q:'钟面上3时整，时针和分针所成的角是（　）。', o:['A. 锐角', 'B. 直角', 'C. 钝角', 'D. 平角'], a:1, ex:'3时整时针指3，分针指12，夹角90°，是直角。' },
+    { id:'sx-u3-6', u:'sx-u-3', type:'judge', q:'一条射线长5米。', a:false, ex:'射线有一个端点，向一方无限延伸，不能量出长度。' },
+
+    { id:'sx-u4-1', u:'sx-u-4', type:'choice', q:'234×15=（　）。', o:['A. 3510', 'B. 3410', 'C. 3520', 'D. 3400'], a:0, ex:'234×15=234×10+234×5=2340+1170=3510。' },
+    { id:'sx-u4-2', u:'sx-u-4', type:'fill', q:'250×40=____。', a:'10000', ex:'25×4=100，因数末尾共3个0，添在100末尾得10000。' },
+    { id:'sx-u4-3', u:'sx-u-4', type:'judge', q:'一个因数乘5，另一个因数不变，积也乘5。', a:true, ex:'积的变化规律：一个因数不变，另一个因数乘几，积也乘几。' },
+    { id:'sx-u4-4', u:'sx-u-4', type:'fill', q:'一辆汽车速度是80千米/时，行驶3小时，路程是____千米。', a:'240', ex:'速度×时间=路程，80×3=240千米。' },
+    { id:'sx-u4-5', u:'sx-u-4', type:'choice', q:'两个数相乘，一个因数乘10，另一个因数除以10，积（　）。', o:['A. 乘10', 'B. 除以10', 'C. 不变', 'D. 乘100'], a:2, ex:'一个因数乘10另一个除以10，积先乘10再除以10，不变。' },
+    { id:'sx-u4-6', u:'sx-u-4', type:'judge', q:'因数末尾有0的乘法，可以先把0前面的数相乘，再看因数末尾共有几个0，就在积的末尾添几个0。', a:true, ex:'这是因数末尾有0的乘法简便算法，注意0前面的数相乘若产生新0要合并。' },
+
+    { id:'sx-u5-1', u:'sx-u-5', type:'choice', q:'只有一组对边平行的四边形是（　）。', o:['A. 平行四边形', 'B. 长方形', 'C. 梯形', 'D. 正方形'], a:2, ex:'梯形定义：只有一组对边平行的四边形。' },
+    { id:'sx-u5-2', u:'sx-u-5', type:'fill', q:'平行四边形有____组对边平行且相等。', a:'2', ex:'平行四边形两组对边分别平行且相等。' },
+    { id:'sx-u5-3', u:'sx-u-5', type:'judge', q:'长方形是特殊的平行四边形。', a:true, ex:'长方形两组对边分别平行，是特殊的平行四边形（角都是直角）。' },
+    { id:'sx-u5-4', u:'sx-u-5', type:'judge', q:'平行四边形容易变形。', a:true, ex:'平行四边形具有不稳定性，受力容易变形。' },
+    { id:'sx-u5-5', u:'sx-u-5', type:'choice', q:'从直线外一点到这条直线所画的（　）最短。', o:['A. 直线', 'B. 射线', 'C. 垂直线段', 'D. 斜线'], a:2, ex:'从直线外一点到这条直线所画的垂直线段最短。' },
+    { id:'sx-u5-6', u:'sx-u-5', type:'fill', q:'等腰梯形有____条腰相等。', a:'2', ex:'等腰梯形两腰相等。' },
+
+    { id:'sx-u6-1', u:'sx-u-6', type:'choice', q:'360÷40=（　）。', o:['A. 8', 'B. 9', 'C. 10', 'D. 7'], a:1, ex:'40×9=360，所以360÷40=9。' },
+    { id:'sx-u6-2', u:'sx-u-6', type:'fill', q:'725÷80的商是____。', a:'9', ex:'80×9=720，720最接近725且小于725，所以商9余5。' },
+    { id:'sx-u6-3', u:'sx-u-6', type:'judge', q:'被除数和除数同时乘3，商不变。', a:true, ex:'商不变规律：被除数和除数同时乘或除以相同的数（0除外），商不变。' },
+    { id:'sx-u6-4', u:'sx-u-6', type:'fill', q:'480÷60=____。', a:'8', ex:'60×8=480，所以480÷60=8。' },
+    { id:'sx-u6-5', u:'sx-u-6', type:'choice', q:'196÷39的商最接近（　）。', o:['A. 4', 'B. 5', 'C. 6', 'D. 7'], a:1, ex:'把39看作40试商，196÷40≈5，39×5=195，所以商是5。' },
+    { id:'sx-u6-6', u:'sx-u-6', type:'judge', q:'计算除法时，余数必须比除数小。', a:true, ex:'若余数大于或等于除数，说明商小了，要调大。' },
+
+    { id:'sx-u7-1', u:'sx-u-7', type:'choice', q:'条形统计图能清楚地看出（　）。', o:['A. 数量的多少', 'B. 数量的增减变化', 'C. 部分与整体的关系', 'D. 数量的发展趋势'], a:0, ex:'条形统计图用直条高低表示数量多少，便于比较。' },
+    { id:'sx-u7-2', u:'sx-u-7', type:'judge', q:'条形统计图纵轴可以一格表示多个单位。', a:true, ex:'数据较大时，纵轴一格可表示2、5、10等。' },
+    { id:'sx-u7-3', u:'sx-u-7', type:'fill', q:'条形统计图中，直条越高表示数量越____。', a:'多', ex:'直条的高低表示数量的多少，越高表示越多。' },
+    { id:'sx-u7-4', u:'sx-u-7', type:'choice', q:'制作条形统计图时，直条的宽度应（　）。', o:['A. 越宽越好', 'B. 宽度相同', 'C. 越细越好', 'D. 随意变化'], a:1, ex:'同一统计图中各直条宽度要一致，间隔要均匀。' },
+    { id:'sx-u7-5', u:'sx-u-7', type:'judge', q:'条形统计图比统计表更直观。', a:true, ex:'条形统计图用图形表示数据，比统计表更直观形象。' },
+    { id:'sx-u7-6', u:'sx-u-7', type:'fill', q:'条形统计图一格表示5，画3格表示数量是____。', a:'15', ex:'5×3=15。' },
+
+    { id:'sx-u8-1', u:'sx-u-8', type:'choice', q:'每次最多烙2张饼，两面都要烙，每面2分，烙3张饼最少需要（　）分。', o:['A. 4', 'B. 5', 'C. 6', 'D. 8'], a:2, ex:'烙3张饼最优方案：第一次正1正2，第二次反1正3，第三次反2反3，共3次×2分=6分。' },
+    { id:'sx-u8-2', u:'sx-u-8', type:'fill', q:'妈妈洗水壶用1分，烧水用8分，洗茶杯用2分，沏茶用1分，最少需要____分。', a:'10', ex:'烧水同时可以洗茶杯，总时间=1+8+1=10分。' },
+    { id:'sx-u8-3', u:'sx-u-8', type:'judge', q:'田忌赛马中，田忌用下等马对齐王的上等马是最优策略之一。', a:true, ex:'以弱对强，弃一胜二，是田忌赛马的最优策略。' },
+    { id:'sx-u8-4', u:'sx-u-8', type:'choice', q:'每次最多煎2条鱼，每面煎3分，煎3条鱼最少需要（　）分。', o:['A. 6', 'B. 9', 'C. 12', 'D. 18'], a:1, ex:'3条鱼轮流煎：第一次正1正2，第二次反1正3，第三次反2反3，共3次×3分=9分。' },
+    { id:'sx-u8-5', u:'sx-u-8', type:'fill', q:'每次最多烙2张饼，每面2分，烙2张饼最少需要____分。', a:'4', ex:'2张饼同时烙，正反面各2分，共2×2=4分。' },
+    { id:'sx-u8-6', u:'sx-u-8', type:'judge', q:'合理安排时间可以同时进行不冲突的事情。', a:true, ex:'优化思想：找出能同时进行的事情并行做，节省总时间。' },
+
+    { id:'sx-d1-1', u:'sx-d-1', type:'choice', q:'0÷25=（　）。', o:['A. 25', 'B. 0', 'C. 1', 'D. 无意义'], a:1, ex:'0除以任何非零数都得0。' },
+    { id:'sx-d1-2', u:'sx-d-1', type:'fill', q:'36+（72-28）=____。', a:'80', ex:'先算括号：72-28=44，再算36+44=80。' },
+    { id:'sx-d1-3', u:'sx-d-1', type:'judge', q:'0作除数无意义。', a:true, ex:'除数为0时找不到商，所以0不能作除数。' },
+    { id:'sx-d1-4', u:'sx-d-1', type:'choice', q:'下面运算顺序正确的是（　）。', o:['A. 先加减后乘除', 'B. 先乘除后加减', 'C. 从右往左', 'D. 任意顺序'], a:1, ex:'没有括号时，先算乘除法，后算加减法。' },
+    { id:'sx-d1-5', u:'sx-d-1', type:'fill', q:'48÷[（12-8）×2]=____。', a:'6', ex:'先算小括号12-8=4，再算中括号4×2=8，最后48÷8=6。' },
+    { id:'sx-d1-6', u:'sx-d-1', type:'judge', q:'25×4÷25×4=1。', a:false, ex:'从左到右依次计算：25×4=100，100÷25=4，4×4=16，结果是16不是1。' },
+
+    { id:'sx-d2-1', u:'sx-d-2', type:'choice', q:'从不同方向观察一个正方体，看到的形状都是（　）。', o:['A. 长方形', 'B. 正方形', 'C. 三角形', 'D. 圆形'], a:1, ex:'正方体六个面都是正方形，从任意方向看都是正方形。' },
+    { id:'sx-d2-2', u:'sx-d-2', type:'judge', q:'从不同方向观察物体，看到的形状可能相同。', a:true, ex:'不同方向可能看到相同形状，如正方体各面视图相同。' },
+    { id:'sx-d2-3', u:'sx-d-2', type:'fill', q:'3个小正方体一字排开搭成一行，从正面看到____个正方形。', a:'3', ex:'一行3个，从正面看是横排3个正方形。' },
+    { id:'sx-d2-4', u:'sx-d-2', type:'choice', q:'从一个方向观察由小正方体搭成的物体，最多能看到（　）个面。', o:['A. 1', 'B. 2', 'C. 3', 'D. 4'], a:2, ex:'从一个方向看物体最多能看到3个面（前、上、侧各一）。' },
+    { id:'sx-d2-5', u:'sx-d-2', type:'judge', q:'不同的物体从同一方向看，形状可能相同。', a:true, ex:'多个物体从某方向视图可能相同，需多方向综合判断。' },
+    { id:'sx-d2-6', u:'sx-d-2', type:'fill', q:'观察长方体时，从一个方向最多能看到____个面。', a:'3', ex:'从一个方向看长方体，最多能看到3个面。' },
+
+    { id:'sx-d3-1', u:'sx-d-3', type:'choice', q:'25×（4+8）=（　）。', o:['A. 100', 'B. 200', 'C. 300', 'D. 320'], a:2, ex:'用乘法分配律：25×4+25×8=100+200=300。' },
+    { id:'sx-d3-2', u:'sx-d-3', type:'fill', q:'125×8=____。', a:'1000', ex:'125×8=1000，是常用凑整算式。' },
+    { id:'sx-d3-3', u:'sx-d-3', type:'judge', q:'（a+b）×c=a×c+b×c是乘法分配律。', a:true, ex:'乘法分配律：两数和乘一个数等于各数分别乘这个数再相加。' },
+    { id:'sx-d3-4', u:'sx-d-3', type:'fill', q:'99×46=____。', a:'4554', ex:'99×46=（100-1）×46=4600-46=4554。' },
+    { id:'sx-d3-5', u:'sx-d-3', type:'choice', q:'540÷45÷2简便计算结果是（　）。', o:['A. 6', 'B. 12', 'C. 60', 'D. 5'], a:0, ex:'除法的性质：540÷（45×2）=540÷90=6。' },
+    { id:'sx-d3-6', u:'sx-d-3', type:'judge', q:'a×（b+c）=a×b+a×c这是乘法分配律。', a:true, ex:'乘法分配律可正向也可逆向使用，此为正向展开形式。' },
+
+    { id:'sx-d4-1', u:'sx-d-4', type:'choice', q:'0.305读作（　）。', o:['A. 零点三零五', 'B. 零点三百零五', 'C. 零点三十五', 'D. 零点零三零五'], a:0, ex:'小数部分依次读出每一位数字：0.305读作零点三零五。' },
+    { id:'sx-d4-2', u:'sx-d-4', type:'fill', q:'3.5平方米=____平方分米。', a:'350', ex:'1平方米=100平方分米，3.5×100=350平方分米。' },
+    { id:'sx-d4-3', u:'sx-d-4', type:'judge', q:'0.5和0.50大小相等。', a:true, ex:'小数的性质：末尾添0或去0大小不变，0.5=0.50。' },
+    { id:'sx-d4-4', u:'sx-d-4', type:'fill', q:'把0.08的小数点向右移动两位是____。', a:'8', ex:'小数点向右移动两位，小数扩大到原来的100倍，0.08×100=8。' },
+    { id:'sx-d4-5', u:'sx-d-4', type:'choice', q:'4.95保留一位小数约是（　）。', o:['A. 4.9', 'B. 5.0', 'C. 5', 'D. 4.0'], a:1, ex:'看百分位5≥5，向十分位进1，4.9+0.1=5.0，保留一位小数写5.0。' },
+    { id:'sx-d4-6', u:'sx-d-4', type:'judge', q:'把一个小数的小数点向右移动三位，这个数就扩大到原来的1000倍。', a:true, ex:'小数点右移一位扩大10倍，两位100倍，三位1000倍。' },
+
+    { id:'sx-d5-1', u:'sx-d-5', type:'choice', q:'三角形内角和是（　）度。', o:['A. 90', 'B. 180', 'C. 270', 'D. 360'], a:1, ex:'任意三角形三个内角之和等于180°。' },
+    { id:'sx-d5-2', u:'sx-d-5', type:'fill', q:'一个三角形两个内角分别是50°和60°，第三个角是____°。', a:'70', ex:'180-50-60=70°。' },
+    { id:'sx-d5-3', u:'sx-d-5', type:'judge', q:'三角形具有稳定性。', a:true, ex:'三角形三边确定后形状就确定，具有稳定性。' },
+    { id:'sx-d5-4', u:'sx-d-5', type:'choice', q:'下面各组线段中，能围成三角形的是（　）。', o:['A. 1cm、2cm、5cm', 'B. 3cm、4cm、5cm', 'C. 2cm、2cm、5cm', 'D. 1cm、3cm、5cm'], a:1, ex:'三角形任意两边之和大于第三边，3+4>5能围成；A项1+2<5不能。' },
+    { id:'sx-d5-5', u:'sx-d-5', type:'fill', q:'等边三角形的每个内角是____度。', a:'60', ex:'等边三角形三个角相等，180÷3=60°。' },
+    { id:'sx-d5-6', u:'sx-d-5', type:'judge', q:'三角形任意两边之和大于第三边。', a:true, ex:'这是判断三条线段能否围成三角形的关键依据。' },
+
+    { id:'sx-d6-1', u:'sx-d-6', type:'choice', q:'3.75+2.4=（　）。', o:['A. 5.79', 'B. 6.15', 'C. 3.99', 'D. 6.05'], a:1, ex:'3.75+2.40=6.15，小数点对齐计算。' },
+    { id:'sx-d6-2', u:'sx-d-6', type:'fill', q:'8-3.25=____。', a:'4.75', ex:'8.00-3.25=4.75，整数减小数时把整数看作小数。' },
+    { id:'sx-d6-3', u:'sx-d-6', type:'judge', q:'计算小数加减法时，小数点要对齐。', a:true, ex:'小数点对齐即相同数位对齐，是小数加减法的关键。' },
+    { id:'sx-d6-4', u:'sx-d-6', type:'fill', q:'4.2+1.78=____。', a:'5.98', ex:'4.20+1.78=5.98。' },
+    { id:'sx-d6-5', u:'sx-d-6', type:'choice', q:'7.5-2.8=（　）。', o:['A. 4.7', 'B. 5.3', 'C. 4.3', 'D. 5.7'], a:0, ex:'7.5-2.8=4.7，可看作7.5-2.5-0.3=5-0.3=4.7。' },
+    { id:'sx-d6-6', u:'sx-d-6', type:'judge', q:'小数加减法得数末尾的0通常要去掉。', a:true, ex:'依据小数的性质，末尾0去掉大小不变，如13.0=13。' },
+
+    { id:'sx-d7-1', u:'sx-d-7', type:'choice', q:'正方形有（　）条对称轴。', o:['A. 1', 'B. 2', 'C. 4', 'D. 无数'], a:2, ex:'正方形有4条对称轴（2条对角线+2条过对边中点的直线）。' },
+    { id:'sx-d7-2', u:'sx-d-7', type:'fill', q:'长方形有____条对称轴。', a:'2', ex:'长方形有2条对称轴（过每组对边中点的直线）。' },
+    { id:'sx-d7-3', u:'sx-d-7', type:'judge', q:'平移不改变图形的形状和大小。', a:true, ex:'平移只改变位置，不改变形状、大小和方向。' },
+    { id:'sx-d7-4', u:'sx-d-7', type:'choice', q:'下面图形中对称轴最多的是（　）。', o:['A. 正方形', 'B. 长方形', 'C. 圆', 'D. 等边三角形'], a:2, ex:'圆有无数条对称轴，最多。' },
+    { id:'sx-d7-5', u:'sx-d-7', type:'judge', q:'平行四边形是轴对称图形。', a:false, ex:'平行四边形沿任何直线对折都不能完全重合，不是轴对称图形。' },
+    { id:'sx-d7-6', u:'sx-d-7', type:'fill', q:'等腰三角形有____条对称轴。', a:'1', ex:'等腰三角形有1条对称轴（底边上的高所在直线）。' },
+
+    { id:'sx-d8-1', u:'sx-d-8', type:'choice', q:'求平均数的方法是（　）。', o:['A. 总数÷份数', 'B. 总数×份数', 'C. 最大数-最小数', 'D. 总数+份数'], a:0, ex:'平均数=总数量÷总份数。' },
+    { id:'sx-d8-2', u:'sx-d-8', type:'fill', q:'5个数：4、5、6、7、8，平均数是____。', a:'6', ex:'总数4+5+6+7+8=30，30÷5=6。' },
+    { id:'sx-d8-3', u:'sx-d-8', type:'judge', q:'平均数能反映一组数据的总体水平。', a:true, ex:'平均数是一组数据的代表值，反映总体情况。' },
+    { id:'sx-d8-4', u:'sx-d-8', type:'fill', q:'3个同学的平均分是85分，三人总分是____分。', a:'255', ex:'总分=平均数×份数=85×3=255分。' },
+    { id:'sx-d8-5', u:'sx-d-8', type:'choice', q:'复式条形统计图可以同时表示（　）组数据。', o:['A. 只能一', 'B. 两或多', 'C. 只能两', 'D. 不能同时'], a:1, ex:'复式条形统计图用不同颜色直条同时表示两组或多组数据。' },
+    { id:'sx-d8-6', u:'sx-d-8', type:'judge', q:'一组数据中可能有数大于平均数，也可能有数小于平均数。', a:true, ex:'平均数介于最大值与最小值之间，数据可大可小于平均数。' },
+
+    { id:'sx-d9-1', u:'sx-d-9', type:'choice', q:'鸡兔同笼，共有头10个、脚26只，鸡有（　）只。', o:['A. 5', 'B. 6', 'C. 7', 'D. 8'], a:2, ex:'假设全是兔，应有脚10×4=40只，多40-26=14只，每只鸡多算2只脚，鸡=14÷2=7只。' },
+    { id:'sx-d9-2', u:'sx-d-9', type:'fill', q:'鸡兔同笼，共8个头、22只脚，兔有____只。', a:'3', ex:'假设全是鸡，应有脚8×2=16只，少22-16=6只，每只兔少算2只脚，兔=6÷2=3只。' },
+    { id:'sx-d9-3', u:'sx-d-9', type:'judge', q:'鸡兔同笼问题可以用假设法解决。', a:true, ex:'假设法是解决鸡兔同笼问题的常用方法。' },
+    { id:'sx-d9-4', u:'sx-d-9', type:'fill', q:'鸡兔同笼，共10个头、32只脚，兔有____只。', a:'6', ex:'假设全是鸡，应有10×2=20只脚，少32-20=12只，兔=12÷2=6只（验算：鸡4只，4×2+6×4=8+24=32）。' },
+    { id:'sx-d9-5', u:'sx-d-9', type:'choice', q:'鸡兔同笼，共6个头、20只脚，兔有（　）只。', o:['A. 2', 'B. 3', 'C. 4', 'D. 5'], a:2, ex:'假设全是鸡，应有6×2=12只脚，少20-12=8只，兔=8÷2=4只。' },
+    { id:'sx-d9-6', u:'sx-d-9', type:'judge', q:'鸡兔同笼问题中，假设全是兔时，多算的脚数除以2等于鸡的只数。', a:true, ex:'假设全是兔多算的脚=每只鸡多算2只脚之和，除以2即鸡的只数。' }
+  ]
+};
+
+window.DATA_ENGLISH = {
+  units: [
+    {
+      id: 'yy-u-1',
+      book: 'up',
+      no: 1,
+      name: 'Unit 1 This is my new friend 我的新朋友',
+      focus: '见面介绍新朋友、国家国籍、询问职业',
+      points: [
+        { t: '核心单词', c: 'friend 朋友 / from 来自 / China 中国 / America 美国 / England 英国 / Singapore 新加坡 / Canada 加拿大 / boy 男孩 / girl 女孩 / student 学生 / teacher 教师 / doctor 医生 / nurse 护士 / driver 司机 / farmer 农民 / postman 邮递员' },
+        { t: '核心句型', c: 'This is my new friend. 这是我的新朋友。 / Where are you from? 你来自哪里？ / I am from China. 我来自中国。 / What does your father do? 你爸爸是做什么的？ / He is a doctor. 他是一名医生。 / Nice to meet you. 很高兴见到你。' },
+        { t: '语法要点', c: 'be from 表示来自某地，主语是 I 时用 am，you/they 用 are，he/she 用 is。询问职业用 What does...do? 回答用 He/She is a/an 加职业名词。' },
+        { t: '易错提醒', c: 'policeman 男警察与 policewoman 女警察要分清。职业名词前用 a 或 an，元音音素开头的词用 an，如 an English teacher。America 指美国，American 指美国人，不要混淆。' },
+        { t: '常用短语', c: 'Nice to meet you. 很高兴见到你 / Welcome to China. 欢迎来中国 / my new friend 我的新朋友 / come from 来自' }
+      ]
+    },
+    {
+      id: 'yy-u-2',
+      book: 'up',
+      no: 2,
+      name: 'Unit 2 What is your number 你的号码是多少',
+      focus: '数字1到20、班级与年级表达',
+      points: [
+        { t: '核心单词', c: 'number 号码 / class 班级 / grade 年级 / one 一 / two 二 / three 三 / four 四 / five 五 / six 六 / seven 七 / eight 八 / nine 九 / ten 十 / eleven 十一 / twelve 十二 / thirteen 十三 / fifteen 十五 / twenty 二十' },
+        { t: '核心句型', c: 'What is your number? 你的号码是多少？ / I am number thirteen. 我是十三号。 / What class are you in? 你在哪个班？ / I am in Class One, Grade Four. 我在四年级一班。 / How many students? 有多少学生？' },
+        { t: '语法要点', c: '询问号码用 What is your number? 回答用 I am number 加数字。表示在几班几年级用 in Class 加序数词, Grade 加序数词，首字母都要大写。How many 用来询问数量，后接可数名词复数。' },
+        { t: '易错提醒', c: '数字 thirteen 十三 与 thirty 三十 容易混淆，thirteen 重音在后。Class 和 Grade 作为专有名词首字母必须大写。twelve 变序数词是 twelfth，但本单元直接用基数词表示班级。' },
+        { t: '常用短语', c: 'Class One 一班 / Grade Four 四年级 / number thirteen 十三号 / how many 多少 / in our class 在我们班' }
+      ]
+    },
+    {
+      id: 'yy-u-3',
+      book: 'up',
+      no: 3,
+      name: 'Unit 3 It is a pineapple 这是一个菠萝',
+      focus: '水果蔬菜词汇、this与that区分',
+      points: [
+        { t: '核心单词', c: 'pineapple 菠萝 / lemon 柠檬 / apple 苹果 / pear 梨 / watermelon 西瓜 / kiwi fruit 猕猴桃 / orange 橙子 / banana 香蕉 / potato 土豆 / tomato 西红柿 / carrot 胡萝卜 / cucumber 黄瓜 / eggplant 茄子 / pepper 辣椒' },
+        { t: '核心句型', c: 'What is this? 这是什么？ / It is a pineapple. 这是一个菠萝。 / What is that? 那是什么？ / It is a tomato. 那是一个西红柿。 / What are these? 这些是什么？ / They are bananas. 它们是香蕉。' },
+        { t: '语法要点', c: 'this 这 指近处，that 那 指远处，单数用 is；these 这些 与 those 那些 是复数，用 are。回答单数用 It is a/an 加名词，复数用 They are 加名词复数。orange 是元音音素开头，用 an orange。' },
+        { t: '易错提醒', c: 'a 与 an 的区别看单词首音素：an orange, an apple, an eggplant；但 a pineapple, a pear, a tomato。tomato 西红柿和 potato 土豆拼写只差一个字母，不要写反。kiwi fruit 是两个单词，不要连写。' },
+        { t: '常用短语', c: 'an apple 一个苹果 / a banana 一根香蕉 / how nice 多好看 / I like... 我喜欢...' }
+      ]
+    },
+    {
+      id: 'yy-u-4',
+      book: 'up',
+      no: 4,
+      name: 'Unit 4 How is the weather today 今天天气怎么样',
+      focus: '天气词汇、服装词汇、穿脱衣物表达',
+      points: [
+        { t: '核心单词', c: 'weather 天气 / sunny 晴朗的 / cloudy 多云的 / rainy 下雨的 / snowy 下雪的 / windy 刮风的 / hot 热的 / warm 温暖的 / cool 凉爽的 / cold 寒冷的 / jacket 夹克 / jeans 牛仔裤 / shorts 短裤 / socks 袜子 / shoes 鞋 / hat 帽子 / T-shirt T恤 / skirt 短裙 / sweater 毛衣 / shirt 衬衫 / dress 连衣裙' },
+        { t: '核心句型', c: 'How is the weather today? 今天天气怎么样？ / It is sunny. 今天是晴天。 / Put on your jacket. 穿上你的夹克。 / Take off your sweater. 脱下你的毛衣。 / It is hot today. 今天很热。' },
+        { t: '语法要点', c: '询问天气用 How is the weather? 回答用 It is 加天气形容词。put on 表示穿上，take off 表示脱下，后面接衣物名词。表示天气的形容词由名词加 y 变来：sun 加 y 变 sunny，cloud 加 y 变 cloudy。' },
+        { t: '易错提醒', c: 'weather 是不可数名词，不能说 a weather。sunny 双写 n 加 y，不要写成 suny。put on 和 take off 后接物主代词 your/his/her 再接衣物。jeans 牛仔裤和 shorts 短裤本身是复数，不能说 a jeans。' },
+        { t: '常用短语', c: 'put on 穿上 / take off 脱下 / how is the weather 天气如何 / a sunny day 晴天 / a cold winter 寒冷的冬天' }
+      ]
+    },
+    {
+      id: 'yy-u-5',
+      book: 'up',
+      no: 5,
+      name: 'Unit 5 I like hamburgers 我喜欢汉堡包',
+      focus: '食物饮料词汇、表达饮食偏好',
+      points: [
+        { t: '核心单词', c: 'hamburger 汉堡包 / hot dog 热狗 / Coke 可乐 / juice 果汁 / milk 牛奶 / water 水 / tea 茶 / coffee 咖啡 / cake 蛋糕 / bread 面包 / egg 鸡蛋 / sausage 香肠 / chicken 鸡肉 / fish 鱼 / rice 米饭 / noodles 面条 / beef 牛肉 / ice cream 冰淇淋' },
+        { t: '核心句型', c: 'I like hamburgers. 我喜欢汉堡包。 / I do not like milk. 我不喜欢牛奶。 / What about you? 你呢？ / Have some bread. 吃点面包。 / What would you like? 你想要什么？ / I would like a cake. 我想要一个蛋糕。' },
+        { t: '语法要点', c: 'like 后接可数名词复数或不可数名词，如 I like apples 和 I like milk。do not like 表示不喜欢，主语是第三人称单数时用 does not like。would like 表示想要，比 want 更礼貌。Have some... 是请别人吃东西的句型。' },
+        { t: '易错提醒', c: 'bread 面包和 milk 牛奶是不可数名词，不能说 a bread 或 milks。说一种食物用 a 加可数名词，如 a cake。noodles 面条总是复数形式。I would like 可缩写为 I would like，但本教材要求写完整形式。' },
+        { t: '常用短语', c: 'have some 吃点 / what about you 你呢 / I would like 我想要 / a glass of juice 一杯果汁 / a piece of bread 一片面包' }
+      ]
+    },
+    {
+      id: 'yy-u-6',
+      book: 'up',
+      no: 6,
+      name: 'Unit 6 Would you like to take a walk 你想去散步吗',
+      focus: '邀请与户外活动、表达能力',
+      points: [
+        { t: '核心单词', c: 'walk 散步 / run 跑 / jump 跳 / swim 游泳 / ride a bike 骑自行车 / fly a kite 放风筝 / play football 踢足球 / play basketball 打篮球 / play table tennis 打乒乓球 / go shopping 去购物 / go fishing 去钓鱼 / go to the park 去公园 / dance 跳舞 / sing 唱歌' },
+        { t: '核心句型', c: 'Would you like to take a walk? 你想去散步吗？ / Yes, I would love to. 是的，我很乐意。 / Sorry, I can not. 对不起，我不能。 / Let us go to the park. 让我们去公园吧。 / Good idea! 好主意！ / Can you swim? 你会游泳吗？ / Yes, I can. 是的，我会。' },
+        { t: '语法要点', c: 'Would you like to... 是礼貌邀请，肯定回答用 I would love to，否定用 Sorry, I can not。Let us 加动词原形表示建议。can 表示能力，疑问句把 can 提前，回答用 Yes, I can 或 No, I can not。' },
+        { t: '易错提醒', c: 'play 后接球类运动不加 the，如 play football 不能说 play the football。would like to 后接动词原形。Let us 是 let us 的完整形式，不要写成 lets。can not 是完整形式，口语可缩写为 cannot。' },
+        { t: '常用短语', c: 'take a walk 散步 / good idea 好主意 / go fishing 去钓鱼 / ride a bike 骑车 / play football 踢足球' }
+      ]
+    },
+    {
+      id: 'yy-d-1',
+      book: 'down',
+      no: 1,
+      name: 'Unit 1 Welcome to my new home 欢迎来我的新家',
+      focus: '房间与家具、There be 句型',
+      points: [
+        { t: '核心单词', c: 'home 家 / living room 客厅 / bedroom 卧室 / kitchen 厨房 / bathroom 浴室 / study 书房 / sofa 沙发 / armchair 扶手椅 / TV 电视 / table 桌子 / desk 书桌 / chair 椅子 / bed 床 / fridge 冰箱 / computer 电脑 / clock 钟表 / picture 图画 / wall 墙 / window 窗户 / door 门 / lamp 台灯' },
+        { t: '核心句型', c: 'Welcome to my new home. 欢迎来我的新家。 / Look at the living room. 看这个客厅。 / There is a sofa. 有一张沙发。 / There are two chairs. 有两把椅子。 / Is this your bedroom? 这是你的卧室吗？ / Yes, it is. 是的，它是。 / What is in the box? 盒子里有什么？' },
+        { t: '语法要点', c: 'There be 句型表示某处有某物，单数用 There is a/an，复数用 There are。就近原则：靠近的主语是单数用 is，是复数用 are。Welcome to 加地点表示欢迎来到某地。Look at 加名词表示看某物。' },
+        { t: '易错提醒', c: 'There be 与 have 的区别：There be 表示存在，have 表示拥有。不要说 There has。living room 和 bathroom 是两个单词，不要连写。Is this...? 的回答用 Yes, it is 或 No, it is not，不能用 Yes, this is。' },
+        { t: '常用短语', c: 'welcome to 欢迎来到 / look at 看 / living room 客厅 / in the bedroom 在卧室里 / on the wall 在墙上' }
+      ]
+    },
+    {
+      id: 'yy-d-2',
+      book: 'down',
+      no: 2,
+      name: 'Unit 2 There are forty students in our class 我们班有四十名学生',
+      focus: '数字21到100、班级人数表达',
+      points: [
+        { t: '核心单词', c: 'student 学生 / teacher 教师 / boy 男孩 / girl 女孩 / class 班级 / grade 年级 / school 学校 / twenty 二十 / thirty 三十 / forty 四十 / fifty 五十 / sixty 六十 / seventy 七十 / eighty 八十 / ninety 九十 / one hundred 一百' },
+        { t: '核心句型', c: 'How many students are there in your class? 你们班有多少学生？ / There are forty students in our class. 我们班有四十名学生。 / How many teachers? 有多少老师？ / There are fifty teachers. 有五十位老师。 / How many boys? 有多少男孩？ / There are twenty boys. 有二十个男孩。' },
+        { t: '语法要点', c: 'How many 用来询问数量，后接可数名词复数，回答用 There are 加数字加名词复数。整十数字 twenty 到 ninety 都以 ty 结尾。one hundred 一百中 hundred 前加数字时不变复数，如 two hundred。' },
+        { t: '易错提醒', c: 'forty 四十的拼写，不是 fourty。整十数字之间不要混淆：thirty 三十 与 thirteen 十三，forty 四十 与 fourteen 十四。How many 后必须接复数名词，如 How many students 不能说 How many student。' },
+        { t: '常用短语', c: 'how many 多少 / in our class 在我们班 / how many teachers 多少老师 / one hundred 一百 / twenty-one 二十一' }
+      ]
+    },
+    {
+      id: 'yy-d-3',
+      book: 'down',
+      no: 3,
+      name: 'Unit 3 What subject do you like best 你最喜欢什么学科',
+      focus: '学科词汇、课程与星期',
+      points: [
+        { t: '核心单词', c: 'subject 学科 / maths 数学 / Chinese 语文 / English 英语 / PE 体育 / music 音乐 / art 美术 / science 科学 / lesson 课 / today 今天 / Monday 星期一 / Tuesday 星期二 / Wednesday 星期三 / Thursday 星期四 / Friday 星期五' },
+        { t: '核心句型', c: 'What subject do you like best? 你最喜欢什么学科？ / I like maths best. 我最喜欢数学。 / Do you like English? 你喜欢英语吗？ / Yes, I do. 是的，我喜欢。 / No, I do not. 不，我不喜欢。 / How many lessons do you have today? 你今天有几节课？ / We have six. 我们有六节。' },
+        { t: '语法要点', c: 'like best 表示最喜欢，主语是 I/you/we/they 时用 do，是 he/she 时用 does。Do you like...? 的肯定回答用 Yes, I do，否定用 No, I do not。How many lessons 询问多少节课，回答用数字。' },
+        { t: '易错提醒', c: '学科名称首字母大写：Maths, Chinese, English, PE, Music, Art, Science。best 是 good 的最高级，like best 表示最喜欢。do not 是完整形式，不要写成 dont。PE 是 Physical Education 的缩写，要大写。' },
+        { t: '常用短语', c: 'like best 最喜欢 / how many lessons 多少节课 / have a lesson 上课 / on Monday 在星期一 / today is 今天是' }
+      ]
+    },
+    {
+      id: 'yy-d-4',
+      book: 'down',
+      no: 4,
+      name: 'Unit 4 There are seven days in a week 一周有七天',
+      focus: '星期表达、一周七天',
+      points: [
+        { t: '核心单词', c: 'week 星期 / day 天 / Sunday 星期日 / Monday 星期一 / Tuesday 星期二 / Wednesday 星期三 / Thursday 星期四 / Friday 星期五 / Saturday 星期六 / today 今天 / tomorrow 明天 / yesterday 昨天' },
+        { t: '核心句型', c: 'How many days are there in a week? 一周有多少天？ / There are seven. 有七天。 / What are they? 它们是什么？ / They are Sunday, Monday, Tuesday... 它们是星期日、星期一、星期二等。 / What day is today? 今天星期几？ / Today is Monday. 今天是星期一。' },
+        { t: '语法要点', c: '星期名称首字母必须大写：Sunday 到 Saturday。询问星期几用 What day is today? 回答用 Today is 加星期。How many days 询问多少天，回答用 There are 加数字。on 加星期几表示在星期几，如 on Monday。' },
+        { t: '易错提醒', c: 'Sunday 是星期日，不是周日。Wednesday 星期三的拼写中间有 d，不要写成 Wednesay。Saturday 星期六和 Sunday 星期日容易混淆。today 今天、tomorrow 明天、yesterday 昨天不要搞混。' },
+        { t: '常用短语', c: 'in a week 在一周里 / what day 星期几 / today is 今天是 / on Sunday 在星期日 / every day 每天' }
+      ]
+    },
+    {
+      id: 'yy-d-5',
+      book: 'down',
+      no: 5,
+      name: 'Unit 5 What will you do this weekend 这个周末你要做什么',
+      focus: '周末计划、一般将来时',
+      points: [
+        { t: '核心单词', c: 'weekend 周末 / picnic 野餐 / go shopping 去购物 / go fishing 去钓鱼 / go swimming 去游泳 / go to the park 去公园 / go to the zoo 去动物园 / watch TV 看电视 / read a book 读书 / play computer games 玩电脑游戏 / do homework 做作业 / clean the room 打扫房间 / have a picnic 去野餐' },
+        { t: '核心句型', c: 'What will you do this weekend? 这个周末你要做什么？ / I will go to the park. 我要去公园。 / Would you like to go shopping? 你想去购物吗？ / Yes, I would love to. 是的，我很乐意。 / Sorry, I can not. 对不起，我不能。 / Shall we go fishing? 我们去钓鱼好吗？ / Good idea! 好主意！' },
+        { t: '语法要点', c: 'will 加动词原形构成一般将来时，表示将要发生的动作。What will you do? 询问将做什么。Shall we...? 是提建议的句型，回答用 Good idea 或 OK。Would you like to...? 邀请别人，肯定回答用 I would love to。' },
+        { t: '易错提醒', c: 'will 后接动词原形，不能说 will going。do homework 做作业中的 do 不能换成 make。weekend 周末是一个词，不要写成 week end。this weekend 这个周末前不加 on。shall 仅用于第一人称 I/we。' },
+        { t: '常用短语', c: 'this weekend 这个周末 / have a picnic 去野餐 / do homework 做作业 / good idea 好主意 / go swimming 去游泳' }
+      ]
+    },
+    {
+      id: 'yy-d-6',
+      book: 'down',
+      no: 6,
+      name: 'Unit 6 Would you like to take a trip 你想去旅行吗',
+      focus: '旅行与交通方式',
+      points: [
+        { t: '核心单词', c: 'trip 旅行 / zoo 动物园 / park 公园 / farm 农场 / beach 海滩 / city 城市 / bus 公共汽车 / train 火车 / plane 飞机 / ship 轮船 / bike 自行车 / car 小汽车 / museum 博物馆 / on foot 步行' },
+        { t: '核心句型', c: 'Would you like to take a trip? 你想去旅行吗？ / Yes, I would love to. 是的，我很乐意。 / Where shall we go? 我们去哪里？ / Let us go to the zoo. 让我们去动物园吧。 / We will go to Beijing by train. 我们将坐火车去北京。 / How do you go to school? 你怎么去上学？ / I go to school on foot. 我步行去上学。' },
+        { t: '语法要点', c: 'Would you like to...? 邀请别人，用 I would love to 回答。by 加交通工具表示乘坐，如 by bus 乘公交，by train 乘火车，by plane 乘飞机。on foot 步行是固定搭配，不加 by。How do you go...? 询问交通方式。' },
+        { t: '易错提醒', c: 'by 后接交通工具不加冠词，如 by bus 不能说 by a bus。on foot 步行是固定用法，不要说 by foot。plane 飞机和 ship 轮船不要搞混。trip 旅行是可数名词，take a trip 去旅行。Let us 不要写成 lets。' },
+        { t: '常用短语', c: 'take a trip 去旅行 / by bus 乘公交 / by train 乘火车 / on foot 步行 / go to the zoo 去动物园' }
+      ]
+    }
+  ],
+  questions: [
+    { id:'yy-u1-1', u:'yy-u-1', type:'choice', q:'—Where are you from?  —I am from ___.', o:['A. China','B. Chinese','C. student','D. teacher'], a:0, ex:'问来自哪里，回答国家名。China 是国家，Chinese 是语言或人。' },
+    { id:'yy-u1-2', u:'yy-u-1', type:'choice', q:'—What does your father do?  —He is a ___.', o:['A. doctor','B. apple','C. China','D. twelve'], a:0, ex:'询问职业，回答用职业名词。doctor 医生是职业，其它都不是。' },
+    { id:'yy-u1-3', u:'yy-u-1', type:'fill', q:'朋友的英文单词是____。', a:'friend', ex:'friend 朋友，可数名词。' },
+    { id:'yy-u1-4', u:'yy-u-1', type:'fill', q:'This is my ___ friend.（新）', a:'new', ex:'new 新的，形容词修饰 friend。' },
+    { id:'yy-u1-5', u:'yy-u-1', type:'judge', q:'句子 What does your mother do? 是询问妈妈职业的。', a:true, ex:'What does...do? 是询问职业的常用句型。' },
+    { id:'yy-u1-6', u:'yy-u-1', type:'judge', q:'America 表示美国人，American 表示美国。', a:false, ex:'反了。America 是美国，American 是美国人或美国籍的。' },
+    { id:'yy-u2-1', u:'yy-u-2', type:'choice', q:'—What class are you in?  —I am in Class ___, Grade Four.', o:['A. One','B. first','C. one','D. ones'], a:0, ex:'表示几班时 Class 后接序数词首字母大写，用 One。' },
+    { id:'yy-u2-2', u:'yy-u-2', type:'choice', q:'—What is your number?  —I am number ___.', o:['A. thirteen','B. thirteenth','C. thirteens','D. thirteenth'], a:0, ex:'number 后接基数词， thirteen 十三。' },
+    { id:'yy-u2-3', u:'yy-u-2', type:'fill', q:'I am number ____.（十五）', a:'fifteen', ex:'fifteen 十五，注意拼写有 f。' },
+    { id:'yy-u2-4', u:'yy-u-2', type:'fill', q:'How many ____ are there in your class?（学生，复数）', a:'students', ex:'How many 后接可数名词复数 students。' },
+    { id:'yy-u2-5', u:'yy-u-2', type:'judge', q:'I am in Class One, Grade Four. 表示我在四年级一班。', a:true, ex:'Class 和 Grade 首字母大写，后接序数词。' },
+    { id:'yy-u2-6', u:'yy-u-2', type:'judge', q:'thirteen 和 thirty 都是十三的意思。', a:false, ex:'thirteen 是十三，thirty 是三十，不同。' },
+    { id:'yy-u3-1', u:'yy-u-3', type:'choice', q:'—What is this?  —___ a pineapple.', o:['A. It is','B. They are','C. This is','D. It are'], a:0, ex:'问单数用 What is this? 回答用 It is 加单数名词。' },
+    { id:'yy-u3-2', u:'yy-u-3', type:'choice', q:'—What are these?  —___ bananas.', o:['A. They are','B. It is','C. These are','D. It are'], a:0, ex:'问复数用 What are these? 回答用 They are 加复数名词。' },
+    { id:'yy-u3-3', u:'yy-u-3', type:'fill', q:'It is an ____.（橙子）', a:'orange', ex:'orange 元音音素开头用 an，橙子。' },
+    { id:'yy-u3-4', u:'yy-u-3', type:'fill', q:'What is ___?（那）', a:'that', ex:'that 那，指远处的事物。' },
+    { id:'yy-u3-5', u:'yy-u-3', type:'judge', q:'an orange 是正确的，因为 orange 首字母是元音音素。', a:true, ex:'orange 首音素是元音，所以用 an。' },
+    { id:'yy-u3-6', u:'yy-u-3', type:'judge', q:'a apple 表达是正确的。', a:false, ex:'apple 元音音素开头，应该用 an apple。' },
+    { id:'yy-u4-1', u:'yy-u-4', type:'choice', q:'—How is the weather today?  —It is ___.', o:['A. sunny','B. sun','C. suny','D. suns'], a:0, ex:'回答天气用形容词 sunny 晴朗的，双写 n。' },
+    { id:'yy-u4-2', u:'yy-u-4', type:'choice', q:'It is cold. ___ your jacket.', o:['A. Put on','B. Take off','C. Look at','D. Have'], a:0, ex:'cold 冷，应该穿上夹克，用 put on。' },
+    { id:'yy-u4-3', u:'yy-u-4', type:'fill', q:'Take ___ your sweater.（脱下）', a:'off', ex:'take off 脱下，固定搭配。' },
+    { id:'yy-u4-4', u:'yy-u-4', type:'fill', q:'How is the ____ today?（天气）', a:'weather', ex:'weather 天气，不可数名词。' },
+    { id:'yy-u4-5', u:'yy-u-4', type:'judge', q:'sunny 是由 sun 加 y 变来的形容词。', a:true, ex:'sun 加 y 变 sunny，双写 n。' },
+    { id:'yy-u4-6', u:'yy-u-4', type:'judge', q:'a jeans 表示一条牛仔裤是正确的。', a:false, ex:'jeans 本身是复数，不能说 a jeans，应说 a pair of jeans。' },
+    { id:'yy-u5-1', u:'yy-u-5', type:'choice', q:'I like ___. They are sweet.', o:['A. apples','B. apple','C. a apple','D. an apple'], a:0, ex:'like 后接可数名词复数表示一类，用 apples。' },
+    { id:'yy-u5-2', u:'yy-u-5', type:'choice', q:'—What would you like?  —___ a cake, please.', o:['A. I would like','B. I like','C. I wants','D. I have'], a:0, ex:'would like 礼貌地表达想要，用 I would like。' },
+    { id:'yy-u5-3', u:'yy-u-5', type:'fill', q:'Have some ____.（牛奶）', a:'milk', ex:'milk 牛奶，不可数名词。' },
+    { id:'yy-u5-4', u:'yy-u-5', type:'fill', q:'I do not ____.（喜欢）', a:'like', ex:'do not like 不喜欢，后接动词原形。' },
+    { id:'yy-u5-5', u:'yy-u-5', type:'judge', q:'I like bread. 中 bread 是不可数名词。', a:true, ex:'bread 面包是不可数名词，不能加 s。' },
+    { id:'yy-u5-6', u:'yy-u-5', type:'judge', q:'I would like 表示我不想。', a:false, ex:'I would like 表示我想要，不是不想。' },
+    { id:'yy-u6-1', u:'yy-u-6', type:'choice', q:'—Would you like to take a walk?  —Yes, ___.', o:['A. I would love to','B. I do','C. I am','D. I can'], a:0, ex:'Would you like to...? 的肯定回答用 I would love to。' },
+    { id:'yy-u6-2', u:'yy-u-6', type:'choice', q:'—Can you swim?  —___, I can.', o:['A. Yes','B. No','C. Do','D. Are'], a:0, ex:'Can you...? 的肯定回答用 Yes, I can。' },
+    { id:'yy-u6-3', u:'yy-u-6', type:'fill', q:'Let ___ go to the park.（我们）', a:'us', ex:'Let us 让我们，us 是 we 的宾格。' },
+    { id:'yy-u6-4', u:'yy-u-6', type:'fill', q:'I can ____.（游泳）', a:'swim', ex:'swim 游泳，can 后接动词原形。' },
+    { id:'yy-u6-5', u:'yy-u-6', type:'judge', q:'play football 中 play 后不加 the。', a:true, ex:'play 后接球类运动不加冠词 the。' },
+    { id:'yy-u6-6', u:'yy-u-6', type:'judge', q:'Good idea! 表示坏主意。', a:false, ex:'Good idea! 表示好主意，不是坏主意。' },
+    { id:'yy-d1-1', u:'yy-d-1', type:'choice', q:'—Is this your bedroom?  —Yes, ___.', o:['A. it is','B. this is','C. I am','D. it are'], a:0, ex:'Is this...? 的回答用 Yes, it is，不能用 this is。' },
+    { id:'yy-d1-2', u:'yy-d-1', type:'choice', q:'There ___ a sofa in the living room.', o:['A. is','B. are','C. am','D. be'], a:0, ex:'a sofa 是单数，There be 用 is。' },
+    { id:'yy-d1-3', u:'yy-d-1', type:'fill', q:'Welcome to my new ____.（家）', a:'home', ex:'home 家，名词。' },
+    { id:'yy-d1-4', u:'yy-d-1', type:'fill', q:'There are two ____ in the room.（椅子，复数）', a:'chairs', ex:'two 后接复数 chairs 椅子。' },
+    { id:'yy-d1-5', u:'yy-d-1', type:'judge', q:'There is a TV on the table. 表示桌上有一台电视。', a:true, ex:'a TV 是单数，用 There is。' },
+    { id:'yy-d1-6', u:'yy-d-1', type:'judge', q:'Is this your bedroom? 的回答可以是 Yes, this is。', a:false, ex:'回答应该用 Yes, it is，不能用 this is。' },
+    { id:'yy-d2-1', u:'yy-d-2', type:'choice', q:'—How many students are there in your class?  —There are ___.', o:['A. forty','B. fortieth','C. forties','D. fortyth'], a:0, ex:'回答数量用基数词 forty 四十。' },
+    { id:'yy-d2-2', u:'yy-d-2', type:'choice', q:'How many ___ are there in your school?', o:['A. teachers','B. teacher','C. a teacher','D. teaches'], a:0, ex:'How many 后接可数名词复数 teachers。' },
+    { id:'yy-d2-3', u:'yy-d-2', type:'fill', q:'There are ____ students in our class.（四十）', a:'forty', ex:'forty 四十，注意拼写不是 fourty。' },
+    { id:'yy-d2-4', u:'yy-d-2', type:'fill', q:'How many ____?（男孩，复数）', a:'boys', ex:'How many 后接复数 boys 男孩。' },
+    { id:'yy-d2-5', u:'yy-d-2', type:'judge', q:'forty 的正确拼写是 f-o-r-t-y。', a:true, ex:'forty 四十，注意没有 u。' },
+    { id:'yy-d2-6', u:'yy-d-2', type:'judge', q:'How many teacher are there? 是正确的句子。', a:false, ex:'How many 后要接复数 teachers，不能是 teacher。' },
+    { id:'yy-d3-1', u:'yy-d-3', type:'choice', q:'—What subject do you like best?  —I like ___ best.', o:['A. maths','B. apple','C. run','D. Monday'], a:0, ex:'询问最喜欢的学科，回答用学科名 maths 数学。' },
+    { id:'yy-d3-2', u:'yy-d-3', type:'choice', q:'—Do you like English?  —Yes, ___.', o:['A. I do','B. I am','C. I can','D. I would'], a:0, ex:'Do you...? 的肯定回答用 Yes, I do。' },
+    { id:'yy-d3-3', u:'yy-d-3', type:'fill', q:'I like ____ best.（数学）', a:'maths', ex:'maths 数学，英国用法；美国用 math。' },
+    { id:'yy-d3-4', u:'yy-d-3', type:'fill', q:'How many ____ do you have today?（课，复数）', a:'lessons', ex:'How many 后接复数 lessons 课。' },
+    { id:'yy-d3-5', u:'yy-d-3', type:'judge', q:'学科名称如 Chinese, English, Maths 首字母要大写。', a:true, ex:'学科名称是专有名词，首字母大写。' },
+    { id:'yy-d3-6', u:'yy-d-3', type:'judge', q:'Do you like English? 的否定回答是 No, I am not。', a:false, ex:'否定回答应该是 No, I do not，不是 am not。' },
+    { id:'yy-d4-1', u:'yy-d-4', type:'choice', q:'—What day is today?  —Today is ___.', o:['A. Monday','B. sunny','C. maths','D. apple'], a:0, ex:'询问星期几，回答用星期名称 Monday 星期一。' },
+    { id:'yy-d4-2', u:'yy-d-4', type:'choice', q:'—How many days are there in a week?  —There are ___.', o:['A. seven','B. five','C. ten','D. twelve'], a:0, ex:'一周有七天，回答 seven。' },
+    { id:'yy-d4-3', u:'yy-d-4', type:'fill', q:'Today is ____.（星期一）', a:'Monday', ex:'Monday 星期一，首字母大写。' },
+    { id:'yy-d4-4', u:'yy-d-4', type:'fill', q:'There are ____ days in a week.（七）', a:'seven', ex:'seven 七，基数词。' },
+    { id:'yy-d4-5', u:'yy-d-4', type:'judge', q:'星期名称的首字母必须大写。', a:true, ex:'Sunday 到 Saturday 首字母都要大写。' },
+    { id:'yy-d4-6', u:'yy-d-4', type:'judge', q:'Wednesday 是星期二的意思。', a:false, ex:'Wednesday 是星期三，Tuesday 才是星期二。' },
+    { id:'yy-d5-1', u:'yy-d-5', type:'choice', q:'—What will you do this weekend?  —I will ___.', o:['A. go to the park','B. goes to the park','C. going to the park','D. went to the park'], a:0, ex:'will 后接动词原形，用 go to the park。' },
+    { id:'yy-d5-2', u:'yy-d-5', type:'choice', q:'—Shall we go fishing?  —___!', o:['A. Good idea','B. No','C. Sorry','D. Goodbye'], a:0, ex:'Shall we...? 提建议，赞同用 Good idea 好主意。' },
+    { id:'yy-d5-3', u:'yy-d-5', type:'fill', q:'I will do my ____.（作业）', a:'homework', ex:'homework 作业，不可数名词。' },
+    { id:'yy-d5-4', u:'yy-d-5', type:'fill', q:'Let us have a ____.（野餐）', a:'picnic', ex:'have a picnic 去野餐，固定搭配。' },
+    { id:'yy-d5-5', u:'yy-d-5', type:'judge', q:'will 后面要接动词原形。', a:true, ex:'will 加动词原形构成一般将来时。' },
+    { id:'yy-d5-6', u:'yy-d-5', type:'judge', q:'I will going to the park. 是正确的。', a:false, ex:'will 后接动词原形 go，不能说 will going。' },
+    { id:'yy-d6-1', u:'yy-d-6', type:'choice', q:'—How do you go to school?  —I go to school ___.', o:['A. on foot','B. by foot','C. in foot','D. with foot'], a:0, ex:'步行用 on foot，固定搭配，不用 by foot。' },
+    { id:'yy-d6-2', u:'yy-d-6', type:'choice', q:'We will go to Beijing ___ train.', o:['A. by','B. on','C. in','D. with'], a:0, ex:'乘火车用 by train，by 加交通工具不加冠词。' },
+    { id:'yy-d6-3', u:'yy-d-6', type:'fill', q:'Let us go to the ____.（动物园）', a:'zoo', ex:'zoo 动物园。' },
+    { id:'yy-d6-4', u:'yy-d-6', type:'fill', q:'I go to school by ____.（公共汽车）', a:'bus', ex:'by bus 乘公共汽车。' },
+    { id:'yy-d6-5', u:'yy-d-6', type:'judge', q:'by bus 表示乘公共汽车。', a:true, ex:'by 加交通工具表示乘坐方式。' },
+    { id:'yy-d6-6', u:'yy-d-6', type:'judge', q:'by a bus 是正确的表达。', a:false, ex:'by 后接交通工具不加冠词，应说 by bus。' }
+  ]
+};
+
+</script>
+<script>
+/* =========================================================
+   四年级学习台 · 核心逻辑
+   数据全部保存在浏览器 localStorage，零外部依赖
+   ========================================================= */
+(function () {
+'use strict';
+
+/* ---------- 基础常量 ---------- */
+var KEY = 'wb_tyc4_state_v1';
+
+var SUBJ = {
+  yw: { key:'yw', name:'语文', color:'#E8663D', light:'#FDF0EB' },
+  sx: { key:'sx', name:'数学', color:'#2F6FEB', light:'#EAF1FE' },
+  yy: { key:'yy', name:'英语', color:'#12A150', light:'#E8F7EE' }
+};
+var SUBJ_ORDER = ['yw','sx','yy'];
+
+var ICON = {
+  today:'<path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="m9 16 2 2 4-4"/>',
+  learn:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  test:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  wrong:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+  report:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  check:'<polyline points="20 6 9 17 4 12"/>',
+  play:'<polygon points="5 3 19 12 5 21 5 3"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/>',
+  trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  fire:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  chevron:'<polyline points="6 9 12 15 18 9"/>',
+  star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'
+};
+
+function svg(path, size, sw) {
+  size = size || 18; sw = sw || 2.1;
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+sw+'" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>';
+}
+
+/* ---------- 教材数据装载 ---------- */
+function safeData(o){ return (o && o.units && o.questions) ? o : { units: [], questions: [] }; }
+var RAW = { yw: safeData(window.DATA_CHINESE), sx: safeData(window.DATA_MATH), yy: safeData(window.DATA_ENGLISH) };
+
+var UNITS = [];   // 全部单元
+var QS = [];      // 全部题目
+var UMAP = {};    // unitId -> unit
+var QMAP = {};    // qid -> question
+
+SUBJ_ORDER.forEach(function (sk) {
+  RAW[sk].units.forEach(function (u) {
+    var o = { id:u.id, subject:sk, book:u.book, no:u.no, name:u.name, focus:u.focus||'', points:u.points||[] };
+    UNITS.push(o); UMAP[o.id] = o;
+  });
+  RAW[sk].questions.forEach(function (q) {
+    if (!UMAP[q.u]) return;
+    var o = { id:q.id, u:q.u, subject:sk, type:q.type, q:q.q, o:q.o||null, a:q.a, ex:q.ex||'' };
+    QS.push(o); QMAP[o.id] = o;
+  });
+});
+
+function unitsOf(sk, book){ return UNITS.filter(function(u){ return u.subject===sk && u.book===book; }).sort(function(a,b){return a.no-b.no;}); }
+function qsOfUnit(uid){ return QS.filter(function(q){ return q.u===uid; }); }
+
+/* ---------- 工具 ---------- */
+function ymd(d){ d = d||new Date(); var m=d.getMonth()+1, dd=d.getDate(); return d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(dd<10?'0':'')+dd; }
+function addDays(dateStr, n){ var p=dateStr.split('-'); var d=new Date(+p[0], +p[1]-1, +p[2]); d.setDate(d.getDate()+n); return ymd(d); }
+function dayGap(a, b){ var pa=a.split('-'), pb=b.split('-'); var da=new Date(+pa[0],+pa[1]-1,+pa[2]), db=new Date(+pb[0],+pb[1]-1,+pb[2]); return Math.round((db-da)/86400000); }
+function cnDate(s){ var p=s.split('-'); return (+p[1])+'月'+(+p[2])+'日'; }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function norm(s){
+  return String(s==null?'':s)
+    .replace(/[\uFF01-\uFF5E]/g, function(c){ return String.fromCharCode(c.charCodeAt(0)-0xFEE0); })
+    .replace(/\u3000/g,'')
+    .replace(/\s+/g,'')
+    .replace(/[，。、；：？！""''‘’“”（）【】《》〈〉·,.;:?!"'()\[\]<>~`_—\-]/g,'')
+    .replace(/[≈=]/g,'')
+    .toLowerCase();
+}
+function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+
+/* ---------- 状态 ---------- */
+var S = null;
+
+function blank(){
+  return {
+    v:1,
+    profile:{ name:'', school:'天津市河东区太阳城小学', klass:'四年级' },
+    units:{}, exams:[], wrong:[], tasks:[], checkin:{},
+    seeded:false, createdAt:new Date().toISOString()
+  };
+}
+
+function load(){
+  try {
+    var raw = localStorage.getItem(KEY);
+    if (raw) { var o = JSON.parse(raw); S = Object.assign(blank(), o); }
+    else S = blank();
+  } catch(e){ S = blank(); }
+  if (!S.units) S.units={}; if (!S.exams) S.exams=[]; if (!S.wrong) S.wrong=[];
+  if (!S.tasks) S.tasks=[]; if (!S.checkin) S.checkin={};
+  if (!S.seeded) { seed(); S.seeded = true; save(); }
+}
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch(e){ toast('保存失败：浏览器存储空间可能已满，建议先导出备份'); }
+  scheduleSync();
+}
+
+/* ---------- 示例数据（首次打开就有内容，含 1 条逾期） ---------- */
+function seed(){
+  var t = ymd();
+  var firstOf = function(sk){ var a = unitsOf(sk,'up'); return a.length ? a[0] : null; };
+  var yw1 = firstOf('yw'), sx1 = firstOf('sx'), yy1 = firstOf('yy');
+
+  if (yw1) S.tasks.push({ id:uid(), date:addDays(t,-2), subject:'yw', unitId:yw1.id, type:'learn', title:'预习 '+yw1.name, done:false, demo:true });
+  if (sx1) S.tasks.push({ id:uid(), date:t, subject:'sx', unitId:sx1.id, type:'test', title:'完成 '+sx1.name+' 单元小测', done:false, demo:true });
+  if (yy1) S.tasks.push({ id:uid(), date:t, subject:'yy', unitId:yy1.id, type:'learn', title:'背诵 '+yy1.name+' 核心单词', done:false, demo:true });
+  if (yw1) S.tasks.push({ id:uid(), date:addDays(t,1), subject:'yw', unitId:yw1.id, type:'test', title:'完成 '+yw1.name+' 单元小测', done:false, demo:true });
+
+  if (sx1) {
+    S.units[sx1.id] = { status:'learning', pts:{0:true,1:true} };
+    var qq = qsOfUnit(sx1.id);
+    if (qq.length >= 4) {
+      S.exams.push({
+        id:uid(), date:addDays(t,-3), subject:'sx', unitId:sx1.id, unitName:sx1.name,
+        total:qq.length, right:Math.max(1,qq.length-2), rate:Math.round((qq.length-2)/qq.length*100),
+        items:[], demo:true
+      });
+      var w = qq[qq.length-1];
+      S.wrong.push({ qid:w.id, subject:'sx', unitId:sx1.id, ua:'', addDate:addDays(t,-3), lastDate:addDays(t,-3), times:0, mastered:false, demo:true });
+    }
+  }
+  if (yw1) {
+    var qw = qsOfUnit(yw1.id);
+    if (qw.length) S.wrong.push({ qid:qw[0].id, subject:'yw', unitId:yw1.id, ua:'', addDate:addDays(t,-1), lastDate:addDays(t,-1), times:0, mastered:false, demo:true });
+  }
+  S.checkin[addDays(t,-3)] = 1; S.checkin[addDays(t,-2)] = 2; S.checkin[addDays(t,-5)] = 1;
+}
+
+/* ---------- 单元进度 ---------- */
+function uState(uid_){ var o = S.units[uid_]; return o || { status:'todo', pts:{} }; }
+function uPct(u){
+  var st = uState(u.id);
+  if (st.status === 'done') return 100;
+  var n = u.points.length || 1, c = 0;
+  for (var k in st.pts) if (st.pts[k]) c++;
+  return Math.round(clamp(c,0,n)/n*100);
+}
+function unitBest(uid_){
+  var best = null;
+  S.exams.forEach(function(e){ if (e.unitId===uid_ && (!best || e.rate>best)) best = e.rate; });
+  return best;
+}
+function doneUnits(sk){
+  return UNITS.filter(function(u){ return (!sk || u.subject===sk) && uState(u.id).status==='done'; }).length;
+}
+
+/* ---------- 今日事项 ---------- */
+function todayItems(){
+  var t = ymd(), out = [];
+  S.tasks.forEach(function(x){
+    if (x.done) return;
+    if (x.date > t) return;
+    var late = dayGap(x.date, t);
+    out.push({ kind:'task', late:late, data:x, sort:(late>0?0:1) });
+  });
+  S.wrong.forEach(function(w){
+    if (w.mastered) return;
+    if (dayGap(w.lastDate||w.addDate, t) < 2) return;
+    out.push({ kind:'review', late:0, data:w, sort:2 });
+  });
+  out.sort(function(a,b){ return a.sort-b.sort || b.late-a.late; });
+  return out;
+}
+function pendingCount(){ return todayItems().length; }
+function wrongPending(){ return S.wrong.filter(function(w){ return !w.mastered; }).length; }
+
+/* ---------- 视图路由 ---------- */
+var TABS = [
+  { k:'today',  n:'今日',    ic:ICON.today },
+  { k:'learn',  n:'学资料',  ic:ICON.learn },
+  { k:'test',   n:'做测试',  ic:ICON.test },
+  { k:'wrong',  n:'错题本',  ic:ICON.wrong },
+  { k:'report', n:'学习报告',ic:ICON.report }
+];
+var cur = 'today';
+
+function renderNav(){
+  var pend = pendingCount(), wp = wrongPending();
+  function badge(k){
+    if (k==='today' && pend>0) return '<span class="dot">'+(pend>99?'99+':pend)+'</span>';
+    if (k==='wrong' && wp>0) return '<span class="dot">'+(wp>99?'99+':wp)+'</span>';
+    return '';
+  }
+  document.getElementById('tabBar').innerHTML = TABS.map(function(t){
+    return '<button class="tab'+(cur===t.k?' on':'')+'" onclick="App.go(\''+t.k+'\')">'+svg(t.ic,17)+t.n+badge(t.k)+'</button>';
+  }).join('');
+  document.getElementById('mnav').innerHTML = TABS.map(function(t){
+    return '<button class="'+(cur===t.k?'on':'')+'" onclick="App.go(\''+t.k+'\')">'+svg(t.ic,21)+'<span>'+(t.k==='report'?'报告':t.n)+'</span>'+badge(t.k)+'</button>';
+  }).join('');
+}
+
+function go(k){
+  cur = k;
+  TABS.forEach(function(t){ document.getElementById('v-'+t.k).className = 'view'+(t.k===k?' on':''); });
+  renderNav(); renderBackupTip();
+  ({ today:viewToday, learn:viewLearn, test:viewTest, wrong:viewWrong, report:viewReport })[k]();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function renderBackupTip(){
+  var n = S.exams.length + S.wrong.length + S.tasks.length;
+  var el = document.getElementById('backupTip');
+  if (n >= 30) {
+    el.innerHTML = '<div class="banner tip">'+svg('<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',16)+
+      '<span>学习数据已积累 <b>'+n+'</b> 条，建议点右上角「导出备份」保存一份，换设备也能恢复。</span></div>';
+  } else el.innerHTML = '';
+}
+
+/* =========================================================
+   视图一：今日
+   ========================================================= */
+function viewToday(){
+  var t = ymd(), items = todayItems();
+  var totalU = UNITS.length, doneU = doneUnits();
+  var streak = 0, d = t;
+  while (S.checkin[d]) { streak++; d = addDays(d,-1); }
+  var rates = S.exams.slice(-5).map(function(e){ return e.rate; });
+  var avg = rates.length ? Math.round(rates.reduce(function(a,b){return a+b;},0)/rates.length) : 0;
+  var hello = (function(){ var h=new Date().getHours(); return h<6?'夜深了':h<11?'早上好':h<14?'中午好':h<18?'下午好':'晚上好'; })();
+  var who = S.profile.name ? esc(S.profile.name)+'同学' : '同学';
+
+  var html = ''
+   + '<div class="hero"><div class="hero-top"><div style="flex:1;min-width:180px">'
+   + '<h1>'+hello+'，'+who+'！</h1>'
+   + '<p>'+cnDate(t)+' · 今天有 <b>'+items.length+'</b> 件事要处理'+(streak>1?' · 已连续打卡 '+streak+' 天':'')+'</p>'
+   + '</div></div><div class="hero-stats">'
+   + '<div class="hs"><b>'+doneU+'/'+totalU+'</b><span>单元已学完</span></div>'
+   + '<div class="hs"><b>'+S.exams.length+'</b><span>累计测试</span></div>'
+   + '<div class="hs"><b>'+(avg||'—')+(avg?'%':'')+'</b><span>近5次正确率</span></div>'
+   + '<div class="hs"><b>'+wrongPending()+'</b><span>错题待攻克</span></div>'
+   + '</div></div>';
+
+  html += '<div class="card"><div class="card-h">'+svg(ICON.today,18)+'<h2>今天要处理</h2><span class="sub">逾期的会自动顺延到今天</span><div class="sp"></div>'
+        + '<button class="btn sm" onclick="App.addTaskDialog()">'+svg(ICON.plus,14)+'加任务</button></div><div class="card-b">';
+
+  if (!items.length) {
+    html += '<div class="empty">'+svg('<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',40,1.6)
+          + '<p>今天的事情都处理完啦，很棒！</p>'
+          + '<button class="btn pri sm" style="margin-top:11px" onclick="App.autoPlan()">'+svg(ICON.plus,14)+'一键安排下一步学习</button></div>';
+  } else {
+    items.forEach(function(it){
+      if (it.kind === 'task') {
+        var x = it.data, sj = SUBJ[x.subject] || SUBJ.yw, u = UMAP[x.unitId];
+        html += '<div class="todo'+(it.late>0?' late':'')+'">'
+          + '<div class="todo-ic" style="background:'+sj.light+';color:'+sj.color+'">'+svg(x.type==='test'?ICON.test:ICON.learn,18)+'</div>'
+          + '<div class="todo-m"><div class="todo-t">'+esc(x.title)+'</div><div class="todo-s">'
+          + '<span class="pill '+sj.key+'">'+sj.name+'</span>'
+          + (it.late>0 ? '<span class="pill late">逾期 '+it.late+' 天</span>' : '<span class="pill today">今天</span>')
+          + '<span>原定 '+cnDate(x.date)+'</span></div></div>'
+          + '<div class="todo-a">'
+          + (u ? '<button class="btn sm pri" onclick="App.handleTask(\''+x.id+'\')">'+svg(ICON.play,13)+(x.type==='test'?'去测试':'去学习')+'</button>' : '')
+          + '<button class="btn sm" onclick="App.finishTask(\''+x.id+'\')">'+svg(ICON.check,13)+'完成</button>'
+          + '<button class="btn sm dgr" onclick="App.delTask(\''+x.id+'\')">'+svg(ICON.trash,13)+'</button>'
+          + '</div></div>';
+      } else {
+        var w = it.data, q = QMAP[w.qid]; if (!q) return;
+        var sj2 = SUBJ[w.subject] || SUBJ.yw;
+        html += '<div class="todo">'
+          + '<div class="todo-ic" style="background:'+sj2.light+';color:'+sj2.color+'">'+svg(ICON.refresh,17)+'</div>'
+          + '<div class="todo-m"><div class="todo-t">复习错题：'+esc(q.q.slice(0,26))+(q.q.length>26?'…':'')+'</div>'
+          + '<div class="todo-s"><span class="pill '+sj2.key+'">'+sj2.name+'</span><span class="pill gray">已放 '+dayGap(w.lastDate||w.addDate, t)+' 天</span></div></div>'
+          + '<div class="todo-a"><button class="btn sm pri" onclick="App.redo(\''+w.qid+'\')">'+svg(ICON.refresh,13)+'重做</button></div></div>';
+      }
+    });
+  }
+  html += '</div></div>';
+
+  // 三科进度概览
+  html += '<div class="card"><div class="card-h">'+svg(ICON.report,18)+'<h2>本学年进度</h2><span class="sub">语数英 · 上册+下册</span></div><div class="card-b"><div class="grid3">';
+  SUBJ_ORDER.forEach(function(sk){
+    var all = UNITS.filter(function(u){return u.subject===sk;});
+    var dn = all.filter(function(u){ return uState(u.id).status==='done'; }).length;
+    var pct = all.length ? Math.round(dn/all.length*100) : 0;
+    html += '<div class="stat"><div style="display:flex;justify-content:center;margin-bottom:6px">'+ring(pct, SUBJ[sk].color, 62)+'</div>'
+          + '<b style="font-size:15px;color:'+SUBJ[sk].color+'">'+SUBJ[sk].name+'</b><span>'+dn+' / '+all.length+' 单元</span></div>';
+  });
+  html += '</div><button class="btn blk" style="margin-top:12px" onclick="App.go(\'learn\')">'+svg(ICON.learn,15)+'去学习资料</button></div></div>';
+
+  document.getElementById('v-today').innerHTML = html;
+}
+
+/* 环形进度 SVG */
+function ring(pct, color, size){
+  size = size || 70;
+  var r = size/2 - 6, c = 2*Math.PI*r, off = c*(1-pct/100);
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'
+    + '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="#EDF0F6" stroke-width="7"/>'
+    + '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="7" stroke-linecap="round"'
+    + ' stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 '+size/2+' '+size/2+')"/>'
+    + '<text x="'+size/2+'" y="'+(size/2+5)+'" text-anchor="middle" font-size="'+(size*0.26).toFixed(0)+'" font-weight="800" fill="'+color+'" font-family="-apple-system,sans-serif">'+pct+'%</text></svg>';
+}
+
+/* =========================================================
+   视图二：学资料
+   ========================================================= */
+var LV = { sk:'yw', book:'up', open:{} };
+
+function viewLearn(){
+  var list = unitsOf(LV.sk, LV.book);
+  var sj = SUBJ[LV.sk];
+  var html = '<div class="card"><div class="card-b tight">'
+    + '<div class="segs">'+SUBJ_ORDER.map(function(k){
+        return '<button class="seg'+(LV.sk===k?' on':'')+'" data-s="'+k+'" onclick="App.setLearn(\''+k+'\',null)">'+SUBJ[k].name+'</button>';
+      }).join('')+'</div>'
+    + '<div class="segs" style="margin-bottom:2px">'
+    + '<button class="seg plain'+(LV.book==='up'?' on':'')+'" onclick="App.setLearn(null,\'up\')">四年级上册</button>'
+    + '<button class="seg plain'+(LV.book==='down'?' on':'')+'" onclick="App.setLearn(null,\'down\')">四年级下册</button>'
+    + '</div></div></div>';
+
+  html += '<div class="card"><div class="card-h">'
+    + '<span style="color:'+sj.color+'">'+svg(ICON.learn,18)+'</span>'
+    + '<h2>'+sj.name+' · 四年级'+(LV.book==='up'?'上':'下')+'册</h2>'
+    + '<span class="sub">共 '+list.length+' 个单元</span></div><div class="card-b">';
+
+  if (!list.length) {
+    html += '<div class="empty"><p>本册暂无数据</p></div>';
+  } else {
+    list.forEach(function(u){
+      var st = uState(u.id), pct = uPct(u), open = !!LV.open[u.id];
+      var best = unitBest(u.id);
+      var badge = st.status==='done'
+        ? '<span class="pill ok">已学完</span>'
+        : (pct>0 ? '<span class="pill today">学习中</span>' : '<span class="pill gray">未开始</span>');
+      html += '<div class="unit'+(open?' open':'')+'" id="u-'+u.id+'">'
+        + '<div class="unit-h" onclick="App.toggleUnit(\''+u.id+'\')">'
+        + '<div class="unit-n" style="background:'+sj.color+'">'+u.no+'</div>'
+        + '<div class="unit-m"><div class="unit-t">'+esc(u.name)+'</div><div class="unit-f">'+esc(u.focus)+'</div></div>'
+        + '<div class="unit-r">'+badge
+        + (best!==null?'<span class="pill '+(best>=85?'ok':'gray')+'">测'+best+'%</span>':'')
+        + '<div class="prog"><i style="width:'+pct+'%;background:'+sj.color+'"></i></div>'
+        + '<span class="chev">'+svg(ICON.chevron,17)+'</span></div></div>'
+        + '<div class="unit-b">';
+      u.points.forEach(function(p, i){
+        html += '<div class="pt"><div class="pt-chk'+(st.pts[i]?' on':'')+'" onclick="App.togglePoint(\''+u.id+'\','+i+')">'
+              + (st.pts[i]?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">'+ICON.check+'</svg>':'')
+              + '</div><div class="pt-m"><div class="pt-t">'+esc(p.t)+'</div><div class="pt-c">'+esc(p.c)+'</div></div></div>';
+      });
+      html += '<div class="unit-acts">'
+        + '<button class="btn sm '+(st.status==='done'?'':'ok')+'" onclick="App.markUnit(\''+u.id+'\')">'+svg(ICON.check,14)+(st.status==='done'?'取消已学完':'标记本单元已学完')+'</button>'
+        + '<button class="btn sm pri" onclick="App.startTest(\''+u.id+'\')">'+svg(ICON.test,14)+'测试本单元（'+qsOfUnit(u.id).length+'题）</button>'
+        + '<button class="btn sm" onclick="App.planUnit(\''+u.id+'\')">'+svg(ICON.plus,14)+'加入今日计划</button>'
+        + '</div></div></div>';
+    });
+  }
+  html += '</div></div>';
+  document.getElementById('v-learn').innerHTML = html;
+}
+
+/* =========================================================
+   视图三：做测试
+   ========================================================= */
+var TV = { sk:'yw', book:'up', unitId:'', running:null, answers:{}, submitted:false, result:null };
+
+function viewTest(){
+  if (TV.running) return renderPaper();
+  var list = unitsOf(TV.sk, TV.book);
+  if (!TV.unitId || !UMAP[TV.unitId] || UMAP[TV.unitId].subject!==TV.sk || UMAP[TV.unitId].book!==TV.book) {
+    TV.unitId = list.length ? list[0].id : '';
+  }
+  var n = TV.unitId ? qsOfUnit(TV.unitId).length : 0;
+
+  var html = '<div class="card"><div class="card-h">'+svg(ICON.test,18)+'<h2>开始一次测试</h2><span class="sub">做完自动判分，错题自动收进错题本</span></div><div class="card-b">'
+    + '<div class="segs">'+SUBJ_ORDER.map(function(k){
+        return '<button class="seg'+(TV.sk===k?' on':'')+'" data-s="'+k+'" onclick="App.setTest(\''+k+'\',null,null)">'+SUBJ[k].name+'</button>';
+      }).join('')+'</div>'
+    + '<div class="segs">'
+    + '<button class="seg plain'+(TV.book==='up'?' on':'')+'" onclick="App.setTest(null,\'up\',null)">上册</button>'
+    + '<button class="seg plain'+(TV.book==='down'?' on':'')+'" onclick="App.setTest(null,\'down\',null)">下册</button>'
+    + '</div>'
+    + '<div class="fld"><label>选择单元</label><select id="selUnit" onchange="App.setTest(null,null,this.value)">'
+    + list.map(function(u){ return '<option value="'+u.id+'"'+(u.id===TV.unitId?' selected':'')+'>'+esc(u.name)+'（'+qsOfUnit(u.id).length+'题）</option>'; }).join('')
+    + '</select></div>'
+    + '<button class="btn pri blk" style="min-height:48px" '+(n?'':'disabled')+' onclick="App.startTest(App_selUnit())">'+svg(ICON.play,16)+'开始单元测试（'+n+' 题）</button>'
+    + '<div style="height:9px"></div>'
+    + '<button class="btn blk" onclick="App.startMix()">'+svg(ICON.star,15)+'随机综合测 · 三科混合 15 题</button>'
+    + '<div style="height:9px"></div>'
+    + '<button class="btn blk" onclick="App.printTestDialog()">'+svg(ICON.test,15)+'打印/导出试卷 PDF（A4分页）</button>'
+    + '</div></div>';
+
+  // 历史成绩
+  var ex = S.exams.slice().reverse().slice(0,12);
+  html += '<div class="card"><div class="card-h">'+svg(ICON.report,18)+'<h2>最近测试记录</h2><div class="sp"></div>'
+        + (S.exams.length?'<button class="btn sm" onclick="App.exportCSV()">导出成绩单</button>':'')+'</div><div class="card-b">';
+  if (!ex.length) html += '<div class="empty">'+svg(ICON.test,36,1.6)+'<p>还没有测试记录，选一个单元试试吧</p></div>';
+  else ex.forEach(function(e){
+    var sj = SUBJ[e.subject]||SUBJ.yw;
+    var col = e.rate>=85?'var(--green)':e.rate>=60?'var(--amber)':'var(--red)';
+    html += '<div class="todo"><div class="todo-ic" style="background:'+sj.light+';color:'+sj.color+'">'+svg(ICON.test,17)+'</div>'
+      + '<div class="todo-m"><div class="todo-t">'+esc(e.unitName)+'</div>'
+      + '<div class="todo-s"><span class="pill '+sj.key+'">'+sj.name+'</span><span>'+cnDate(e.date)+'</span><span>'+e.right+' / '+e.total+' 题</span></div></div>'
+      + '<div style="font-size:21px;font-weight:800;color:'+col+'">'+e.rate+'%</div></div>';
+  });
+  html += '</div></div>';
+  document.getElementById('v-test').innerHTML = html;
+}
+window.App_selUnit = function(){ var s = document.getElementById('selUnit'); return s ? s.value : TV.unitId; };
+
+function renderPaper(){
+  var R = TV.running;
+  var html = '<div class="card"><div class="card-h">'+svg(ICON.test,18)+'<h2>'+esc(R.name)+'</h2>'
+    + '<span class="sub">共 '+R.qs.length+' 题</span><div class="sp"></div>'
+    + '<button class="btn sm" onclick="App.quitPaper()">退出</button></div><div class="card-b">';
+
+  if (TV.submitted && TV.result) {
+    var r = TV.result;
+    var col = r.rate>=85?'#12A150':r.rate>=60?'#D97706':'#DC2626';
+    var word = r.rate>=95?'太棒了，几乎全对！':r.rate>=85?'很不错，继续保持！':r.rate>=60?'还可以，把错题弄懂就更好了':'别灰心，错题本里慢慢攻克';
+    html += '<div class="score-box">'+ring(r.rate, col, 108)
+      + '<div class="score-tx"><b style="color:'+col+'">'+r.right+' / '+r.total+'</b><span>答对题数</span>'
+      + '<div style="margin-top:8px;font-size:14px;color:var(--tx2)">'+word+'</div></div></div>'
+      + '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px">'
+      + '<button class="btn pri" style="flex:1" onclick="App.quitPaper()">'+svg(ICON.check,15)+'完成，返回</button>'
+      + (r.wrongIds.length?'<button class="btn" style="flex:1" onclick="App.go(\'wrong\')">'+svg(ICON.wrong,15)+'看错题（'+r.wrongIds.length+'）</button>':'')
+      + '</div></div></div>';
+  } else {
+    var ansN = Object.keys(TV.answers).filter(function(k){ return TV.answers[k]!==undefined && TV.answers[k]!==''; }).length;
+    html += '<div class="banner info">'+svg(ICON.star,16)+'<span>已作答 <b>'+ansN+'</b> / '+R.qs.length+' 题 · 全部做完后点最下方「交卷」</span></div></div></div>';
+  }
+
+  R.qs.forEach(function(q, i){
+    var sj = SUBJ[q.subject]||SUBJ.yw;
+    var tp = q.type==='choice'?'选择题':q.type==='fill'?'填空题':'判断题';
+    var ua = TV.answers[q.id];
+    var ok = TV.submitted ? judge(q, ua) : null;
+    html += '<div class="q"><div class="q-h"><div class="q-no" style="background:'+sj.light+';color:'+sj.color+'">'+(i+1)+'</div>'
+      + '<div class="q-t">'+esc(q.q)+'</div><span class="q-tp">'+tp+'</span></div>';
+    html += qBody(q, ua, TV.submitted, 'App.pick');
+    if (TV.submitted) {
+      html += '<div class="res '+(ok?'ok':'no')+'">'+(ok?'✓ 答对了':'✗ 答错了')
+        + ' &nbsp;<b>正确答案：'+esc(ansText(q))+'</b>'
+        + (q.ex?'<br>解析：'+esc(q.ex):'')+'</div>';
+    }
+    html += '</div>';
+  });
+
+  if (!TV.submitted) {
+    html += '<button class="btn pri blk" style="min-height:52px;font-size:16px;margin-top:4px" onclick="App.submitPaper()">'+svg(ICON.check,17)+'交卷，看看得了多少分</button>';
+  }
+  document.getElementById('v-test').innerHTML = html;
+}
+
+/* 题目作答区（复用于测试和错题重做） */
+function qBody(q, ua, showAns, cbName){
+  var h = '';
+  if (q.type === 'choice') {
+    (q.o||[]).forEach(function(op, oi){
+      var cls = 'opt';
+      if (showAns) { if (oi===q.a) cls+=' right'; else if (ua===oi) cls+=' wrong'; }
+      else if (ua===oi) cls+=' sel';
+      h += '<div class="'+cls+'" onclick="'+(showAns?'':cbName+'(\''+q.id+'\','+oi+')')+'"><div class="opt-r"></div><div>'+esc(op)+'</div></div>';
+    });
+  } else if (q.type === 'judge') {
+    h += '<div class="jd">';
+    [[true,'✓ 对'],[false,'✗ 错']].forEach(function(p){
+      var cls='opt';
+      if (showAns){ if (p[0]===q.a) cls+=' right'; else if (ua===p[0]) cls+=' wrong'; }
+      else if (ua===p[0]) cls+=' sel';
+      h += '<div class="'+cls+'" onclick="'+(showAns?'':cbName+'(\''+q.id+'\','+p[0]+')')+'"><div class="opt-r"></div><div>'+p[1]+'</div></div>';
+    });
+    h += '</div>';
+  } else {
+    h += '<input class="fill-in" type="text" placeholder="在这里写答案" value="'+esc(ua==null?'':ua)+'"'
+       + (showAns?' disabled':'')+' oninput="'+cbName+'(\''+q.id+'\',this.value)">';
+  }
+  return h;
+}
+function judge(q, ua){
+  if (ua===undefined || ua===null || ua==='') return false;
+  if (q.type==='choice') return ua===q.a;
+  if (q.type==='judge') return ua===q.a;
+  var accept = String(q.a).split('|').map(norm);
+  return accept.indexOf(norm(ua)) >= 0;
+}
+function ansText(q){
+  if (q.type==='choice') return (q.o&&q.o[q.a])?q.o[q.a]:'—';
+  if (q.type==='judge') return q.a?'对':'错';
+  return String(q.a).split('|')[0];
+}
+
+/* =========================================================
+   视图四：错题本
+   ========================================================= */
+var WV = { sk:'all', st:'todo' };
+
+function viewWrong(){
+  var list = S.wrong.filter(function(w){
+    if (!QMAP[w.qid]) return false;
+    if (WV.sk!=='all' && w.subject!==WV.sk) return false;
+    if (WV.st==='todo' && w.mastered) return false;
+    if (WV.st==='done' && !w.mastered) return false;
+    return true;
+  }).sort(function(a,b){ return (b.lastDate||b.addDate).localeCompare(a.lastDate||a.addDate); });
+
+  var html = '<div class="card"><div class="card-b tight">'
+    + '<div class="segs">'
+    + '<button class="seg plain'+(WV.sk==='all'?' on':'')+'" onclick="App.setWrong(\'all\',null)">全部</button>'
+    + SUBJ_ORDER.map(function(k){
+        var n = S.wrong.filter(function(w){return w.subject===k && !w.mastered && QMAP[w.qid];}).length;
+        return '<button class="seg'+(WV.sk===k?' on':'')+'" data-s="'+k+'" onclick="App.setWrong(\''+k+'\',null)">'+SUBJ[k].name+(n?' '+n:'')+'</button>';
+      }).join('')+'</div>'
+    + '<div class="segs" style="margin-bottom:2px">'
+    + '<button class="seg plain'+(WV.st==='todo'?' on':'')+'" onclick="App.setWrong(null,\'todo\')">待攻克</button>'
+    + '<button class="seg plain'+(WV.st==='done'?' on':'')+'" onclick="App.setWrong(null,\'done\')">已掌握</button>'
+    + '<button class="seg plain'+(WV.st==='all'?' on':'')+'" onclick="App.setWrong(null,\'all\')">全部</button>'
+    + '</div></div></div>';
+
+  html += '<div class="card"><div class="card-h">'+svg(ICON.wrong,18)+'<h2>错题本</h2><span class="sub">共 '+list.length+' 题 · 连续答对 2 次自动标为已掌握</span></div><div class="card-b">';
+  if (!list.length) {
+    html += '<div class="empty">'+svg('<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',40,1.6)+'<p>这里空空的，说明做得很棒！</p></div>';
+  } else {
+    list.forEach(function(w){
+      var q = QMAP[w.qid], sj = SUBJ[w.subject]||SUBJ.yw, u = UMAP[w.unitId];
+      html += '<div class="wr"><div class="wr-h">'
+        + '<span class="pill '+sj.key+'">'+sj.name+'</span>'
+        + '<span class="pill gray">'+esc(u?u.name:'')+'</span>'
+        + (w.mastered?'<span class="pill ok">已掌握</span>':'<span class="pill late">待攻克</span>')
+        + '<span class="pill gray">重做 '+(w.times||0)+' 次</span>'
+        + '<div class="sp"></div><span style="font-size:12px;color:var(--tx3)">'+cnDate(w.addDate)+'收录</span></div>'
+        + '<div class="wr-q">'+esc(q.q)+'</div>';
+      if (q.type==='choice' && q.o) html += '<div class="wr-o">'+q.o.map(esc).join('<br>')+'</div>';
+      html += '<div class="res ok" style="margin-top:9px"><b>正确答案：'+esc(ansText(q))+'</b>'+(q.ex?'<br>解析：'+esc(q.ex):'')+'</div>'
+        + '<div class="wr-a">'
+        + '<button class="btn sm pri" onclick="App.redo(\''+w.qid+'\')">'+svg(ICON.refresh,13)+'重做一遍</button>'
+        + '<button class="btn sm '+(w.mastered?'':'ok')+'" onclick="App.toggleMaster(\''+w.qid+'\')">'+svg(ICON.check,13)+(w.mastered?'取消掌握':'标记已掌握')+'</button>'
+        + '<button class="btn sm dgr" onclick="App.delWrong(\''+w.qid+'\')">'+svg(ICON.trash,13)+'移除</button>'
+        + '</div></div>';
+    });
+  }
+  html += '</div></div>';
+  document.getElementById('v-wrong').innerHTML = html;
+}
+
+/* =========================================================
+   打印 / 导出试卷 PDF（A4 自动分页）
+   ========================================================= */
+var PV = { sk:'yw', book:'up', unitId:'', withAns:false };
+
+function printTestDialog(){
+  // 确保数据已加载
+  var list = unitsOf(PV.sk, PV.book);
+  if (!PV.unitId || !UMAP[PV.unitId] || UMAP[PV.unitId].subject!==PV.sk || UMAP[PV.unitId].book!==PV.book) {
+    PV.unitId = list.length ? list[0].id : '';
+  }
+  var opts = SUBJ_ORDER.map(function(sk){
+    return '<button class="seg'+(PV.sk===sk?' on':'')+'" data-s="'+sk+'" onclick="App.setPrint(\''+sk+'\',null,null)">'+SUBJ[sk].name+'</button>';
+  }).join('');
+  var bookSegs = '<button class="seg plain'+(PV.book==='up'?' on':'')+'" onclick="App.setPrint(null,\'up\',null)">上册</button>'
+    + '<button class="seg plain'+(PV.book==='down'?' on':'')+'" onclick="App.setPrint(null,\'down\',null)">下册</button>';
+  var unitOpts = list.map(function(u){ return '<option value="'+u.id+'"'+(u.id===PV.unitId?' selected':'')+'>'+esc(u.name)+'（'+qsOfUnit(u.id).length+'题）</option>'; }).join('');
+
+  var body = '<div style="margin-bottom:14px"><b style="font-size:14px">选择科目</b><div class="segs" style="margin-top:6px">'+opts+'</div></div>'
+    + '<div style="margin-bottom:14px"><b style="font-size:14px">选择册次</b><div class="segs" style="margin-top:6px">'+bookSegs+'</div></div>'
+    + '<div class="fld"><label>选择单元</label><select id="pUnit">'+unitOpts+'</select></div>'
+    + '<div class="fld"><label>试卷版本</label><select id="pAns"><option value="0">学生版（无答案，方便打印做题）</option><option value="1">教师版（含答案和解析）</option></select></div>'
+    + '<div style="font-size:12.5px;color:var(--tx3);line-height:1.7;margin-top:8px">'
+    + svg(ICON.report,14)+' 点击「生成试卷」后会打开浏览器打印窗口，在「目标」里选「另存为 PDF」即可保存电子版，'
+    + '或选已连接的打印机直接打印。试卷已按 A4 纸张自动分页。</div>';
+
+  var btns = '<button class="btn" onclick="App.closeModal()">取消</button>'
+    + '<button class="btn pri" onclick="App.doPrintTest()">生成试卷</button>';
+  modal('打印 / 导出试卷', body, btns);
+}
+function setPrint(sk, book, uid_){
+  if (sk){ PV.sk=sk; PV.unitId=''; }
+  if (book){ PV.book=book; PV.unitId=''; }
+  if (uid_) PV.unitId=uid_;
+  printTestDialog();
+}
+function doPrintTest(){
+  var uid_ = document.getElementById('pUnit').value;
+  var withAns = document.getElementById('pAns').value === '1';
+  var u = UMAP[uid_]; if (!u) { toast('请选择单元'); return; }
+  var qs = qsOfUnit(uid_);
+  if (!qs.length) { toast('这个单元没有题目'); return; }
+  closeModal();
+  // 生成试卷 HTML
+  var paperHTML = generatePaper(u, qs, withAns);
+  var pa = document.getElementById('printArea');
+  pa.innerHTML = paperHTML;
+  // 延迟一下让浏览器渲染完
+  setTimeout(function(){
+    window.print();
+    // 打印结束后清空
+    setTimeout(function(){ pa.innerHTML = ''; }, 500);
+  }, 200);
+}
+
+function generatePaper(u, qs, withAns){
+  var sj = SUBJ[u.subject]||SUBJ.yw;
+  var bookStr = u.book==='up' ? '四年级上册' : '四年级下册';
+  var verStr = withAns ? '（教师版·含答案）' : '（学生版）';
+  var dateStr = (function(){ var d=new Date(); return d.getFullYear()+'年'+(d.getMonth()+1)+'月'; })();
+
+  // 按题型分组
+  var choices = qs.filter(function(q){return q.type==='choice';});
+  var judges  = qs.filter(function(q){return q.type==='judge';});
+  var fills   = qs.filter(function(q){return q.type==='fill';});
+
+  var h = '';
+  // 第一页：标题 + 选择题
+  h += '<div class="pp"><div class="pp-h">';
+  h += '<h1>'+esc(bookStr)+' '+esc(sj.name)+' '+esc(u.name.replace(/^第[一二三四五六七八九十]+单元\s*/,''))+'</h1>';
+  h += '<div class="pp-sub">'+esc(sj.name)+'单元测试卷 '+verStr+'  '+dateStr+'</div>';
+  h += '</div>';
+  h += '<div class="pp-info"><span>姓名：<b>　　</b></span><span>班级：<b>　　</b></span><span>得分：<b>　　</b></span></div>';
+
+  var secIdx = 0;
+  // 一、选择题
+  if (choices.length) {
+    secIdx++;
+    h += '<div class="pp-sec"><div class="pp-sec-h">'+cnNum(secIdx)+'、选择题（共'+choices.length+'题，每题'+Math.round(100/qs.length)+'分）</div>';
+    choices.forEach(function(q, i){
+      h += '<div class="pp-q"><span class="pp-q-n">'+(i+1)+'.</span>'+esc(q.q).replace(/_{2,}/g,'<span class="pp-fill-line"></span>')+'</div>';
+      h += '<div class="pp-opts">';
+      (q.o||[]).forEach(function(op, oi){
+        var letter = String.fromCharCode(65+oi);
+        h += '<span class="pp-opt">'+letter+'. '+esc(op.replace(/^[A-D]\.\s*/,''))+'</span>';
+      });
+      h += '</div>';
+      if (withAns) h += '<div class="pp-ans"><b>答案：'+String.fromCharCode(65+q.a)+'</b>　'+esc(q.ex)+'</div>';
+    });
+    h += '</div>';
+  }
+  // 二、判断题
+  if (judges.length) {
+    secIdx++;
+    h += '<div class="pp-sec"><div class="pp-sec-h">'+cnNum(secIdx)+'、判断题（共'+judges.length+'题，对的打 ✓，错的打 ✗）</div>';
+    judges.forEach(function(q, i){
+      h += '<div class="pp-q"><span class="pp-q-n">'+(i+1)+'.</span>'+esc(q.q).replace(/_{2,}/g,'<span class="pp-fill-line"></span>')+'<span class="pp-judge-box">　</span></div>';
+      if (withAns) h += '<div class="pp-ans"><b>答案：'+(q.a?'✓ 对':'✗ 错')+'</b>　'+esc(q.ex)+'</div>';
+    });
+    h += '</div>';
+  }
+  // 三、填空题
+  if (fills.length) {
+    secIdx++;
+    h += '<div class="pp-sec"><div class="pp-sec-h">'+cnNum(secIdx)+'、填空题（共'+fills.length+'题，将答案写在横线上）</div>';
+    fills.forEach(function(q, i){
+      var qText = esc(q.q).replace(/_{2,}/g,'<span class="pp-fill-line"></span>');
+      h += '<div class="pp-q"><span class="pp-q-n">'+(i+1)+'.</span>'+qText+'</div>';
+      if (withAns) h += '<div class="pp-ans"><b>答案：'+esc(String(q.a).split('|')[0])+'</b>　'+esc(q.ex)+'</div>';
+    });
+    h += '</div>';
+  }
+  h += '</div>'; // 关闭第一页
+
+  // 如果是教师版且有答案，在最后一页加参考答案汇总
+  if (withAns) {
+    h += '<div class="pp"><div class="pp-h"><h1>参考答案与解析</h1><div class="pp-sub">'+esc(bookStr)+' '+esc(u.name)+'</div></div>';
+    var idx = 0;
+    if (choices.length) {
+      h += '<div class="pp-sec"><div class="pp-sec-h">一、选择题</div>';
+      choices.forEach(function(q,i){
+        h += '<div class="pp-q"><span class="pp-q-n">'+(i+1)+'.</span><b>'+String.fromCharCode(65+q.a)+'</b>　'+esc(q.ex)+'</div>';
+      });
+      h += '</div>';
+    }
+    if (judges.length) {
+      h += '<div class="pp-sec"><div class="pp-sec-h">二、判断题</div>';
+      judges.forEach(function(q,i){
+        h += '<div class="pp-q"><span class="pp-q-n">'+(i+1)+'.</span><b>'+(q.a?'✓':'✗')+'</b>　'+esc(q.ex)+'</div>';
+      });
+      h += '</div>';
+    }
+    if (fills.length) {
+      h += '<div class="pp-sec"><div class="pp-sec-h">三、填空题</div>';
+      fills.forEach(function(q,i){
+        h += '<div class="pp-q"><span class="pp-q-n">'+(i+1)+'.</span><b>'+esc(String(q.a).split('|')[0])+'</b>　'+esc(q.ex)+'</div>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  return h;
+}
+
+function cnNum(n){
+  var arr = ['','一','二','三','四','五','六','七','八','九','十'];
+  return arr[n] || String(n);
+}
+
+/* =========================================================
+   视图五：学习报告（给家长看）
+   ========================================================= */
+function viewReport(){
+  var t = ymd();
+  var totalPts = 0, donePts = 0;
+  UNITS.forEach(function(u){ totalPts += u.points.length; var st=uState(u.id); if(st.status==='done') donePts+=u.points.length; else { for(var k in st.pts) if(st.pts[k]) donePts++; } });
+  var avgAll = S.exams.length ? Math.round(S.exams.reduce(function(a,e){return a+e.rate;},0)/S.exams.length) : 0;
+  var days = Object.keys(S.checkin).length;
+
+  var html = '<div class="banner info">'+svg(ICON.star,16)+'<span>这一页是给家长看的：孩子学到哪儿了、哪科薄弱、错题集中在哪，一眼就知道。</span></div>';
+
+  html += '<div class="grid3" style="margin-bottom:14px">'
+    + '<div class="stat"><b style="color:var(--main)">'+doneUnits()+'</b><span>已学完单元</span></div>'
+    + '<div class="stat"><b style="color:var(--green)">'+avgAll+'%</b><span>历次平均正确率</span></div>'
+    + '<div class="stat"><b style="color:var(--amber)">'+wrongPending()+'</b><span>错题待攻克</span></div>'
+    + '</div>';
+
+  // 三科单元完成度
+  html += '<div class="card"><div class="card-h">'+svg(ICON.report,18)+'<h2>三科学习进度</h2></div><div class="card-b"><div class="grid3">';
+  SUBJ_ORDER.forEach(function(sk){
+    var all = UNITS.filter(function(u){return u.subject===sk;});
+    var dn = all.filter(function(u){ return uState(u.id).status==='done'; }).length;
+    var pct = all.length?Math.round(dn/all.length*100):0;
+    html += '<div class="stat"><div style="display:flex;justify-content:center;margin-bottom:5px">'+ring(pct,SUBJ[sk].color,74)+'</div>'
+          + '<b style="font-size:15px;color:'+SUBJ[sk].color+'">'+SUBJ[sk].name+'</b><span>'+dn+' / '+all.length+' 单元</span></div>';
+  });
+  html += '</div><div style="margin-top:12px;font-size:13px;color:var(--tx3);text-align:center">知识点勾选进度：'+donePts+' / '+totalPts+' 条</div></div></div>';
+
+  // 成绩趋势折线
+  html += '<div class="card"><div class="card-h">'+svg(ICON.report,18)+'<h2>测试正确率趋势</h2><span class="sub">最近 12 次</span></div><div class="card-b">'
+        + lineChart(S.exams.slice(-12)) + '</div></div>';
+
+  // 错题分布柱状
+  html += '<div class="card"><div class="card-h">'+svg(ICON.wrong,18)+'<h2>错题分布</h2><span class="sub">哪科需要加强</span></div><div class="card-b">'
+        + barChart() + '</div></div>';
+
+  // 打卡日历
+  html += '<div class="card"><div class="card-h">'+svg(ICON.fire,18)+'<h2>学习打卡</h2><span class="sub">最近 5 周 · 累计 '+days+' 天</span></div><div class="card-b">'
+        + heatmap() + '</div></div>';
+
+  // 薄弱单元
+  var weak = UNITS.map(function(u){ return { u:u, best:unitBest(u.id) }; })
+                  .filter(function(x){ return x.best!==null && x.best<85; })
+                  .sort(function(a,b){ return a.best-b.best; }).slice(0,6);
+  html += '<div class="card"><div class="card-h">'+svg(ICON.star,18)+'<h2>建议重点复习</h2></div><div class="card-b">';
+  if (!weak.length) html += '<div class="empty"><p>暂无明显薄弱单元，多做几次测试后这里会给出建议</p></div>';
+  else weak.forEach(function(x){
+    var sj = SUBJ[x.u.subject];
+    html += '<div class="todo"><div class="todo-ic" style="background:'+sj.light+';color:'+sj.color+'">'+svg(ICON.wrong,17)+'</div>'
+      + '<div class="todo-m"><div class="todo-t">'+esc(x.u.name)+'</div><div class="todo-s">'
+      + '<span class="pill '+sj.key+'">'+sj.name+'</span><span class="pill gray">四年级'+(x.u.book==='up'?'上':'下')+'册</span>'
+      + '<span class="pill late">最好成绩 '+x.best+'%</span></div></div>'
+      + '<div class="todo-a"><button class="btn sm pri" onclick="App.startTest(\''+x.u.id+'\')">再测一次</button></div></div>';
+  });
+  html += '</div></div>';
+
+  // 数据管理
+  html += '<div class="card"><div class="card-h">'+svg(ICON.report,18)+'<h2>数据管理</h2></div><div class="card-b">'
+    + '<div style="display:flex;gap:9px;flex-wrap:wrap">'
+    + '<button class="btn" style="flex:1;min-width:140px" onclick="App.exportJSON()">导出 JSON 备份</button>'
+    + '<button class="btn" style="flex:1;min-width:140px" onclick="document.getElementById(\'impFile\').click()">导入恢复</button>'
+    + '<button class="btn" style="flex:1;min-width:140px" onclick="App.exportCSV()">导出成绩单 CSV</button>'
+    + '<button class="btn dgr" style="flex:1;min-width:140px" onclick="App.clearDemo()">清空示例数据</button>'
+    + '<button class="btn dgr" style="flex:1;min-width:140px" onclick="App.clearAll()">清空全部数据</button>'
+    + '</div>'
+    + '<div style="margin-top:12px;font-size:12.5px;color:var(--tx3);line-height:1.75">'
+    + '所有数据只保存在这台设备的浏览器里，不会上传到任何服务器。换手机、换电脑或清理浏览器数据前，'
+    + '请先点「导出 JSON 备份」，在新设备上「导入恢复」即可。建议每周备份一次。</div>'
+    + '</div></div>';
+
+  document.getElementById('v-report').innerHTML = html;
+}
+
+function lineChart(ex){
+  if (!ex.length) return '<div class="empty">'+svg(ICON.report,36,1.6)+'<p>还没有测试数据</p></div>';
+  var W=640, H=200, PL=38, PR=14, PT=16, PB=30;
+  var iw = W-PL-PR, ih = H-PT-PB;
+  var n = ex.length;
+  var x = function(i){ return PL + (n===1 ? iw/2 : iw*i/(n-1)); };
+  var y = function(v){ return PT + ih*(1 - v/100); };
+  var g = '';
+  [0,25,50,75,100].forEach(function(v){
+    g += '<line x1="'+PL+'" y1="'+y(v)+'" x2="'+(W-PR)+'" y2="'+y(v)+'" stroke="#EDF0F6" stroke-width="1"/>'
+       + '<text x="'+(PL-7)+'" y="'+(y(v)+4)+'" text-anchor="end" font-size="11" fill="#8A93A6">'+v+'</text>';
+  });
+  g += '<line x1="'+PL+'" y1="'+y(85)+'" x2="'+(W-PR)+'" y2="'+y(85)+'" stroke="#12A150" stroke-width="1" stroke-dasharray="4 4" opacity=".55"/>';
+  var pts = ex.map(function(e,i){ return x(i)+','+y(e.rate); }).join(' ');
+  var area = PL+','+(PT+ih)+' '+pts+' '+x(n-1)+','+(PT+ih);
+  g += '<polygon points="'+area+'" fill="#2F6FEB" opacity=".08"/>';
+  g += '<polyline points="'+pts+'" fill="none" stroke="#2F6FEB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
+  ex.forEach(function(e,i){
+    var c = e.rate>=85?'#12A150':e.rate>=60?'#D97706':'#DC2626';
+    g += '<circle cx="'+x(i)+'" cy="'+y(e.rate)+'" r="4.5" fill="#fff" stroke="'+c+'" stroke-width="2.4"/>';
+    g += '<text x="'+x(i)+'" y="'+(y(e.rate)-10)+'" text-anchor="middle" font-size="10.5" font-weight="700" fill="'+c+'">'+e.rate+'</text>';
+    if (n<=8 || i%2===0) g += '<text x="'+x(i)+'" y="'+(H-9)+'" text-anchor="middle" font-size="10" fill="#8A93A6">'+cnDate(e.date)+'</text>';
+  });
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto" font-family="-apple-system,sans-serif">'+g+'</svg>'
+       + '<div class="legend"><span><i style="background:#2F6FEB"></i>每次测试正确率</span><span><i style="background:#12A150"></i>85% 优秀线</span></div>';
+}
+
+function barChart(){
+  var data = SUBJ_ORDER.map(function(sk){
+    return { sk:sk, todo:S.wrong.filter(function(w){return w.subject===sk && !w.mastered && QMAP[w.qid];}).length,
+             done:S.wrong.filter(function(w){return w.subject===sk && w.mastered && QMAP[w.qid];}).length };
+  });
+  var max = Math.max(1, Math.max.apply(null, data.map(function(d){ return d.todo+d.done; })));
+  if (max===1 && data.every(function(d){return d.todo+d.done===0;})) return '<div class="empty">'+svg(ICON.wrong,36,1.6)+'<p>还没有错题记录，继续保持</p></div>';
+  var W=640,H=190,PL=34,PB=30,PT=14;
+  var ih=H-PT-PB, bw=68, gap=(W-PL-24-bw*3)/2;
+  var g='';
+  [0,max/2,max].forEach(function(v){
+    var yy = PT+ih*(1-v/max);
+    g += '<line x1="'+PL+'" y1="'+yy+'" x2="'+(W-14)+'" y2="'+yy+'" stroke="#EDF0F6"/>'
+       + '<text x="'+(PL-7)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" fill="#8A93A6">'+Math.round(v)+'</text>';
+  });
+  data.forEach(function(d,i){
+    var bx = PL+14+i*(bw+gap);
+    var ht = ih*d.todo/max, hd = ih*d.done/max;
+    var yTop = PT+ih-ht-hd;
+    if (hd>0) g += '<rect x="'+bx+'" y="'+(PT+ih-hd)+'" width="'+bw+'" height="'+hd+'" fill="#C9D2E2" rx="3"/>';
+    if (ht>0) g += '<rect x="'+bx+'" y="'+(PT+ih-hd-ht)+'" width="'+bw+'" height="'+ht+'" fill="'+SUBJ[d.sk].color+'" rx="3"/>';
+    g += '<text x="'+(bx+bw/2)+'" y="'+(yTop-6)+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+SUBJ[d.sk].color+'">'+(d.todo+d.done||'')+'</text>';
+    g += '<text x="'+(bx+bw/2)+'" y="'+(H-9)+'" text-anchor="middle" font-size="12" fill="#5B6577">'+SUBJ[d.sk].name+'</text>';
+  });
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto" font-family="-apple-system,sans-serif">'+g+'</svg>'
+       + '<div class="legend"><span><i style="background:#2F6FEB"></i>待攻克</span><span><i style="background:#C9D2E2"></i>已掌握</span></div>';
+}
+
+function heatmap(){
+  var t = ymd(), cols = [];
+  var todayDow = new Date().getDay();
+  var end = addDays(t, 6-todayDow);
+  for (var w=4; w>=0; w--) {
+    var col = [];
+    for (var d=6; d>=0; d--) col.unshift(addDays(end, -(w*7+d)));
+    cols.push(col);
+  }
+  var h = '<div class="cal">';
+  cols.forEach(function(col){
+    h += '<div class="cal-col">';
+    col.forEach(function(day){
+      var v = S.checkin[day]||0;
+      var bg = v>=3?'#12A150':v===2?'#4EC57F':v===1?'#A8E3C0':'#EDF0F6';
+      var bd = day===t?';box-shadow:0 0 0 2px #2F6FEB':'';
+      h += '<div class="cal-d" style="background:'+bg+bd+'" title="'+day+(v?'（'+v+'次学习）':'')+'"></div>';
+    });
+    h += '</div>';
+  });
+  h += '</div><div class="legend"><span><i style="background:#EDF0F6"></i>没学</span><span><i style="background:#A8E3C0"></i>学了1次</span><span><i style="background:#4EC57F"></i>2次</span><span><i style="background:#12A150"></i>3次以上</span></div>';
+  return h;
+}
+
+/* =========================================================
+   交互动作
+   ========================================================= */
+function toast(msg){
+  var host = document.getElementById('toastHost');
+  host.innerHTML = '<div class="toast">'+esc(msg)+'</div>';
+  clearTimeout(host._t);
+  host._t = setTimeout(function(){ host.innerHTML=''; }, 2200);
+}
+function modal(title, body, btns){
+  var host = document.getElementById('modalHost');
+  host.innerHTML = '<div class="mask" onclick="if(event.target===this)App.closeModal()"><div class="modal">'
+    + '<div class="modal-h">'+esc(title)+'</div><div class="modal-b">'+body+'</div>'
+    + '<div class="modal-f">'+btns+'</div></div></div>';
+}
+function closeModal(){ document.getElementById('modalHost').innerHTML=''; }
+
+function checkin(){ var t=ymd(); S.checkin[t]=(S.checkin[t]||0)+1; }
+
+function refresh(){ save(); go(cur); }
+
+/* --- 今日 --- */
+function finishTask(id){
+  var x = S.tasks.filter(function(a){return a.id===id;})[0]; if(!x) return;
+  x.done = true; x.doneDate = ymd(); checkin();
+  if (x.type==='learn' && x.unitId) {
+    var st = S.units[x.unitId] || { status:'todo', pts:{} };
+    if (st.status!=='done') st.status='learning';
+    S.units[x.unitId] = st;
+  }
+  toast('已完成，真棒！'); refresh();
+}
+function delTask(id){
+  S.tasks = S.tasks.filter(function(a){return a.id!==id;}); toast('已删除'); refresh();
+}
+function handleTask(id){
+  var x = S.tasks.filter(function(a){return a.id===id;})[0]; if(!x) return;
+  if (x.type==='test') { startTest(x.unitId, x.id); }
+  else {
+    var u = UMAP[x.unitId]; if (!u) return;
+    LV.sk = u.subject; LV.book = u.book; LV.open[u.id] = true;
+    go('learn');
+    setTimeout(function(){ var el=document.getElementById('u-'+u.id); if(el) el.scrollIntoView({behavior:'smooth',block:'center'}); }, 220);
+  }
+}
+function addTaskDialog(){
+  var opts = SUBJ_ORDER.map(function(sk){
+    return '<optgroup label="'+SUBJ[sk].name+'">'
+      + UNITS.filter(function(u){return u.subject===sk;}).map(function(u){
+          return '<option value="'+u.id+'">'+esc((u.book==='up'?'上册 ':'下册 ')+u.name)+'</option>'; }).join('')
+      + '</optgroup>';
+  }).join('');
+  modal('添加学习任务',
+    '<div class="fld"><label>选择单元</label><select id="mUnit">'+opts+'</select></div>'
+    + '<div class="fld"><label>任务类型</label><select id="mType"><option value="learn">学习知识点</option><option value="test">做单元测试</option></select></div>'
+    + '<div class="fld"><label>计划日期</label><input type="date" id="mDate" value="'+ymd()+'"></div>',
+    '<button class="btn" onclick="App.closeModal()">取消</button><button class="btn pri" onclick="App.addTask()">添加</button>');
+}
+function addTask(){
+  var uid_ = document.getElementById('mUnit').value;
+  var type = document.getElementById('mType').value;
+  var date = document.getElementById('mDate').value || ymd();
+  var u = UMAP[uid_]; if(!u) return;
+  S.tasks.push({ id:uid(), date:date, subject:u.subject, unitId:uid_, type:type,
+                 title:(type==='test'?'完成 ':'学习 ')+u.name+(type==='test'?' 单元小测':''), done:false });
+  closeModal(); toast('任务已添加'); refresh();
+}
+function planUnit(uid_){
+  var u = UMAP[uid_]; if(!u) return; var t = ymd();
+  var exist = S.tasks.some(function(x){ return x.unitId===uid_ && !x.done && x.date===t; });
+  if (exist) { toast('今天已经安排过这个单元了'); return; }
+  S.tasks.push({ id:uid(), date:t, subject:u.subject, unitId:uid_, type:'learn', title:'学习 '+u.name, done:false });
+  S.tasks.push({ id:uid(), date:t, subject:u.subject, unitId:uid_, type:'test', title:'完成 '+u.name+' 单元小测', done:false });
+  save(); toast('已加入今日计划（学习 + 测试）'); renderNav();
+}
+function autoPlan(){
+  var t = ymd(), added = 0;
+  SUBJ_ORDER.forEach(function(sk){
+    var next = UNITS.filter(function(u){ return u.subject===sk && uState(u.id).status!=='done'; })
+                    .sort(function(a,b){ return (a.book===b.book?0:(a.book==='up'?-1:1)) || a.no-b.no; })[0];
+    if (!next) return;
+    if (S.tasks.some(function(x){ return x.unitId===next.id && !x.done; })) return;
+    S.tasks.push({ id:uid(), date:t, subject:sk, unitId:next.id, type:'learn', title:'学习 '+next.name, done:false });
+    added++;
+  });
+  toast(added? '已为三科各安排了下一个单元' : '各科都已安排好了');
+  refresh();
+}
+
+/* --- 学资料 --- */
+function setLearn(sk, book){ if(sk) LV.sk=sk; if(book) LV.book=book; viewLearn(); }
+function toggleUnit(id){ LV.open[id] = !LV.open[id]; viewLearn(); }
+function togglePoint(uid_, i){
+  event.stopPropagation();
+  var st = S.units[uid_] || { status:'todo', pts:{} };
+  st.pts[i] = !st.pts[i];
+  if (st.status==='todo') st.status='learning';
+  S.units[uid_] = st;
+  var u = UMAP[uid_];
+  if (u && uPct(u)===100 && st.status!=='done') { st.status='done'; toast('本单元知识点全部看完，已标记学完！'); checkin(); }
+  save(); viewLearn(); renderNav();
+}
+function markUnit(uid_){
+  var u = UMAP[uid_]; if(!u) return;
+  var st = S.units[uid_] || { status:'todo', pts:{} };
+  if (st.status==='done') { st.status='learning'; }
+  else { st.status='done'; u.points.forEach(function(p,i){ st.pts[i]=true; }); checkin();
+         S.tasks.forEach(function(x){ if(x.unitId===uid_ && x.type==='learn' && !x.done){ x.done=true; x.doneDate=ymd(); } }); }
+  S.units[uid_] = st; save(); viewLearn(); renderNav();
+  toast(st.status==='done'?'已标记学完，继续加油！':'已取消标记');
+}
+
+/* --- 测试 --- */
+function setTest(sk, book, uid_){
+  if (sk){ TV.sk=sk; TV.unitId=''; } if (book){ TV.book=book; TV.unitId=''; } if (uid_) TV.unitId=uid_;
+  viewTest();
+}
+function startTest(uid_, taskId){
+  var u = UMAP[uid_]; if(!u) return;
+  var qs = qsOfUnit(uid_);
+  if (!qs.length) { toast('这个单元还没有配题'); return; }
+  TV.running = { name:u.name+' · 单元测试', qs:qs, unitId:uid_, subject:u.subject, taskId:taskId||null, mix:false };
+  TV.answers = {}; TV.submitted = false; TV.result = null;
+  go('test');
+}
+function startMix(){
+  var pool = QS.slice(), pick = [];
+  for (var i=0; i<15 && pool.length; i++) pick.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+  if (!pick.length) { toast('题库为空'); return; }
+  TV.running = { name:'随机综合测 · 三科混合', qs:pick, unitId:'', subject:'', taskId:null, mix:true };
+  TV.answers = {}; TV.submitted = false; TV.result = null;
+  go('test');
+}
+function pick(qid, val){ TV.answers[qid] = val; if (!TV.submitted) renderPaper(); }
+function quitPaper(){ TV.running=null; TV.submitted=false; TV.result=null; TV.answers={}; go('test'); }
+function submitPaper(){
+  var R = TV.running; if(!R) return;
+  var un = R.qs.filter(function(q){ var a=TV.answers[q.id]; return a===undefined||a===null||a===''; }).length;
+  if (un > 0) {
+    modal('还有 '+un+' 题没做', '<p>没做的题会算作答错，确定现在交卷吗？</p>',
+      '<button class="btn" onclick="App.closeModal()">再检查一下</button><button class="btn pri" onclick="App.closeModal();App.doSubmit()">确定交卷</button>');
+    return;
+  }
+  doSubmit();
+}
+function doSubmit(){
+  var R = TV.running, t = ymd(), right = 0, wrongIds = [], items = [];
+  R.qs.forEach(function(q){
+    var ua = TV.answers[q.id], ok = judge(q, ua);
+    if (ok) right++; else wrongIds.push(q.id);
+    items.push({ qid:q.id, ok:ok });
+    // 错题本维护
+    var ex = S.wrong.filter(function(w){ return w.qid===q.id; })[0];
+    if (!ok) {
+      if (ex) { ex.lastDate=t; ex.mastered=false; ex.ua=String(ua==null?'':ua); }
+      else S.wrong.push({ qid:q.id, subject:q.subject, unitId:q.u, ua:String(ua==null?'':ua), addDate:t, lastDate:t, times:0, mastered:false });
+    } else if (ex && !ex.mastered) {
+      ex.times = (ex.times||0)+1; ex.lastDate = t;
+      if (ex.times>=2) ex.mastered = true;
+    }
+  });
+  var rate = Math.round(right/R.qs.length*100);
+  S.exams.push({ id:uid(), date:t, subject:R.mix?'sx':R.subject, unitId:R.unitId, unitName:R.name,
+                 total:R.qs.length, right:right, rate:rate, items:items });
+  if (R.taskId) { var tk = S.tasks.filter(function(x){return x.id===R.taskId;})[0]; if(tk){ tk.done=true; tk.doneDate=t; } }
+  else if (R.unitId) S.tasks.forEach(function(x){ if(x.unitId===R.unitId && x.type==='test' && !x.done){ x.done=true; x.doneDate=t; } });
+  if (R.unitId && rate>=85) { var st = S.units[R.unitId]||{status:'todo',pts:{}}; if(st.status!=='done'){ st.status='learning'; } S.units[R.unitId]=st; }
+  checkin();
+  TV.submitted = true;
+  TV.result = { right:right, total:R.qs.length, rate:rate, wrongIds:wrongIds };
+  save(); renderNav(); renderPaper();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+/* --- 错题本 --- */
+function setWrong(sk, st){ if(sk) WV.sk=sk; if(st) WV.st=st; viewWrong(); }
+function toggleMaster(qid){
+  var w = S.wrong.filter(function(a){return a.qid===qid;})[0]; if(!w) return;
+  w.mastered = !w.mastered; w.lastDate = ymd();
+  save(); viewWrong(); renderNav(); toast(w.mastered?'已标记掌握':'已放回待攻克');
+}
+function delWrong(qid){
+  S.wrong = S.wrong.filter(function(a){return a.qid!==qid;});
+  save(); viewWrong(); renderNav(); toast('已从错题本移除');
+}
+var RD = { qid:null, ua:undefined };
+function redo(qid){
+  var q = QMAP[qid]; if(!q) return;
+  RD = { qid:qid, ua:undefined };
+  renderRedo(false);
+}
+function renderRedo(showAns){
+  var q = QMAP[RD.qid]; if(!q) return;
+  var sj = SUBJ[q.subject]||SUBJ.yw;
+  var body = '<div style="font-size:15.5px;font-weight:600;line-height:1.65;margin-bottom:12px;color:var(--tx)">'+esc(q.q)+'</div>'
+           + qBody(q, RD.ua, showAns, 'App.redoPick');
+  var btns;
+  if (showAns) {
+    var ok = judge(q, RD.ua);
+    body += '<div class="res '+(ok?'ok':'no')+'" style="margin-top:11px">'+(ok?'✓ 答对了！':'✗ 还是不对')
+          + ' &nbsp;<b>正确答案：'+esc(ansText(q))+'</b>'+(q.ex?'<br>解析：'+esc(q.ex):'')+'</div>';
+    btns = '<button class="btn" onclick="App.closeModal()">关闭</button>'
+         + '<button class="btn pri" onclick="App.redo(\''+q.id+'\')">再做一遍</button>';
+  } else {
+    btns = '<button class="btn" onclick="App.closeModal()">取消</button>'
+         + '<button class="btn pri" onclick="App.redoCheck()">看看对不对</button>';
+  }
+  modal('重做错题 · '+sj.name, body, btns);
+}
+function redoPick(qid, val){ RD.ua = val; if (typeof val !== 'string') renderRedo(false); }
+function redoCheck(){
+  var q = QMAP[RD.qid]; if(!q) return;
+  var ok = judge(q, RD.ua);
+  var w = S.wrong.filter(function(a){return a.qid===RD.qid;})[0];
+  var t = ymd();
+  if (w) {
+    w.lastDate = t;
+    if (ok) { w.times=(w.times||0)+1; if (w.times>=2){ w.mastered=true; } }
+    else { w.times = 0; w.mastered = false; w.ua = String(RD.ua==null?'':RD.ua); }
+  }
+  checkin(); save(); renderRedo(true); renderNav();
+  if (ok && w && w.mastered) setTimeout(function(){ toast('连续答对 2 次，这题已掌握！'); }, 350);
+}
+
+/* --- 设置 / 数据 --- */
+function openSettings(){
+  var hasLock = !!getLockHash();
+  var c = getSyncCfg();
+  var cloudHTML =
+    '<div style="border-top:1px solid var(--line);margin:14px 0;padding-top:14px">'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="display:inline-flex">'+svg('<path d="M6 16a4 4 0 0 1 .8-7.9 5 5 0 0 1 9.7-1.3A3.5 3.5 0 0 1 18 16z"/>', 18, 2)+'</span><div style="font-size:14px;font-weight:600">云同步（防数据丢失）</div></div>'
+    + '<div style="font-size:12.5px;color:var(--tx3);line-height:1.7;margin-bottom:10px">把学习数据备份到云端，换手机或清缓存也不丢。配置只存在本机，不随学习数据导出。</div>'
+    + '<div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg2);margin-bottom:12px">'
+    + '<div style="font-size:13px;font-weight:600;margin-bottom:8px">GitHub Gist 备份</div>'
+    + '<div class="fld"><label>GitHub Token（需 gist 权限）</label><input type="password" id="gistToken" placeholder="ghp_..." value="'+esc(c.gistToken||'')+'"></div>'
+    + '<div class="fld"><label>Gist ID（首次同步后自动填写，可留空）</label><input type="text" id="gistId" placeholder="留空则新建" value="'+esc(c.gistId||'')+'"></div>'
+    + '<label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--tx2);margin:6px 0"><input type="checkbox" id="autoGist" '+(c.autoGist?'checked':'')+'> 自动同步（数据变动后每 3 分钟备份）</label>'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn sm" onclick="App.saveCloudCfg()">保存配置</button><button class="btn sm pri" onclick="App.syncNow()">立即同步</button><button class="btn sm" onclick="App.pullFromGist()">从云端恢复</button></div>'
+    + '</div>'
+    + '<div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg2)">'
+    + '<div style="font-size:13px;font-weight:600;margin-bottom:8px">Supabase 云同步</div>'
+    + '<div class="fld"><label>Project URL</label><input type="text" id="sbUrl" placeholder="https://xxxx.supabase.co" value="'+esc(c.sbUrl||'')+'"></div>'
+    + '<div class="fld"><label>Anon Key</label><input type="password" id="sbKey" placeholder="eyJ..." value="'+esc(c.sbKey||'')+'"></div>'
+    + '<div class="fld"><label>表名（默认 study_desk_sync）</label><input type="text" id="sbTable" placeholder="study_desk_sync" value="'+esc(c.sbTable||'')+'"></div>'
+    + '<label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--tx2);margin:6px 0"><input type="checkbox" id="autoSb" '+(c.autoSb?'checked':'')+'> 自动同步</label>'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn sm" onclick="App.saveCloudCfg()">保存配置</button><button class="btn sm pri" onclick="App.syncNow()">立即同步</button><button class="btn sm" onclick="App.pullFromSupabase()">从云端恢复</button></div>'
+    + '</div>'
+    + '<div style="font-size:12px;color:var(--tx3);margin-top:10px">Supabase 需先建表：<code>study_desk_sync(id text primary key, data jsonb, updated_at timestamptz)</code>，并在 Table Editor 中给 anon 角色开启 insert / select 权限。</div>'
+    + '</div>';
+  modal('设置',
+    '<div class="fld"><label>孩子的名字（显示在首页问候语）</label><input type="text" id="setName" value="'+esc(S.profile.name)+'" placeholder="例如：小雨"></div>'
+    + '<div class="fld"><label>学校</label><input type="text" id="setSchool" value="'+esc(S.profile.school)+'"></div>'
+    + '<div style="border-top:1px solid var(--line);margin:14px 0;padding-top:14px">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between">'
+    + '<div><div style="font-size:14px;font-weight:600">访问密码</div>'
+    + '<div style="font-size:12px;color:var(--tx3)">'+(hasLock?'已开启 · 防止陌生人打开':'未开启')+'</div></div>'
+    + '<button class="btn sm" onclick="App.lockSettings()">'+(hasLock?'修改密码':'设置密码')+'</button></div></div>'
+    + '<div style="font-size:12.5px;color:var(--tx3);line-height:1.7;margin-top:6px">'
+    + '提示：把这个页面「添加到手机主屏幕」，就能像 App 一样打开。数据只存在本机浏览器，'
+    + '换设备前记得先导出备份。</div>'
+    + cloudHTML,
+    '<button class="btn" onclick="App.closeModal()">取消</button><button class="btn pri" onclick="App.saveSettings()">保存</button>');
+}
+function saveSettings(){
+  S.profile.name = document.getElementById('setName').value.trim();
+  S.profile.school = document.getElementById('setSchool').value.trim() || '天津市河东区太阳城小学';
+  document.getElementById('appSub').textContent = S.profile.school + ' · 四年级';
+  closeModal(); save(); go(cur); toast('已保存');
+}
+function exportJSON(){
+  var payload = { app:'四年级学习台', version:1, exportedAt:new Date().toISOString(), state:S };
+  var blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+  dl(blob, '四年级学习台备份_'+ymd()+'.json');
+  toast('备份已导出，请妥善保存');
+}
+function importJSON(input){
+  var f = input.files && input.files[0]; if(!f) return;
+  var r = new FileReader();
+  r.onload = function(){
+    try {
+      var o = JSON.parse(r.result);
+      var st = o.state || o;
+      if (!st || typeof st !== 'object' || (!st.units && !st.exams && !st.tasks)) throw new Error('格式不对');
+      var cnt = (st.exams||[]).length + (st.wrong||[]).length + (st.tasks||[]).length;
+      modal('确认导入', '<p>这份备份包含 <b>'+cnt+'</b> 条记录、<b>'+Object.keys(st.units||{}).length+'</b> 个单元进度。</p>'
+        + '<p style="color:var(--red)">导入会<b>覆盖</b>当前设备上的现有数据，确定继续吗？</p>',
+        '<button class="btn" onclick="App.closeModal()">取消</button><button class="btn pri" onclick="App.doImport()">确定导入</button>');
+      window.__pendingImport = st;
+    } catch(e){ toast('导入失败：文件格式不正确'); }
+    input.value = '';
+  };
+  r.readAsText(f);
+}
+function doImport(){
+  var st = window.__pendingImport; if(!st) return;
+  S = Object.assign(blank(), st); S.seeded = true;
+  save(); closeModal(); go('today'); toast('导入成功，数据已恢复');
+  window.__pendingImport = null;
+}
+function exportCSV(){
+  if (!S.exams.length) { toast('还没有测试记录'); return; }
+  var rows = [['日期','科目','单元','总题数','答对','正确率(%)']];
+  S.exams.forEach(function(e){
+    rows.push([e.date, (SUBJ[e.subject]||{name:'—'}).name, e.unitName, e.total, e.right, e.rate]);
+  });
+  var csv = '\ufeff' + rows.map(function(r){
+    return r.map(function(c){ return '"'+String(c).replace(/"/g,'""')+'"'; }).join(',');
+  }).join('\n');
+  dl(new Blob([csv], { type:'text/csv;charset=utf-8' }), '四年级成绩单_'+ymd()+'.csv');
+  toast('成绩单已导出');
+}
+function dl(blob, name){
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function clearDemo(){
+  modal('清空示例数据', '<p>会删除首次打开时自带的演示任务、演示成绩和演示错题，你自己产生的记录不受影响。</p>',
+    '<button class="btn" onclick="App.closeModal()">取消</button><button class="btn dgr" onclick="App.doClearDemo()">确定清空</button>');
+}
+function doClearDemo(){
+  S.tasks = S.tasks.filter(function(x){ return !x.demo; });
+  S.exams = S.exams.filter(function(x){ return !x.demo; });
+  S.wrong = S.wrong.filter(function(x){ return !x.demo; });
+  save(); closeModal(); go(cur); toast('示例数据已清空');
+}
+function clearAll(){
+  modal('清空全部数据',
+    '<p style="color:var(--red);font-weight:600">这会删除全部学习记录：单元进度、测试成绩、错题本、任务和打卡，且无法撤销。</p>'
+    + '<p>建议先点「导出 JSON 备份」保存一份。确定要清空吗？</p>',
+    '<button class="btn" onclick="App.closeModal()">取消</button>'
+    + '<button class="btn" onclick="App.exportJSON()">先导出备份</button>'
+    + '<button class="btn dgr" onclick="App.doClearAll()">确定清空</button>');
+}
+function doClearAll(){
+  modal('最后确认', '<p style="color:var(--red);font-weight:700">真的要删除全部数据吗？这一步之后就找不回来了。</p>',
+    '<button class="btn" onclick="App.closeModal()">我再想想</button><button class="btn dgr" onclick="App.reallyClear()">是的，全部删除</button>');
+}
+function reallyClear(){
+  S = blank(); S.seeded = true; save(); closeModal(); go('today'); toast('数据已全部清空');
+}
+
+/* =========================================================
+   云同步：GitHub Gist 自动备份 + Supabase 云同步
+   部署在公网后防本机数据丢失。配置存本机，不随学习数据一起导出。
+   ========================================================= */
+var SYNC_KEY = 'wb_tyc4_sync_v1';
+function getSyncCfg(){
+  try { return JSON.parse(localStorage.getItem(SYNC_KEY) || '{}'); } catch(e){ return {}; }
+}
+function setSyncCfg(o){ try { localStorage.setItem(SYNC_KEY, JSON.stringify(o)); } catch(e){} }
+function collectBackup(){ return { app:'四年级学习台', version:1, exportedAt:new Date().toISOString(), state:S }; }
+var _syncTimer = null;
+function scheduleSync(){
+  var c = getSyncCfg();
+  if (!c.autoGist && !c.autoSb) return;
+  if (_syncTimer) return;
+  _syncTimer = setTimeout(function(){ _syncTimer = null; runSync(); }, 4000);
+}
+function runSync(){
+  var c = getSyncCfg();
+  var total = (c.autoGist?1:0) + (c.autoSb?1:0);
+  if (!total) return;
+  var done = 0;
+  function fin(){ done++; if (done===total && done>0) toast('云同步完成'); }
+  if (c.autoGist) syncToGist(fin);
+  if (c.autoSb) syncToSupabase(fin);
+}
+function syncToGist(cb){
+  var c = getSyncCfg();
+  if (!c.gistToken) { cb && cb(); return; }
+  var payload = collectBackup();
+  var body = { public:false, files:{ 'tyc4-backup.json':{ content: JSON.stringify(payload, null, 2) } } };
+  var url = c.gistId ? ('https://api.github.com/gists/'+c.gistId) : 'https://api.github.com/gists';
+  var method = c.gistId ? 'PATCH' : 'POST';
+  fetch(url, { method:method, headers:{ 'Authorization':'Bearer '+c.gistToken, 'Content-Type':'application/json', 'Accept':'application/vnd.github+json' }, body: JSON.stringify(body) })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(j){ if (j && j.id) { c.gistId = j.id; setSyncCfg(c); } toast('已同步到 GitHub Gist'); cb && cb(); })
+    .catch(function(e){ toast('GitHub 同步失败：'+(e.message||e)); cb && cb(); });
+}
+function syncToSupabase(cb){
+  var c = getSyncCfg();
+  if (!c.sbUrl || !c.sbKey) { cb && cb(); return; }
+  var table = c.sbTable || 'study_desk_sync';
+  var base = c.sbUrl.replace(/\/$/,'');
+  var payload = collectBackup();
+  var row = { id:'tyc4-default', data: payload, updated_at: new Date().toISOString() };
+  fetch(base + '/rest/v1/' + table + '?on_conflict=id', { method:'POST', headers:{ 'apikey':c.sbKey, 'Authorization':'Bearer '+c.sbKey, 'Content-Type':'application/json', 'Prefer':'resolution=merge-duplicates' }, body: JSON.stringify([row]) })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+    .then(function(){ toast('已同步到 Supabase'); cb && cb(); })
+    .catch(function(e){ toast('Supabase 同步失败：'+(e.message||e)); cb && cb(); });
+}
+function syncNow(){
+  var c = getSyncCfg();
+  if (!c.gistToken && !c.sbUrl) { toast('请先在「设置 → 云同步」填写配置'); return; }
+  var total = (c.gistToken?1:0) + (c.sbUrl?1:0);
+  var done = 0;
+  function fin(){ done++; if (done===total) toast('云同步完成'); }
+  if (c.gistToken) syncToGist(fin);
+  if (c.sbUrl) syncToSupabase(fin);
+}
+function pullFromGist(){
+  var c = getSyncCfg();
+  if (!c.gistToken || !c.gistId) { toast('请先配置 GitHub Gist 并同步过一次'); return; }
+  fetch('https://api.github.com/gists/'+c.gistId, { headers:{ 'Authorization':'Bearer '+c.gistToken, 'Accept':'application/vnd.github+json' } })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(j){
+      var f = j.files && j.files['tyc4-backup.json'];
+      if (!f || !f.content) throw new Error('备份文件不存在');
+      window.__pendingImport = JSON.parse(f.content).state;
+      offerImport();
+    }).catch(function(e){ toast('拉取失败：'+(e.message||e)); });
+}
+function pullFromSupabase(){
+  var c = getSyncCfg();
+  if (!c.sbUrl || !c.sbKey) { toast('请先配置 Supabase'); return; }
+  var table = c.sbTable || 'study_desk_sync';
+  var base = c.sbUrl.replace(/\/$/,'');
+  fetch(base + '/rest/v1/' + table + '?id=eq.tyc4-default&select=data', { headers:{ 'apikey':c.sbKey, 'Authorization':'Bearer '+c.sbKey } })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(rows){
+      if (!rows || !rows.length || !rows[0].data) throw new Error('没有云端数据');
+      window.__pendingImport = rows[0].data.state;
+      offerImport();
+    }).catch(function(e){ toast('拉取失败：'+(e.message||e)); });
+}
+function offerImport(){
+  var st = window.__pendingImport; if(!st) return;
+  var cnt = (st.exams||[]).length + (st.wrong||[]).length + (st.tasks||[]).length;
+  modal('从云端恢复', '<p>云端备份包含 <b>'+cnt+'</b> 条记录。导入会覆盖当前设备数据，确定继续吗？</p>',
+    '<button class="btn" onclick="App.closeModal()">取消</button><button class="btn pri" onclick="App.doImport()">确定恢复</button>');
+}
+function saveCloudCfg(){
+  var c = getSyncCfg();
+  c.gistToken = (document.getElementById('gistToken').value||'').trim();
+  c.gistId = (document.getElementById('gistId').value||'').trim();
+  c.autoGist = !!document.getElementById('autoGist').checked;
+  c.sbUrl = (document.getElementById('sbUrl').value||'').trim();
+  c.sbKey = (document.getElementById('sbKey').value||'').trim();
+  c.sbTable = (document.getElementById('sbTable').value||'').trim();
+  c.autoSb = !!document.getElementById('autoSb').checked;
+  setSyncCfg(c);
+  toast('云同步配置已保存');
+}
+/* 自动同步：每 3 分钟检查一次，并在关闭页面时尽力同步 */
+(function startAutoSync(){
+  setInterval(function(){ scheduleSync(); }, 180000);
+  window.addEventListener('beforeunload', function(){ try { runSync(); } catch(e){} });
+})();
+
+/* =========================================================
+   访问密码保护（部署在公网后防陌生人随意查看）
+   ========================================================= */
+var LOCK_KEY = 'wb_tyc4_lock_v1';
+var LOCK_HASH = 'wb_tyc4_lockhash_v1';
+var PRESET_LOCK_PWD = '5200817'; // 部署预设访问密码（首次打开即用，可在设置中修改）
+
+function hashStr(s){
+  // 简单哈希：不存明文密码，防一眼可见。非加密级安全。
+  var h = 5381;
+  for (var i = 0; i < s.length; i++) { h = ((h << 5) + h + s.charCodeAt(i)) & 0xFFFFFFFF; }
+  return (h >>> 0).toString(36);
+}
+function getLockHash(){
+  try { return localStorage.getItem(LOCK_HASH) || ''; } catch(e){ return ''; }
+}
+function setLockHash(h){
+  try { localStorage.setItem(LOCK_HASH, h); } catch(e){}
+}
+function clearLock(){
+  try { localStorage.removeItem(LOCK_HASH); } catch(e){}
+}
+
+function showLockScreen(mode){
+  // mode: 'set' = 首次设置密码, 'enter' = 输入密码进入
+  var isSet = mode === 'set';
+  var ls = document.getElementById('lockScreen');
+  ls.innerHTML = ''
+    + '<div class="lock-card">'
+    + '<div class="lock-logo">'
+    + svg('<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>', 28, 2.2)
+    + '</div>'
+    + '<h2>' + (isSet ? '设置访问密码' : '请输入密码') + '</h2>'
+    + '<div class="lk-sub">' + (isSet
+        ? '部署在公网后，设一个密码防止陌生人打开。下次打开需要输入。'
+        : '这是您孩子的专属学习台，请输入密码进入。') + '</div>'
+    + '<div class="lock-input-grp">'
+    + svg('<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>', 18, 2)
+    + '<input class="lock-input" id="lockPwd" type="password" maxlength="8" placeholder="'
+    + (isSet ? '设置 4-8 位密码' : '输入密码') + '" autocomplete="off" inputmode="numeric">'
+    + '</div>'
+    + (isSet ? '<div class="lock-input-grp">'
+      + svg('<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>', 18, 2)
+      + '<input class="lock-input" id="lockPwd2" type="password" maxlength="8" placeholder="再输一次确认" autocomplete="off" inputmode="numeric">'
+      + '</div>' : '')
+    + '<button class="lock-btn" id="lockBtn" onclick="App.unlock()">' + (isSet ? '设置并进入' : '进入') + '</button>'
+    + '<div class="lock-err" id="lockErr"></div>'
+    + '<div class="lock-hint">'
+    + svg('<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>', 12, 2)
+    + ' 密码只存在本机浏览器，不上传服务器。<br>'
+    + (isSet ? '<b>请牢记密码</b>，忘记后只能清空浏览器数据重置。' : '忘记密码？连续输错 5 次可重置。')
+    + '</div>'
+    + (isSet ? '' : '<button class="lock-toggle" onclick="App.lockReset()">忘记密码，重置</button>')
+    + '</div>';
+  ls.classList.remove('hide');
+  // 回车提交
+  var inp = document.getElementById('lockPwd');
+  if (inp) { inp.focus(); inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') App.unlock(); });
+    if (isSet) { var inp2 = document.getElementById('lockPwd2'); if (inp2) inp2.addEventListener('keydown', function(e){ if (e.key === 'Enter') App.unlock(); }); }
+  }
+}
+function hideLockScreen(){
+  var ls = document.getElementById('lockScreen');
+  ls.classList.add('hide');
+  setTimeout(function(){ ls.innerHTML = ''; }, 400);
+}
+var lockTries = 0;
+function unlock(){
+  var pwd = document.getElementById('lockPwd').value;
+  var err = document.getElementById('lockErr');
+  if (isSetMode) {
+    // 设置密码模式
+    var pwd2 = document.getElementById('lockPwd2');
+    var pwd2v = pwd2 ? pwd2.value : '';
+    if (pwd.length < 4) { err.textContent = '密码至少 4 位'; return; }
+    if (pwd !== pwd2v) { err.textContent = '两次输入不一致'; return; }
+    setLockHash(hashStr(pwd));
+    hideLockScreen();
+    initApp();
+  } else {
+    // 验证密码模式
+    if (hashStr(pwd) === getLockHash()) {
+      lockTries = 0;
+      hideLockScreen();
+      initApp();
+    } else {
+      lockTries++;
+      err.textContent = '密码不对，还剩 ' + Math.max(0, 5 - lockTries) + ' 次机会';
+      document.getElementById('lockPwd').value = '';
+      if (lockTries >= 5) { resetLock(); }
+    }
+  }
+}
+var isSetMode = false;
+function resetLock(){
+  clearLock();
+  lockTries = 0;
+  var e = document.getElementById('lockErr');
+  if (e) e.innerHTML = '已重置，请重新设置密码';
+  setTimeout(function(){ showLockScreen('set'); }, 600);
+}
+function lockReset(){
+  var ls = document.getElementById('lockScreen');
+  ls.innerHTML = ''
+    + '<div class="lock-card">'
+    + '<div class="lock-logo" style="background:linear-gradient(135deg,#DC2626,#F87171)">'
+    + svg('<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', 28, 2.2)
+    + '</div>'
+    + '<h2>重置密码</h2><div class="lk-sub">重置会清除已设置的密码和学习台数据。<br>确定要重置吗？</div>'
+    + '<button class="lock-btn" style="background:#DC2626" onclick="App.confirmReset()">是的，全部重置</button>'
+    + '<button class="lock-toggle" onclick="App.cancelReset()">取消，返回输入密码</button>'
+    + '</div>';
+}
+function confirmReset(){
+  clearLock();
+  try { localStorage.removeItem(KEY); } catch(e){}
+  showLockScreen('set');
+}
+function cancelReset(){ showLockScreen('enter'); }
+
+function initApp(){
+  load();
+  document.getElementById('appSub').textContent = S.profile.school + ' · 四年级';
+  go('today');
+}
+
+// 设置里加修改密码/关闭密码
+function lockSettings(){
+  var has = !!getLockHash();
+  var body = has
+    ? '<div style="font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:14px">当前已设置访问密码。'
+      + '可以修改密码或关闭密码保护。</div>'
+      + '<div class="fld"><label>新密码（4-8位）</label><input type="password" id="newPwd" maxlength="8" placeholder="留空则不修改"></div>'
+      + '<div class="fld"><label>确认新密码</label><input type="password" id="newPwd2" maxlength="8" placeholder="再输一次"></div>'
+    : '<div style="font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:14px">当前未设置访问密码。'
+      + '部署在公网后建议开启，防止陌生人打开。</div>'
+      + '<div class="fld"><label>设置密码（4-8位）</label><input type="password" id="newPwd" maxlength="8" placeholder="设置密码"></div>'
+      + '<div class="fld"><label>确认密码</label><input type="password" id="newPwd2" maxlength="8" placeholder="再输一次"></div>';
+  var btns = '<button class="btn" onclick="App.closeModal()">取消</button>';
+  if (has) btns += '<button class="btn dgr" onclick="App.disableLock()">关闭密码</button>';
+  btns += '<button class="btn pri" onclick="App.saveLock()">保存</button>';
+  modal('访问密码', body, btns);
+}
+function saveLock(){
+  var p1 = document.getElementById('newPwd').value;
+  var p2 = document.getElementById('newPwd2').value;
+  if (!p1) { toast('请输入密码'); return; }
+  if (p1.length < 4) { toast('密码至少 4 位'); return; }
+  if (p1 !== p2) { toast('两次输入不一致'); return; }
+  setLockHash(hashStr(p1));
+  closeModal(); toast('密码已设置');
+}
+function disableLock(){
+  clearLock(); closeModal(); toast('密码保护已关闭');
+}
+
+/* ---------- 启动 ---------- */
+window.App = {
+  go:go, exportJSON:exportJSON, importJSON:importJSON, doImport:doImport, exportCSV:exportCSV,
+  openSettings:openSettings, saveSettings:saveSettings, closeModal:closeModal,
+  clearDemo:clearDemo, doClearDemo:doClearDemo, clearAll:clearAll, doClearAll:doClearAll, reallyClear:reallyClear,
+  finishTask:finishTask, delTask:delTask, handleTask:handleTask, addTaskDialog:addTaskDialog, addTask:addTask,
+  planUnit:planUnit, autoPlan:autoPlan,
+  setLearn:setLearn, toggleUnit:toggleUnit, togglePoint:togglePoint, markUnit:markUnit,
+  setTest:setTest, startTest:startTest, startMix:startMix, pick:pick, submitPaper:submitPaper, doSubmit:doSubmit, quitPaper:quitPaper,
+  setWrong:setWrong, toggleMaster:toggleMaster, delWrong:delWrong, redo:redo, redoPick:redoPick, redoCheck:redoCheck,
+  printTestDialog:printTestDialog, setPrint:setPrint, doPrintTest:doPrintTest,
+  unlock:unlock, lockReset:lockReset, confirmReset:confirmReset, cancelReset:cancelReset,
+  lockSettings:lockSettings, saveLock:saveLock, disableLock:disableLock,
+  syncNow:syncNow, pullFromGist:pullFromGist, pullFromSupabase:pullFromSupabase, saveCloudCfg:saveCloudCfg,
+  _stat:function(){ return { units:UNITS.length, questions:QS.length }; }
+};
+
+/* ---------- 启动：先检查密码锁 ---------- */
+(function boot(){
+  var hash = getLockHash();
+  if (!hash) {
+    // 部署预设：未设置过密码时，直接使用预设密码 5200817
+    setLockHash(hashStr(PRESET_LOCK_PWD));
+    hash = getLockHash();
+  }
+  isSetMode = false;
+  showLockScreen('enter'); // 始终进入“输入密码”界面，密码为 5200817（或用户已修改的密码）
+})();
+
+})();
+
+</script>
+</body>
+</html>
