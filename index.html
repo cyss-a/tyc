@@ -310,7 +310,7 @@ main{padding:18px 0 30px}
   .pp-info{ display:flex; justify-content:space-between; font-size:10.5pt; margin-bottom:5mm; border:1px solid #999; padding:2.5mm 4mm; border-radius:2px }
   .pp-info span{ display:inline-block; min-width:30% }
   .pp-info b{ font-weight:400 }
-  .pp-sec{ margin-bottom:5mm }
+  .pp-sec{ margin-bottom:5mm; page-break-inside:avoid }
   .pp-sec-h{ font-size:12pt; font-weight:700; margin-bottom:3mm; border-left:3px solid #333; padding-left:2mm }
   .pp-q{ font-size:11.5pt; line-height:2; margin-bottom:2.5mm; page-break-inside:avoid }
   .pp-q-n{ font-weight:700; margin-right:1mm }
@@ -326,6 +326,40 @@ main{padding:18px 0 30px}
 }
 @media screen{
   .pp-screen{ display:none }
+}
+
+/* ===== 新增试卷样式（拼音 / 计算 / 英语抄写） __B2_CSS__ ===== */
+.pp-py-grid{ display:grid; grid-template-columns:1fr 1fr; gap:4px 24px; margin:4px 0 }
+.pp-py-cell{ display:flex; align-items:flex-end; gap:8px; font-size:13px; padding:2px 0; line-height:1.4 }
+.pp-py-py{ min-width:60px; color:#333; font-weight:600 }
+.pp-py-blank{ flex:1; border-bottom:1px solid #555; height:1.1em; min-width:30px }
+.pp-py-ans{ color:#c0392b; font-weight:600 }
+.pp-cw{ display:flex; align-items:center; gap:10px; padding:2px 0; border-bottom:1px dashed #e6e6e6 }
+.pp-cw-ch{ font-size:18px; font-weight:700; color:#222; min-width:34px; text-align:center }
+.pp-cw-meta{ font-size:12px; color:#666; flex:1 }
+.pp-cw-lines{ display:flex; gap:10px }
+.pp-cw-lines span{ width:48px; border-bottom:1px solid #999; height:1em }
+.pp-kc{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px 18px; font-size:14px }
+.pp-kc-i{ display:flex; align-items:center; gap:6px; padding:3px 0 }
+.pp-kc-b{ flex:1; border-bottom:1px solid #555; min-width:28px }
+.pp-kc-ans{ color:#c0392b; font-weight:600 }
+.pp-bs{ display:flex; align-items:center; gap:12px; padding:6px 0; border-bottom:1px dashed #e6e6e6 }
+.pp-bs-t{ font-size:15px; min-width:118px; font-weight:600 }
+.pp-calc-box{ flex:1; border:1px solid #bbb; height:52px; border-radius:4px; background:#fafafa }
+.pp-calc-box.tall{ height:62px }
+.pp-bs-ans{ color:#c0392b; font-weight:600; min-width:66px }
+.pp-app{ padding:6px 0 }
+.pp-app-q{ font-size:13.5px; margin-bottom:4px; line-height:1.5 }
+.pp-cp{ padding:3px 0; border-bottom:1px dashed #e6e6e6 }
+.pp-cp-en{ font-size:14px; font-weight:600; color:#1f3a93 }
+.pp-cp-zh{ font-size:11px; color:#555; margin:1px 0 }
+.pp-cp-pr{ color:#0a7d3b }
+.pp-cp-lines{ display:flex; gap:16px; margin-top:2px }
+.pp-cp-lines span{ flex:1; max-width:260px; border-bottom:1px solid #999; height:1em }
+@media print{
+  .pp-py-grid{ grid-template-columns:1fr 1fr }
+  .pp-kc{ grid-template-columns:1fr 1fr 1fr }
+  .pp-calc-box{ background:#fff }
 }
 </style>
 </head>
@@ -10452,12 +10486,13 @@ window.DATA_ENGLISH = {
 /* ---------- 基础常量 ---------- */
 var KEY = 'wb_tyc4_state_v1';
 
-var SUBJ = {
-  yw: { key:'yw', name:'语文', color:'#E8663D', light:'#FDF0EB' },
-  sx: { key:'sx', name:'数学', color:'#2F6FEB', light:'#EAF1FE' },
-  yy: { key:'yy', name:'英语', color:'#12A150', light:'#E8F7EE' }
+var SUBJ = { /*__B2_SUBJ__*/
+  yw: { key:'yw', name:'语文', color:'#E8663D', light:'#FDF0EB', grade:'四' },
+  sx: { key:'sx', name:'数学', color:'#2F6FEB', light:'#EAF1FE', grade:'四' },
+  yy: { key:'yy', name:'英语', color:'#12A150', light:'#E8F7EE', grade:'四' },
+  yy3: { key:'yy3', name:'英语(三)', color:'#0E9F6E', light:'#E6F7EF', grade:'三' }
 };
-var SUBJ_ORDER = ['yw','sx','yy'];
+var SUBJ_ORDER = ['yw','sx','yy','yy3'];
 
 var ICON = {
   today:'<path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="m9 16 2 2 4-4"/>',
@@ -10481,8 +10516,140 @@ function svg(path, size, sw) {
 }
 
 /* ---------- 教材数据装载 ---------- */
+/*__B2_DATA__*/window.DATA_ENGLISH3 = {"units":[{"id":"yy3-u-1","book":"up","no":1,"name":"Unit 1 Hello! I'm Monkey. 你好，我是猴子！","focus":"见面问候、自我介绍、常见动物名称","points":[{"t":"核心单词","c":"hello 你好 / hi 嗨 / I'm 我是 / Monkey 猴子 / Cat 猫 / Dog 狗 / Bird 鸟 / Duck 鸭子 / Panda 熊猫 / Pig 猪 / Rabbit 兔子 / Bear 熊"},{"t":"核心句型","c":"Hello! 你好！ / Hi! 嗨！ / I'm Monkey. 我是猴子。 / I'm Cat. 我是猫。 / Goodbye! 再见！"},{"t":"语法要点","c":"I'm = I am，用来做自我介绍；英语中“我”永远大写写成 I；句子开头的首字母要大写，结尾用句号或感叹号。"},{"t":"易错提醒","c":"I 永远大写，不能写成 i；动物名、人名首字母也要大写；hello 和 hi 都表示“你好”，hi 更随意、更口语化。"},{"t":"学习建议","c":"每天听读单词和句型各5分钟；用动物图片卡记核心词汇；对着镜子用 I'm ... 介绍自己和小动物。"},{"t":"口语交际","c":"用 Hello / Hi 和同学打招呼，用 I'm ... 做自我介绍，并说出自己喜欢的动物名称。"}],"words":[{"en":"hello","zh":"你好","pron":"/həˈləʊ/ 哈喽"},{"en":"hi","zh":"嗨","pron":"/haɪ/ 嗨"},{"en":"I'm","zh":"我是","pron":"/aɪm/ 爱姆"},{"en":"Monkey","zh":"猴子","pron":"/ˈmʌŋki/ 忙ki"},{"en":"Cat","zh":"猫","pron":"/kæt/ 凯特"},{"en":"Dog","zh":"狗","pron":"/dɒɡ/ 道格"},{"en":"Bird","zh":"鸟","pron":"/bɜːd/ 勃德"},{"en":"Duck","zh":"鸭子","pron":"/dʌk/ 达克"},{"en":"Panda","zh":"熊猫","pron":"/ˈpændə/ 潘得"},{"en":"Pig","zh":"猪","pron":"/pɪɡ/ 皮格"},{"en":"Rabbit","zh":"兔子","pron":"/ˈræbɪt/ 瑞比特"},{"en":"Bear","zh":"熊","pron":"/beə(r)/ 贝尔"}],"sentences":[{"en":"Hello! I'm Monkey.","zh":"你好！我是猴子。","pron":"哈喽！爱姆 忙ki。"},{"en":"Hi, I'm Cat.","zh":"嗨，我是猫。","pron":"嗨，爱姆 凯特。"},{"en":"Hello, I'm Dog.","zh":"你好，我是狗。","pron":"哈喽，爱姆 道格。"},{"en":"Goodbye!","zh":"再见！","pron":"古德拜！"},{"en":"I'm Panda.","zh":"我是熊猫。","pron":"爱姆 潘得。"}]},{"id":"yy3-u-2","book":"up","no":2,"name":"Unit 2 This is my pencil. 这是我的铅笔。","focus":"学习用品名称、介绍身边的物品","points":[{"t":"核心单词","c":"book 书 / bag 书包 / pen 钢笔 / pencil 铅笔 / pencil-box 铅笔盒 / ruler 尺子 / eraser 橡皮 / glue 胶棒 / marker 马克笔 / sharpener 卷笔刀"},{"t":"核心句型","c":"This is my pencil. 这是我的铅笔。 / This is my book. 这是我的书。 / Glad to meet you. 很高兴见到你。"},{"t":"语法要点","c":"This is ... 用来介绍人或物品，意思是“这是……”；my 表示“我的”，后面接名词。"},{"t":"易错提醒","c":"This is 不能写成 This's；介绍多个物品用 These are ...；“铅笔盒”是 pencil-box，中间有连字符。"},{"t":"学习建议","c":"把书桌上的文具贴上英文小标签；听读时用手指着实物说 This is my ...；每天复习5个文具词。"},{"t":"口语交际","c":"见到新朋友说 Glad to meet you.，并指着自己的文具用 This is my ... 一一介绍。"}],"words":[{"en":"book","zh":"书","pron":"/bʊk/ 布克"},{"en":"bag","zh":"书包","pron":"/bæɡ/ 拜格"},{"en":"pen","zh":"钢笔","pron":"/pen/ 喷"},{"en":"pencil","zh":"铅笔","pron":"/ˈpensl/ 喷搜"},{"en":"pencil-box","zh":"铅笔盒","pron":"/ˈpensl bɒks/ 喷搜 波克斯"},{"en":"ruler","zh":"尺子","pron":"/ˈruːlə(r)/ 入勒"},{"en":"eraser","zh":"橡皮","pron":"/ɪˈreɪzə(r)/ 伊瑞泽"},{"en":"glue","zh":"胶棒","pron":"/ɡluː/ 格路"},{"en":"marker","zh":"马克笔","pron":"/ˈmɑːkə(r)/ 马克"},{"en":"sharpener","zh":"卷笔刀","pron":"/ˈʃɑːpnə(r)/ 沙普讷"},{"en":"pencil case","zh":"笔袋","pron":"/ˈpensl keɪs/ 喷搜 凯斯"},{"en":"schoolbag","zh":"书包","pron":"/ˈskuːlbæɡ/ 斯故白格"}],"sentences":[{"en":"This is my pencil.","zh":"这是我的铅笔。","pron":"贼斯 一兹 买 喷搜。"},{"en":"This is my book.","zh":"这是我的书。","pron":"贼斯 一兹 买 布克。"},{"en":"Glad to meet you.","zh":"很高兴见到你。","pron":"格来德 吐 密特 优。"},{"en":"This is my ruler.","zh":"这是我的尺子。","pron":"贼斯 一兹 买 入勒。"},{"en":"This is my eraser.","zh":"这是我的橡皮。","pron":"贼斯 一兹 买 伊瑞泽。"}]},{"id":"yy3-u-3","book":"up","no":3,"name":"Unit 3 Look at my nose. 看我的鼻子。","focus":"身体部位名称、描述与指认身体器官","points":[{"t":"核心单词","c":"head 头 / face 脸 / eye 眼睛 / nose 鼻子 / mouth 嘴 / ear 耳朵 / neck 脖子 / arm 胳膊 / hand 手 / foot 脚 / knee 膝盖"},{"t":"核心句型","c":"Look at my nose. 看我的鼻子。 / This is my eye. 这是我的眼睛。 / Touch your head. 摸摸你的头。"},{"t":"语法要点","c":"Look at ... 用于让别人看某物；my 是“我的”，your 是“你的”；foot 的复数是 feet（脚，两只脚）。"},{"t":"易错提醒","c":"foot 复数变 feet，不是 foots；摸自己用 my，摸对方用 your；ear（耳朵）和 eye（眼睛）发音不同，注意区分。"},{"t":"学习建议","c":"对着镜子边指边说身体部位；玩“听指令做动作”游戏：Touch your ...；每天记3个部位词。"},{"t":"口语交际","c":"用 Look at my ... 介绍自己的身体部位，并听指令用 Touch your ... 做动作。"}],"words":[{"en":"head","zh":"头","pron":"/hed/ 海德"},{"en":"face","zh":"脸","pron":"/feɪs/ 费斯"},{"en":"eye","zh":"眼睛","pron":"/aɪ/ 爱"},{"en":"nose","zh":"鼻子","pron":"/nəʊz/ 耨兹"},{"en":"mouth","zh":"嘴","pron":"/maʊθ/ 冒斯"},{"en":"ear","zh":"耳朵","pron":"/ɪə(r)/ 一尔"},{"en":"neck","zh":"脖子","pron":"/nek/ 耐克"},{"en":"arm","zh":"胳膊","pron":"/ɑːm/ 阿姆"},{"en":"hand","zh":"手","pron":"/hænd/ 汉德"},{"en":"foot","zh":"脚","pron":"/fʊt/ 福特"},{"en":"knee","zh":"膝盖","pron":"/niː/ 尼"},{"en":"leg","zh":"腿","pron":"/leɡ/ 赖格"}],"sentences":[{"en":"Look at my nose.","zh":"看我的鼻子。","pron":"路克 爱特 买 耨兹。"},{"en":"This is my eye.","zh":"这是我的眼睛。","pron":"贼斯 一兹 买 爱。"},{"en":"Touch your head.","zh":"摸摸你的头。","pron":"塔尺 哟 海德。"},{"en":"This is my hand.","zh":"这是我的手。","pron":"贼斯 一兹 买 汉德。"},{"en":"Look at my mouth.","zh":"看我的嘴。","pron":"路克 爱特 买 冒斯。"}]},{"id":"yy3-u-4","book":"up","no":4,"name":"Unit 4 I have a ball. 我有一个球。","focus":"玩具与交通工具、表达“拥有”","points":[{"t":"核心单词","c":"doll 娃娃 / ball 球 / kite 风筝 / balloon 气球 / car 小汽车 / bus 公共汽车 / bike 自行车 / taxi 出租车 / train 火车 / ship 轮船 / plane 飞机 / boat 小船"},{"t":"核心句型","c":"I have a ball. 我有一个球。 / I have a kite. 我有一只风筝。 / Do you have a car? 你有一辆小汽车吗？"},{"t":"语法要点","c":"I have ... 表示“我有……”；a 用在辅音音素开头的词前，an 用在元音音素开头的词前（如 an apple）。"},{"t":"易错提醒","c":"have 随主语变化，第三人称用 has；问“你有……吗”用 Do you have ...；balloon 和 bike 别漏了中间的字母。"},{"t":"学习建议","c":"用玩具实物说 I have a ...；画一画交通工具并标英文；和同伴互问 Do you have ...？"},{"t":"口语交际","c":"展示自己的玩具说 I have a ...，并询问同伴 Do you have a ...？用 Yes/No 回答。"}],"words":[{"en":"doll","zh":"娃娃","pron":"/dɒl/ 道"},{"en":"ball","zh":"球","pron":"/bɔːl/ 波"},{"en":"kite","zh":"风筝","pron":"/kaɪt/ 凯特"},{"en":"balloon","zh":"气球","pron":"/bəˈluːn/ 波路恩"},{"en":"car","zh":"小汽车","pron":"/kɑː(r)/ 卡"},{"en":"bus","zh":"公共汽车","pron":"/bʌs/ 巴斯"},{"en":"bike","zh":"自行车","pron":"/baɪk/ 拜克"},{"en":"taxi","zh":"出租车","pron":"/ˈtæksi/ 泰克西"},{"en":"train","zh":"火车","pron":"/treɪn/ 春"},{"en":"ship","zh":"轮船","pron":"/ʃɪp/ 希普"},{"en":"plane","zh":"飞机","pron":"/pleɪn/ 普雷恩"},{"en":"boat","zh":"小船","pron":"/bəʊt/ 伯特"}],"sentences":[{"en":"I have a ball.","zh":"我有一个球。","pron":"爱 海夫 饿 波。"},{"en":"I have a kite.","zh":"我有一只风筝。","pron":"爱 海夫 饿 凯特。"},{"en":"Do you have a car?","zh":"你有一辆小汽车吗？","pron":"度 优 海夫 饿 卡？"},{"en":"I have a balloon.","zh":"我有一个气球。","pron":"爱 海夫 饿 波路恩。"},{"en":"I have a bike.","zh":"我有一辆自行车。","pron":"爱 海夫 饿 拜克。"}]},{"id":"yy3-u-5","book":"up","no":5,"name":"Unit 5 What colour is it? 它是什么颜色的？","focus":"常见颜色名称、询问与回答颜色","points":[{"t":"核心单词","c":"red 红色 / yellow 黄色 / green 绿色 / blue 蓝色 / purple 紫色 / white 白色 / black 黑色 / pink 粉色 / orange 橙色 / brown 棕色 / grey 灰色"},{"t":"核心句型","c":"What colour is it? 它是什么颜色？ / It's red. 它是红色的。 / What colour do you like? 你喜欢什么颜色？"},{"t":"语法要点","c":"What colour ... 用来问颜色；回答用 It's + 颜色；颜色词首字母一般小写，但句首要大写。"},{"t":"易错提醒","c":"colour（英式）也可写成 color（美式）；orange 既是“橙色”也是“橘子”；说“它是红的”用 It's red，red 后不加 s。"},{"t":"学习建议","c":"把身边的物品用英语说颜色；做颜色卡片配对游戏；每天认3种颜色并造句 It's ...。"},{"t":"口语交际","c":"拿起物品问 What colour is it?，同伴用 It's ... 回答，轮流练习各种颜色。"}],"words":[{"en":"red","zh":"红色","pron":"/red/ 瑞德"},{"en":"yellow","zh":"黄色","pron":"/ˈjeləʊ/ 耶漏"},{"en":"green","zh":"绿色","pron":"/ɡriːn/ 格润"},{"en":"blue","zh":"蓝色","pron":"/bluː/ 布鲁"},{"en":"purple","zh":"紫色","pron":"/ˈpɜːpl/ 泼剖"},{"en":"white","zh":"白色","pron":"/waɪt/ 怀特"},{"en":"black","zh":"黑色","pron":"/blæk/ 布莱克"},{"en":"pink","zh":"粉色","pron":"/pɪŋk/ 拼克"},{"en":"orange","zh":"橙色","pron":"/ˈɒrɪndʒ/ 奥润吉"},{"en":"brown","zh":"棕色","pron":"/braʊn/ 布朗"},{"en":"grey","zh":"灰色","pron":"/ɡreɪ/ 格瑞"},{"en":"colour","zh":"颜色","pron":"/ˈkʌlə(r)/ 卡勒"}],"sentences":[{"en":"What colour is it?","zh":"它是什么颜色的？","pron":"沃特 卡勒 一兹 一特？"},{"en":"It's red.","zh":"它是红色的。","pron":"一茨 瑞德。"},{"en":"It's blue.","zh":"它是蓝色的。","pron":"一茨 布鲁。"},{"en":"What colour do you like?","zh":"你喜欢什么颜色？","pron":"沃特 卡勒 度 优 赖克？"},{"en":"I like green.","zh":"我喜欢绿色。","pron":"爱 赖克 格润。"}]},{"id":"yy3-u-6","book":"up","no":6,"name":"Unit 6 I like hamburgers. 我喜欢汉堡包。","focus":"常见食物与饮料、表达喜好","points":[{"t":"核心单词","c":"hamburger 汉堡包 / hot dog 热狗 / Coke 可乐 / cake 蛋糕 / egg 蛋 / orange 橙子 / apple 苹果 / banana 香蕉 / milk 牛奶 / juice 果汁"},{"t":"核心句型","c":"I like hamburgers. 我喜欢汉堡包。 / I like hot dogs. 我喜欢热狗。 / Have some Coke. 喝点可乐吧。"},{"t":"语法要点","c":"I like ... 表示“我喜欢……”；可数名词复数常加 s（hamburger→hamburgers）；请别人吃喝用 Have some ...。"},{"t":"易错提醒","c":"like 后表示一类食物常用复数加 s；Coke 首字母大写（是品牌名）；egg 以元音开头，说 an egg 而不是 a egg。"},{"t":"学习建议","c":"画出喜欢的食物并写英文；用 I like ... 和同伴说说爱吃什么；角色扮演“小吃店点餐”。"},{"t":"口语交际","c":"用 I like ... 说出喜欢的食物，并招待同伴说 Have some ...，练习用餐交际。"}],"words":[{"en":"hamburger","zh":"汉堡包","pron":"/ˈhæmbɜːɡə(r)/ 汉姆伯格"},{"en":"hot dog","zh":"热狗","pron":"/ˈhɒt dɒɡ/ 浩特 道格"},{"en":"Coke","zh":"可乐","pron":"/kəʊk/ 扣克"},{"en":"cake","zh":"蛋糕","pron":"/keɪk/ 凯克"},{"en":"egg","zh":"蛋","pron":"/eɡ/ 艾格"},{"en":"orange","zh":"橙子","pron":"/ˈɒrɪndʒ/ 奥润吉"},{"en":"apple","zh":"苹果","pron":"/ˈæpl/ 阿婆"},{"en":"banana","zh":"香蕉","pron":"/bəˈnɑːnə/ 波南那"},{"en":"milk","zh":"牛奶","pron":"/mɪlk/ 米尔克"},{"en":"juice","zh":"果汁","pron":"/dʒuːs/ 居斯"},{"en":"bread","zh":"面包","pron":"/bred/ 布瑞德"},{"en":"water","zh":"水","pron":"/ˈwɔːtə(r)/ 沃特"}],"sentences":[{"en":"I like hamburgers.","zh":"我喜欢汉堡包。","pron":"爱 赖克 汉姆伯格斯。"},{"en":"I like hot dogs.","zh":"我喜欢热狗。","pron":"爱 赖克 浩特 道格兹。"},{"en":"Have some Coke.","zh":"喝点可乐吧。","pron":"海夫 萨姆 扣克。"},{"en":"I like cake.","zh":"我喜欢蛋糕。","pron":"爱 赖克 凯克。"},{"en":"Have an apple.","zh":"吃个苹果吧。","pron":"海夫 安 阿婆。"}]},{"id":"yy3-u-7","book":"down","no":1,"name":"Unit 1 Let's go to school. 我们去上学吧。","focus":"学校与教室物品、提议一起做事","points":[{"t":"核心单词","c":"school 学校 / classroom 教室 / textbook 课本 / storybook 故事书 / Chinese book 语文书 / English book 英语书 / exercise book 练习本 / notebook 笔记本 / desk 书桌 / chair 椅子"},{"t":"核心句型","c":"Let's go to school. 我们去上学吧。 / I have a new textbook. 我有一本新课本。 / Can I see it? 我能看看吗？"},{"t":"语法要点","c":"Let's + 动词原形 表示建议“我们做……吧”；Can I ...? 用来礼貌请求；Sure. Here you are. 表示“当然，给你”。"},{"t":"易错提醒","c":"Let's = Let us，不是 Let is；storybook 是一个词；Chinese book 两个词都要首字母大写。"},{"t":"学习建议","c":"指认教室里的物品说英文；用 Let's ... 邀请同伴一起做事；每天记3个学校用品词。"},{"t":"口语交际","c":"用 Let's go to school. 提议上学，展示新书说 I have a new ...，并礼貌请求 Can I see it?。"}],"words":[{"en":"school","zh":"学校","pron":"/skuːl/ 斯故"},{"en":"classroom","zh":"教室","pron":"/ˈklɑːsruːm/ 克拉斯入姆"},{"en":"textbook","zh":"课本","pron":"/ˈtekstbʊk/ 泰克斯特布克"},{"en":"storybook","zh":"故事书","pron":"/ˈstɔːribʊk/ 斯多瑞布克"},{"en":"Chinese book","zh":"语文书","pron":"/ˌtʃaɪˈniːz bʊk/ 柴尼兹 布克"},{"en":"English book","zh":"英语书","pron":"/ˈɪŋɡlɪʃ bʊk/ 英格利许 布克"},{"en":"exercise book","zh":"练习本","pron":"/ˈeksəsaɪz bʊk/ 埃克赛兹 布克"},{"en":"notebook","zh":"笔记本","pron":"/ˈnəʊtbʊk/ 诺特布克"},{"en":"desk","zh":"书桌","pron":"/desk/ 戴斯克"},{"en":"chair","zh":"椅子","pron":"/tʃeə(r)/ 擦尔"},{"en":"blackboard","zh":"黑板","pron":"/ˈblækbɔːd/ 布莱克波德"},{"en":"teacher","zh":"老师","pron":"/ˈtiːtʃə(r)/ 提彻"}],"sentences":[{"en":"Let's go to school.","zh":"我们去上学吧。","pron":"赖茨 勾 吐 斯故。"},{"en":"I have a new textbook.","zh":"我有一本新课本。","pron":"爱 海夫 饿 纽 泰克斯特布克。"},{"en":"Can I see it?","zh":"我能看看吗？","pron":"堪 爱 西 一特？"},{"en":"Sure. Here you are.","zh":"当然。给你。","pron":"秀尔。希尔 优 阿。"},{"en":"What's on the desk?","zh":"书桌上有什么？","pron":"沃茨 昂 泽 戴斯克？"}]},{"id":"yy3-u-8","book":"down","no":2,"name":"Unit 2 I'm in Class One, Grade Three. 我在三年一班。","focus":"数字1-12、年级与班级表达","points":[{"t":"核心单词","c":"one 一 / two 二 / three 三 / four 四 / five 五 / six 六 / seven 七 / eight 八 / nine 九 / ten 十 / eleven 十一 / twelve 十二"},{"t":"核心句型","c":"I'm in Class One. 我在一班。 / I'm in Class Four, Grade Three. 我在三年四班。 / How old are you? 你几岁了？"},{"t":"语法要点","c":"Class 和 Grade 首字母要大写在班年级前；I'm in Class + 数字, Grade + 数字；Pleased to meet you. 用于初次见面。"},{"t":"易错提醒","c":"Class、Grade 和数字首字母都大写；说班级顺序“几班”数字用英语单词；How old are you 问年龄不是问东西。"},{"t":"学习建议","c":"用左手比数字并用英语说；写自己的班级 Grade Three, Class ... 练说；和同伴互问 How old are you?。"},{"t":"口语交际","c":"用 I'm in Class ..., Grade ... 介绍班级，用 Pleased to meet you. 打招呼，并用 How old are you? 问年龄。"}],"words":[{"en":"one","zh":"一","pron":"/wʌn/ 万"},{"en":"two","zh":"二","pron":"/tuː/ 吐"},{"en":"three","zh":"三","pron":"/θriː/ 斯瑞"},{"en":"four","zh":"四","pron":"/fɔː(r)/ 佛"},{"en":"five","zh":"五","pron":"/faɪv/ 法伊夫"},{"en":"six","zh":"六","pron":"/sɪks/ 西克斯"},{"en":"seven","zh":"七","pron":"/ˈsevn/ 赛文"},{"en":"eight","zh":"八","pron":"/eɪt/ 埃特"},{"en":"nine","zh":"九","pron":"/naɪn/ 耐恩"},{"en":"ten","zh":"十","pron":"/ten/ 疼"},{"en":"eleven","zh":"十一","pron":"/ɪˈlevn/ 伊莱文"},{"en":"twelve","zh":"十二","pron":"/twelv/ 特外夫"}],"sentences":[{"en":"I'm in Class One.","zh":"我在一班。","pron":"爱姆 因 克拉斯 万。"},{"en":"I'm in Class Four, Grade Three.","zh":"我在三年四班。","pron":"爱姆 因 克拉斯 佛，格瑞德 斯瑞。"},{"en":"Pleased to meet you.","zh":"很高兴见到你。","pron":"普雷兹德 吐 密特 优。"},{"en":"How old are you?","zh":"你几岁了？","pron":"豪 欧得 阿 优？"},{"en":"I'm eight.","zh":"我八岁了。","pron":"爱姆 埃特。"}]},{"id":"yy3-u-9","book":"down","no":3,"name":"Unit 3 This is my father. 这是我的爸爸。","focus":"家庭成员称谓、介绍家人","points":[{"t":"核心单词","c":"father 爸爸 / mother 妈妈 / brother 兄弟 / sister 姐妹 / daughter 女儿 / son 儿子 / grandfather 祖父 / grandmother 祖母 / uncle 叔叔 / aunt 阿姨"},{"t":"核心句型","c":"This is my father. 这是我的爸爸。 / Who's this? 这是谁？ / That's my grandfather. 那是我的祖父。"},{"t":"语法要点","c":"This is ... 介绍近处的人，That is ... 介绍远处的人；Who's = Who is，用来问“谁是……”；father 口语常说 dad。"},{"t":"易错提醒","c":"this（这，近）和 that（那，远）别混；grandfather/grandmother 可简称 grandpa/grandma；brother 可指哥哥也可指弟弟。"},{"t":"学习建议","c":"拿家庭照片用 This is my ... 介绍；和同伴互问 Who's this?；每天记3个家庭成员词。"},{"t":"口语交际","c":"展示全家福，用 This is my ... / That's my ... 介绍家人，并回答同伴的 Who's this/that?。"}],"words":[{"en":"father","zh":"爸爸","pron":"/ˈfɑːðə(r)/ 法泽"},{"en":"mother","zh":"妈妈","pron":"/ˈmʌðə(r)/ 妈泽"},{"en":"brother","zh":"兄弟","pron":"/ˈbrʌðə(r)/ 布拉泽"},{"en":"sister","zh":"姐妹","pron":"/ˈsɪstə(r)/ 西斯特"},{"en":"daughter","zh":"女儿","pron":"/ˈdɔːtə(r)/ 多特"},{"en":"son","zh":"儿子","pron":"/sʌn/ 桑"},{"en":"grandfather","zh":"祖父","pron":"/ˈɡrænfɑːðə(r)/ 格兰法泽"},{"en":"grandmother","zh":"祖母","pron":"/ˈɡrænmʌðə(r)/ 格兰妈泽"},{"en":"uncle","zh":"叔叔","pron":"/ˈʌŋkl/ 昂扣"},{"en":"aunt","zh":"阿姨","pron":"/ɑːnt/ 安特"},{"en":"family","zh":"家庭","pron":"/ˈfæməli/ 法么里"},{"en":"baby","zh":"婴儿","pron":"/ˈbeɪbi/ 贝比"}],"sentences":[{"en":"This is my father.","zh":"这是我的爸爸。","pron":"贼斯 一兹 买 法泽。"},{"en":"This is my mother.","zh":"这是我的妈妈。","pron":"贼斯 一兹 买 妈泽。"},{"en":"Who's this?","zh":"这是谁？","pron":"胡兹 贼斯？"},{"en":"That's my grandfather.","zh":"那是我的祖父。","pron":"贼兹 买 格兰法泽。"},{"en":"Who's that woman?","zh":"那个女人是谁？","pron":"胡兹 贼特 乌曼？"}]},{"id":"yy3-u-10","book":"down","no":4,"name":"Unit 4 Do you like candy? 你喜欢糖果吗？","focus":"食物与水果、询问与表达喜好","points":[{"t":"核心单词","c":"mango 芒果 / bread 面包 / candy 糖果 / doughnut 面包圈 / coffee 咖啡 / fruit 水果 / grapes 葡萄 / honey 蜂蜜 / ice cream 冰淇淋 / jam 果酱"},{"t":"核心句型","c":"Do you like candy? 你喜欢糖果吗？ / Yes, I do. 是的，我喜欢。 / No, I don't. 不，我不喜欢。"},{"t":"语法要点","c":"Do you like ...? 问喜好，肯定答 Yes, I do.，否定答 No, I don't.；don't = do not。"},{"t":"易错提醒","c":"否定回答用 I don't 不是 I don't like；candy 作“糖果”常不可数；grapes 是复数要加 s。"},{"t":"学习建议","c":"画出爱吃的食物并写英文；用 Do you like ...? 调查同伴喜好；注意 Yes/No 的完整回答。"},{"t":"口语交际","c":"用 Do you like ...? 询问同伴对食物的喜好，并用 Yes, I do. / No, I don't. 回答。"}],"words":[{"en":"mango","zh":"芒果","pron":"/ˈmæŋɡəʊ/ 曼勾"},{"en":"bread","zh":"面包","pron":"/bred/ 布瑞德"},{"en":"candy","zh":"糖果","pron":"/ˈkændi/ 堪迪"},{"en":"doughnut","zh":"面包圈","pron":"/ˈdəʊnʌt/ 逗纳特"},{"en":"coffee","zh":"咖啡","pron":"/ˈkɒfi/ 考菲"},{"en":"fruit","zh":"水果","pron":"/fruːt/ 夫入特"},{"en":"grapes","zh":"葡萄","pron":"/ɡreɪps/ 格瑞普斯"},{"en":"honey","zh":"蜂蜜","pron":"/ˈhʌni/ 哈尼"},{"en":"ice cream","zh":"冰淇淋","pron":"/ˈaɪs kriːm/ 艾斯 克瑞姆"},{"en":"jam","zh":"果酱","pron":"/dʒæm/ 詹姆"},{"en":"banana","zh":"香蕉","pron":"/bəˈnɑːnə/ 波南那"},{"en":"apple","zh":"苹果","pron":"/ˈæpl/ 阿婆"}],"sentences":[{"en":"Do you like candy?","zh":"你喜欢糖果吗？","pron":"度 优 赖克 堪迪？"},{"en":"Yes, I do.","zh":"是的，我喜欢。","pron":"耶斯，爱 度。"},{"en":"No, I don't.","zh":"不，我不喜欢。","pron":"诺，爱 东特。"},{"en":"I like mangoes.","zh":"我喜欢芒果。","pron":"爱 赖克 曼勾兹。"},{"en":"Do you like grapes?","zh":"你喜欢葡萄吗？","pron":"度 优 赖克 格瑞普斯？"}]},{"id":"yy3-u-11","book":"down","no":5,"name":"Unit 5 It's a parrot. 它是一只鹦鹉。","focus":"动物名称、确认与指认动物","points":[{"t":"核心单词","c":"kangaroo 袋鼠 / lion 狮子 / owl 猫头鹰 / parrot 鹦鹉 / quail 鹌鹑 / rooster 公鸡 / elephant 大象 / tiger 老虎 / nest 鸟巢 / monkey 猴子"},{"t":"核心句型","c":"It's a parrot. 它是一只鹦鹉。 / What's this? 这是什么？ / It's a lion. 它是一头狮子。"},{"t":"语法要点","c":"It's = It is，用于说明“它是……”；What's = What is，问“是什么”；动物前用 a/an（an elephant, a tiger）。"},{"t":"易错提醒","c":"elephant 以元音开头用 an elephant；owl 读音注意 w 不发音；parrot 双写 r。"},{"t":"学习建议","c":"看动物图片快速说英文；玩“猜动物”游戏用 What's this?；每天记3个动物词。"},{"t":"口语交际","c":"指图问 What's this?，用 It's a/an ... 回答，并说出动物的名称。"}],"words":[{"en":"kangaroo","zh":"袋鼠","pron":"/ˌkæŋɡəˈruː/ 堪哥入"},{"en":"lion","zh":"狮子","pron":"/ˈlaɪən/ 赖恩"},{"en":"owl","zh":"猫头鹰","pron":"/aʊl/ 奥尔"},{"en":"parrot","zh":"鹦鹉","pron":"/ˈpærət/ 派若特"},{"en":"quail","zh":"鹌鹑","pron":"/kweɪl/ 夸尔"},{"en":"rooster","zh":"公鸡","pron":"/ˈruːstə(r)/ 路斯特"},{"en":"elephant","zh":"大象","pron":"/ˈelɪfənt/ 埃里范特"},{"en":"tiger","zh":"老虎","pron":"/ˈtaɪɡə(r)/ 泰格"},{"en":"nest","zh":"鸟巢","pron":"/nest/ 耐斯特"},{"en":"monkey","zh":"猴子","pron":"/ˈmʌŋki/ 忙ki"},{"en":"panda","zh":"熊猫","pron":"/ˈpændə/ 潘得"},{"en":"bird","zh":"鸟","pron":"/bɜːd/ 勃德"}],"sentences":[{"en":"It's a parrot.","zh":"它是一只鹦鹉。","pron":"一茨 饿 派若特。"},{"en":"What's this?","zh":"这是什么？","pron":"沃茨 贼斯？"},{"en":"It's a lion.","zh":"它是一头狮子。","pron":"一茨 饿 赖恩。"},{"en":"It's an elephant.","zh":"它是一头大象。","pron":"一茨 安 埃里范特。"},{"en":"It's a tiger.","zh":"它是一只老虎。","pron":"一茨 饿 泰格。"}]},{"id":"yy3-u-12","book":"down","no":6,"name":"Unit 6 Is this your skirt? 这是你的裙子吗？","focus":"衣物名称、确认物品归属","points":[{"t":"核心单词","c":"skirt 裙子 / T-shirt T恤 / uniform 制服 / vest 背心 / watch 手表 / box 盒子 / yacht 帆船 / zebra 斑马 / coat 外套 / sweater 毛衣"},{"t":"核心句型","c":"Is this your skirt? 这是你的裙子吗？ / Yes, it is. 是的，它是。 / No, it isn't. 不，它不是。"},{"t":"语法要点","c":"Is this ...? 问“这是……吗”；your 是“你的”；肯定答 Yes, it is.，否定答 No, it isn't.（isn't = is not）。"},{"t":"易错提醒","c":"skirt 中 ir 发 /ɜː/；否定回答用 it isn't 不是 it's not（口语均可，但教材多用 isn't）；T-shirt 中间有连字符且 T 大写。"},{"t":"学习建议","c":"把衣柜衣物标英文；用 Is this your ...? 互相认领物品；每天记3个衣物词。"},{"t":"口语交际","c":"拿起衣物问 Is this your ...?，同伴用 Yes, it is. / No, it isn't. 回答，练习物品归属。"}],"words":[{"en":"skirt","zh":"裙子","pron":"/skɜːt/ 斯克特"},{"en":"T-shirt","zh":"T恤","pron":"/ˈtiː ʃɜːt/ 提 舍特"},{"en":"uniform","zh":"制服","pron":"/ˈjuːnɪfɔːm/ 由尼佛姆"},{"en":"vest","zh":"背心","pron":"/vest/ 外斯特"},{"en":"watch","zh":"手表","pron":"/wɒtʃ/ 沃驰"},{"en":"box","zh":"盒子","pron":"/bɒks/ 波克斯"},{"en":"yacht","zh":"帆船","pron":"/jɒt/ 邀特"},{"en":"zebra","zh":"斑马","pron":"/ˈzebrə/ 泽布拉"},{"en":"coat","zh":"外套","pron":"/kəʊt/ 扣特"},{"en":"sweater","zh":"毛衣","pron":"/ˈswetə(r)/ 斯威特"},{"en":"shirt","zh":"衬衫","pron":"/ʃɜːt/ 舍特"},{"en":"sock","zh":"袜子","pron":"/sɒk/ 索克"}],"sentences":[{"en":"Is this your skirt?","zh":"这是你的裙子吗？","pron":"一兹 贼斯 哟 斯克特？"},{"en":"Yes, it is.","zh":"是的，它是。","pron":"耶斯，一特 一兹。"},{"en":"No, it isn't.","zh":"不，它不是。","pron":"诺，一特 一兹恩特。"},{"en":"Is this your T-shirt?","zh":"这是你的T恤吗？","pron":"一兹 贼斯 哟 提 舍特？"},{"en":"This is my coat.","zh":"这是我的外套。","pron":"贼斯 一兹 买 扣特。"}]}],"questions":[]};
+window.DATA_CHARS = {"units":[{"id":"yw-u-1","book":"up","no":1,"name":"第一单元 自然之美","words":[{"char":"潮","pinyin":"cháo","bushou":"氵","zuci":["潮水","观潮"]},{"char":"据","pinyin":"jù","bushou":"扌","zuci":["根据","据说"]},{"char":"堤","pinyin":"dī","bushou":"土","zuci":["河堤","大堤"]},{"char":"阔","pinyin":"kuò","bushou":"门","zuci":["宽阔","广阔"]},{"char":"盼","pinyin":"pàn","bushou":"目","zuci":["盼望","期盼"]},{"char":"滚","pinyin":"gǔn","bushou":"氵","zuci":["滚动","翻滚"]},{"char":"顿","pinyin":"dùn","bushou":"页","zuci":["顿时","停顿"]},{"char":"逐","pinyin":"zhú","bushou":"辶","zuci":["追逐","逐渐"]},{"char":"渐","pinyin":"jiàn","bushou":"氵","zuci":["渐渐","逐渐"]},{"char":"犹","pinyin":"yóu","bushou":"犭","zuci":["犹如","犹豫"]},{"char":"震","pinyin":"zhèn","bushou":"雨","zuci":["震动","地震"]},{"char":"余","pinyin":"yú","bushou":"人","zuci":["余波","剩余"]},{"char":"淘","pinyin":"táo","bushou":"氵","zuci":["淘洗","淘气"]},{"char":"鹅","pinyin":"é","bushou":"鸟","zuci":["白鹅","天鹅"]},{"char":"卵","pinyin":"luǎn","bushou":"卩","zuci":["鸟卵","卵石"]},{"char":"稻","pinyin":"dào","bushou":"禾","zuci":["水稻","稻田"]},{"char":"熟","pinyin":"shú","bushou":"灬","zuci":["成熟","熟悉"]},{"char":"俗","pinyin":"sú","bushou":"亻","zuci":["风俗","通俗"]}]},{"id":"yw-u-2","book":"up","no":2,"name":"第二单元 提问策略","words":[{"char":"豌","pinyin":"wān","bushou":"豆","zuci":["豌豆","豌豆苗"]},{"char":"按","pinyin":"àn","bushou":"扌","zuci":["按照","按时"]},{"char":"适","pinyin":"shì","bushou":"辶","zuci":["舒适","合适"]},{"char":"恐","pinyin":"kǒng","bushou":"心","zuci":["恐怕","恐龙"]},{"char":"枪","pinyin":"qiāng","bushou":"木","zuci":["手枪","枪支"]},{"char":"耐","pinyin":"nài","bushou":"而","zuci":["耐心","忍耐"]},{"char":"探","pinyin":"tàn","bushou":"扌","zuci":["探望","探索"]},{"char":"愉","pinyin":"yú","bushou":"忄","zuci":["愉快","愉悦"]},{"char":"曾","pinyin":"céng","bushou":"曰","zuci":["曾经","未曾"]},{"char":"蚊","pinyin":"wén","bushou":"虫","zuci":["蚊子","蚊香"]},{"char":"即","pinyin":"jí","bushou":"卩","zuci":["即使","立即"]},{"char":"横","pinyin":"héng","bushou":"木","zuci":["横竖","纵横"]},{"char":"竖","pinyin":"shù","bushou":"立","zuci":["竖立","横竖"]},{"char":"绳","pinyin":"shéng","bushou":"纟","zuci":["绳子","跳绳"]},{"char":"证","pinyin":"zhèng","bushou":"讠","zuci":["证明","证据"]},{"char":"研","pinyin":"yán","bushou":"石","zuci":["研究","钻研"]},{"char":"唤","pinyin":"huàn","bushou":"口","zuci":["呼唤","唤醒"]},{"char":"超","pinyin":"chāo","bushou":"走","zuci":["超过","超越"]}]},{"id":"yw-u-3","book":"up","no":3,"name":"第三单元 连续观察","words":[{"char":"暮","pinyin":"mù","bushou":"日","zuci":["日暮","暮色"]},{"char":"吟","pinyin":"yín","bushou":"口","zuci":["吟诵","吟唱"]},{"char":"题","pinyin":"tí","bushou":"页","zuci":["题目","问题"]},{"char":"侧","pinyin":"cè","bushou":"亻","zuci":["侧面","两侧"]},{"char":"峰","pinyin":"fēng","bushou":"山","zuci":["山峰","高峰"]},{"char":"缘","pinyin":"yuán","bushou":"纟","zuci":["缘故","边缘"]},{"char":"输","pinyin":"shū","bushou":"车","zuci":["输赢","运输"]},{"char":"虎","pinyin":"hǔ","bushou":"虍","zuci":["老虎","壁虎"]},{"char":"操","pinyin":"cāo","bushou":"扌","zuci":["操场","操心"]},{"char":"占","pinyin":"zhàn","bushou":"卜","zuci":["占领","独占"]},{"char":"嫩","pinyin":"nèn","bushou":"女","zuci":["嫩绿","娇嫩"]},{"char":"均","pinyin":"jūn","bushou":"土","zuci":["均匀","平均"]},{"char":"叠","pinyin":"dié","bushou":"又","zuci":["重叠","折叠"]},{"char":"隙","pinyin":"xì","bushou":"阝","zuci":["空隙","缝隙"]},{"char":"柄","pinyin":"bǐng","bushou":"木","zuci":["叶柄","把柄"]},{"char":"固","pinyin":"gù","bushou":"囗","zuci":["牢固","固定"]},{"char":"宅","pinyin":"zhái","bushou":"宀","zuci":["住宅","宅院"]},{"char":"择","pinyin":"zé","bushou":"扌","zuci":["选择","择优"]}]},{"id":"yw-u-4","book":"up","no":4,"name":"第四单元 神话故事","words":[{"char":"睁","pinyin":"zhēng","bushou":"目","zuci":["睁眼","睁开"]},{"char":"翻","pinyin":"fān","bushou":"羽","zuci":["翻身","翻滚"]},{"char":"斧","pinyin":"fǔ","bushou":"斤","zuci":["斧头","斧子"]},{"char":"劈","pinyin":"pī","bushou":"刀","zuci":["劈开","劈柴"]},{"char":"缓","pinyin":"huǎn","bushou":"纟","zuci":["缓慢","缓缓"]},{"char":"浊","pinyin":"zhuó","bushou":"氵","zuci":["浑浊","污浊"]},{"char":"丈","pinyin":"zhàng","bushou":"一","zuci":["万丈","丈量"]},{"char":"撑","pinyin":"chēng","bushou":"扌","zuci":["支撑","撑开"]},{"char":"竭","pinyin":"jié","bushou":"立","zuci":["竭力","枯竭"]},{"char":"液","pinyin":"yè","bushou":"氵","zuci":["血液","液体"]},{"char":"茂","pinyin":"mào","bushou":"艹","zuci":["茂盛","茂密"]},{"char":"滋","pinyin":"zī","bushou":"氵","zuci":["滋润","滋味"]},{"char":"帝","pinyin":"dì","bushou":"巾","zuci":["皇帝","上帝"]},{"char":"溺","pinyin":"nì","bushou":"氵","zuci":["溺水","沉溺"]},{"char":"返","pinyin":"fǎn","bushou":"辶","zuci":["返回","往返"]},{"char":"悲","pinyin":"bēi","bushou":"心","zuci":["悲伤","悲惨"]},{"char":"惨","pinyin":"cǎn","bushou":"忄","zuci":["悲惨","凄惨"]},{"char":"违","pinyin":"wéi","bushou":"辶","zuci":["违抗","违背"]}]},{"id":"yw-u-5","book":"up","no":5,"name":"第五单元 生活万花筒（习作单元）","words":[{"char":"嗅","pinyin":"xiù","bushou":"口","zuci":["嗅觉","嗅到"]},{"char":"呆","pinyin":"dāi","bushou":"口","zuci":["发呆","呆住"]},{"char":"奈","pinyin":"nài","bushou":"大","zuci":["无奈","奈何"]},{"char":"巢","pinyin":"cháo","bushou":"巛","zuci":["鸟巢","巢穴"]},{"char":"齿","pinyin":"chǐ","bushou":"齿","zuci":["牙齿","齿轮"]},{"char":"躯","pinyin":"qū","bushou":"身","zuci":["身躯","躯体"]},{"char":"掩","pinyin":"yǎn","bushou":"扌","zuci":["掩护","掩盖"]},{"char":"护","pinyin":"hù","bushou":"扌","zuci":["保护","爱护"]},{"char":"幼","pinyin":"yòu","bushou":"幺","zuci":["幼儿","幼小"]},{"char":"搏","pinyin":"bó","bushou":"扌","zuci":["搏斗","拼搏"]},{"char":"庞","pinyin":"páng","bushou":"广","zuci":["庞大","脸庞"]},{"char":"愣","pinyin":"lèng","bushou":"忄","zuci":["发愣","愣住"]},{"char":"级","pinyin":"jí","bushou":"纟","zuci":["年级","级别"]},{"char":"链","pinyin":"liàn","bushou":"钅","zuci":["铁链","链条"]},{"char":"颤","pinyin":"chàn","bushou":"页","zuci":["颤抖","发颤"]},{"char":"攀","pinyin":"pān","bushou":"手","zuci":["攀登","攀爬"]},{"char":"猴","pinyin":"hóu","bushou":"犭","zuci":["猴子","猕猴"]},{"char":"辫","pinyin":"biàn","bushou":"辛","zuci":["辫子","小辫"]}]},{"id":"yw-u-6","book":"up","no":6,"name":"第六单元 童年往事","words":[{"char":"摸","pinyin":"mō","bushou":"扌","zuci":["抚摸","摸索"]},{"char":"甚","pinyin":"shèn","bushou":"甘","zuci":["甚至","甚好"]},{"char":"跪","pinyin":"guì","bushou":"足","zuci":["下跪","跪拜"]},{"char":"捶","pinyin":"chuí","bushou":"扌","zuci":["捶打","捶背"]},{"char":"顽","pinyin":"wán","bushou":"页","zuci":["顽强","顽皮"]},{"char":"脖","pinyin":"bó","bushou":"月","zuci":["脖子","脖颈"]},{"char":"脱","pinyin":"tuō","bushou":"月","zuci":["脱落","摆脱"]},{"char":"概","pinyin":"gài","bushou":"木","zuci":["大概","概念"]},{"char":"惹","pinyin":"rě","bushou":"心","zuci":["惹祸","招惹"]},{"char":"昏","pinyin":"hūn","bushou":"日","zuci":["黄昏","昏迷"]},{"char":"握","pinyin":"wò","bushou":"扌","zuci":["握手","把握"]},{"char":"摔","pinyin":"shuāi","bushou":"扌","zuci":["摔倒","摔跤"]},{"char":"凭","pinyin":"píng","bushou":"几","zuci":["凭借","任凭"]},{"char":"段","pinyin":"duàn","bushou":"殳","zuci":["片段","段落"]},{"char":"逃","pinyin":"táo","bushou":"辶","zuci":["逃跑","逃走"]},{"char":"亏","pinyin":"kuī","bushou":"二","zuci":["吃亏","幸亏"]},{"char":"旋","pinyin":"xuán","bushou":"方","zuci":["旋转","盘旋"]},{"char":"溃","pinyin":"kuì","bushou":"氵","zuci":["溃败","崩溃"]}]},{"id":"yw-u-7","book":"up","no":7,"name":"第七单元 家国情怀","words":[{"char":"塞","pinyin":"sài","bushou":"宀","zuci":["边塞","要塞"]},{"char":"秦","pinyin":"qín","bushou":"禾","zuci":["秦朝","秦岭"]},{"char":"征","pinyin":"zhēng","bushou":"彳","zuci":["出征","征服"]},{"char":"词","pinyin":"cí","bushou":"讠","zuci":["歌词","词语"]},{"char":"催","pinyin":"cuī","bushou":"亻","zuci":["催促","催眠"]},{"char":"醉","pinyin":"zuì","bushou":"酉","zuci":["陶醉","醉酒"]},{"char":"杰","pinyin":"jié","bushou":"灬","zuci":["杰出","豪杰"]},{"char":"亦","pinyin":"yì","bushou":"亠","zuci":["亦然","人云亦云"]},{"char":"雄","pinyin":"xióng","bushou":"隹","zuci":["英雄","雄伟"]},{"char":"项","pinyin":"xiàng","bushou":"页","zuci":["项目","项链"]},{"char":"肃","pinyin":"sù","bushou":"聿","zuci":["严肃","肃静"]},{"char":"晰","pinyin":"xī","bushou":"日","zuci":["清晰","明晰"]},{"char":"振","pinyin":"zhèn","bushou":"扌","zuci":["振奋","振作"]},{"char":"胸","pinyin":"xiōng","bushou":"月","zuci":["胸怀","胸膛"]},{"char":"怀","pinyin":"huái","bushou":"忄","zuci":["怀念","胸怀"]},{"char":"赞","pinyin":"zàn","bushou":"贝","zuci":["赞叹","赞美"]},{"char":"顾","pinyin":"gù","bushou":"页","zuci":["照顾","回顾"]},{"char":"斥","pinyin":"chì","bushou":"斤","zuci":["训斥","斥责"]}]},{"id":"yw-u-8","book":"up","no":8,"name":"第八单元 历史传说","words":[{"char":"戎","pinyin":"róng","bushou":"戈","zuci":["戎马","戎装"]},{"char":"尝","pinyin":"cháng","bushou":"小","zuci":["品尝","尝试"]},{"char":"诸","pinyin":"zhū","bushou":"讠","zuci":["诸位","诸多"]},{"char":"竞","pinyin":"jìng","bushou":"立","zuci":["竞争","竞赛"]},{"char":"唯","pinyin":"wéi","bushou":"口","zuci":["唯一","唯独"]},{"char":"豹","pinyin":"bào","bushou":"豸","zuci":["豹子","猎豹"]},{"char":"派","pinyin":"pài","bushou":"氵","zuci":["派遣","派别"]},{"char":"娶","pinyin":"qǔ","bushou":"女","zuci":["娶亲","迎娶"]},{"char":"媳","pinyin":"xí","bushou":"女","zuci":["媳妇","儿媳"]},{"char":"妇","pinyin":"fù","bushou":"女","zuci":["妇女","夫妇"]},{"char":"淹","pinyin":"yān","bushou":"氵","zuci":["淹没","淹死"]},{"char":"逼","pinyin":"bī","bushou":"辶","zuci":["逼近","逼迫"]},{"char":"浮","pinyin":"fú","bushou":"氵","zuci":["漂浮","浮现"]},{"char":"旱","pinyin":"hàn","bushou":"日","zuci":["干旱","旱灾"]},{"char":"徒","pinyin":"tú","bushou":"彳","zuci":["徒弟","师徒"]},{"char":"扔","pinyin":"rēng","bushou":"扌","zuci":["扔掉","扔球"]},{"char":"饶","pinyin":"ráo","bushou":"饣","zuci":["求饶","富饶"]},{"char":"灌","pinyin":"guàn","bushou":"氵","zuci":["灌溉","浇灌"]}]},{"id":"yw-u-9","book":"down","no":1,"name":"第一单元 乡村生活","words":[{"char":"杂","pinyin":"zá","bushou":"木","zuci":["杂乱","复杂"]},{"char":"稀","pinyin":"xī","bushou":"禾","zuci":["稀疏","稀少"]},{"char":"篱","pinyin":"lí","bushou":"竹","zuci":["篱笆","竹篱"]},{"char":"蜻","pinyin":"qīng","bushou":"虫","zuci":["蜻蜓","蜻蜓点水"]},{"char":"蝶","pinyin":"dié","bushou":"虫","zuci":["蝴蝶","蝶泳"]},{"char":"宿","pinyin":"sù","bushou":"宀","zuci":["住宿","宿舍"]},{"char":"徐","pinyin":"xú","bushou":"彳","zuci":["徐徐","徐步"]},{"char":"疏","pinyin":"shū","bushou":"疋","zuci":["稀疏","疏通"]},{"char":"茅","pinyin":"máo","bushou":"艹","zuci":["茅草","茅屋"]},{"char":"檐","pinyin":"yán","bushou":"木","zuci":["屋檐","房檐"]},{"char":"翁","pinyin":"wēng","bushou":"羽","zuci":["老翁","渔翁"]},{"char":"构","pinyin":"gòu","bushou":"木","zuci":["结构","构成"]},{"char":"饰","pinyin":"shì","bushou":"饣","zuci":["装饰","首饰"]},{"char":"蹲","pinyin":"dūn","bushou":"足","zuci":["蹲下","蹲守"]},{"char":"序","pinyin":"xù","bushou":"广","zuci":["顺序","序言"]},{"char":"率","pinyin":"shuài","bushou":"玄","zuci":["率领","直率"]},{"char":"耸","pinyin":"sǒng","bushou":"耳","zuci":["耸立","高耸"]},{"char":"谐","pinyin":"xié","bushou":"讠","zuci":["和谐","谐音"]}]},{"id":"yw-u-10","book":"down","no":2,"name":"第二单元 现代科技","words":[{"char":"怒","pinyin":"nù","bushou":"心","zuci":["愤怒","怒吼"]},{"char":"吼","pinyin":"hǒu","bushou":"口","zuci":["怒吼","吼叫"]},{"char":"脂","pinyin":"zhī","bushou":"月","zuci":["松脂","脂肪"]},{"char":"拭","pinyin":"shì","bushou":"扌","zuci":["擦拭","拂拭"]},{"char":"餐","pinyin":"cān","bushou":"食","zuci":["早餐","野餐"]},{"char":"渗","pinyin":"shèn","bushou":"氵","zuci":["渗透","渗出"]},{"char":"番","pinyin":"fān","bushou":"采","zuci":["一番","番茄"]},{"char":"埋","pinyin":"mái","bushou":"土","zuci":["掩埋","埋葬"]},{"char":"测","pinyin":"cè","bushou":"氵","zuci":["推测","测量"]},{"char":"详","pinyin":"xiáng","bushou":"讠","zuci":["详细","端详"]},{"char":"笨","pinyin":"bèn","bushou":"竹","zuci":["笨重","愚笨"]},{"char":"钝","pinyin":"dùn","bushou":"钅","zuci":["迟钝","钝角"]},{"char":"描","pinyin":"miáo","bushou":"扌","zuci":["描绘","描写"]},{"char":"隧","pinyin":"suì","bushou":"阝","zuci":["隧道","隧洞"]},{"char":"膨","pinyin":"péng","bushou":"月","zuci":["膨胀","膨大"]},{"char":"辟","pinyin":"pì","bushou":"辛","zuci":["开辟","精辟"]},{"char":"纳","pinyin":"nà","bushou":"纟","zuci":["纳米","归纳"]},{"char":"蔬","pinyin":"shū","bushou":"艹","zuci":["蔬菜","果蔬"]}]},{"id":"yw-u-11","book":"down","no":3,"name":"第三单元 现代诗歌","words":[{"char":"繁","pinyin":"fán","bushou":"糸","zuci":["繁星","繁忙"]},{"char":"漫","pinyin":"màn","bushou":"氵","zuci":["漫长","弥漫"]},{"char":"灭","pinyin":"miè","bushou":"火","zuci":["消灭","熄灭"]},{"char":"藤","pinyin":"téng","bushou":"艹","zuci":["藤萝","紫藤"]},{"char":"萝","pinyin":"luó","bushou":"艹","zuci":["萝卜","藤萝"]},{"char":"膝","pinyin":"xī","bushou":"月","zuci":["膝盖","双膝"]},{"char":"涛","pinyin":"tāo","bushou":"氵","zuci":["波涛","松涛"]},{"char":"躲","pinyin":"duǒ","bushou":"身","zuci":["躲藏","躲避"]},{"char":"瓶","pinyin":"píng","bushou":"瓦","zuci":["花瓶","瓶子"]},{"char":"挤","pinyin":"jǐ","bushou":"扌","zuci":["拥挤","挤压"]},{"char":"叉","pinyin":"chā","bushou":"又","zuci":["交叉","叉子"]},{"char":"挥","pinyin":"huī","bushou":"扌","zuci":["挥手","指挥"]},{"char":"桦","pinyin":"huà","bushou":"木","zuci":["白桦","桦树"]},{"char":"涂","pinyin":"tú","bushou":"氵","zuci":["涂抹","涂色"]},{"char":"绣","pinyin":"xiù","bushou":"纟","zuci":["绣花","刺绣"]},{"char":"潇","pinyin":"xiāo","bushou":"氵","zuci":["潇洒","潇潇"]},{"char":"朦","pinyin":"méng","bushou":"月","zuci":["朦胧","朦朦胧胧"]},{"char":"寂","pinyin":"jì","bushou":"宀","zuci":["寂静","寂寞"]}]},{"id":"yw-u-12","book":"down","no":4,"name":"第四单元 作家笔下的动物","words":[{"char":"忧","pinyin":"yōu","bushou":"忄","zuci":["忧愁","担忧"]},{"char":"虑","pinyin":"lǜ","bushou":"虍","zuci":["考虑","忧虑"]},{"char":"贪","pinyin":"tān","bushou":"贝","zuci":["贪心","贪玩"]},{"char":"职","pinyin":"zhí","bushou":"耳","zuci":["职业","尽职"]},{"char":"蹭","pinyin":"cèng","bushou":"足","zuci":["蹭痒","磨蹭"]},{"char":"稿","pinyin":"gǎo","bushou":"禾","zuci":["稿子","文稿"]},{"char":"腔","pinyin":"qiāng","bushou":"月","zuci":["口腔","腔调"]},{"char":"解","pinyin":"jiě","bushou":"角","zuci":["解释","理解"]},{"char":"蛇","pinyin":"shé","bushou":"虫","zuci":["毒蛇","蛇皮"]},{"char":"遭","pinyin":"zāo","bushou":"辶","zuci":["遭遇","遭殃"]},{"char":"盆","pinyin":"pén","bushou":"皿","zuci":["花盆","脸盆"]},{"char":"讨","pinyin":"tǎo","bushou":"讠","zuci":["讨厌","讨论"]},{"char":"厌","pinyin":"yàn","bushou":"厂","zuci":["讨厌","厌倦"]},{"char":"绩","pinyin":"jì","bushou":"纟","zuci":["成绩","功绩"]},{"char":"警","pinyin":"jǐng","bushou":"言","zuci":["警戒","警惕"]},{"char":"戒","pinyin":"jiè","bushou":"戈","zuci":["警戒","戒备"]},{"char":"脾","pinyin":"pí","bushou":"月","zuci":["脾气","脾胃"]},{"char":"捷","pinyin":"jié","bushou":"扌","zuci":["敏捷","捷报"]}]},{"id":"yw-u-13","book":"down","no":5,"name":"第五单元 妙笔写美景（习作单元）","words":[{"char":"扩","pinyin":"kuò","bushou":"扌","zuci":["扩大","扩散"]},{"char":"范","pinyin":"fàn","bushou":"艹","zuci":["范围","模范"]},{"char":"努","pinyin":"nǔ","bushou":"力","zuci":["努力","努嘴"]},{"char":"刹","pinyin":"chà","bushou":"刂","zuci":["刹那","一刹那"]},{"char":"烂","pinyin":"làn","bushou":"火","zuci":["灿烂","破烂"]},{"char":"替","pinyin":"tì","bushou":"曰","zuci":["代替","替换"]},{"char":"镶","pinyin":"xiāng","bushou":"钅","zuci":["镶嵌","镶边"]},{"char":"紫","pinyin":"zǐ","bushou":"糸","zuci":["紫色","紫红"]},{"char":"仅","pinyin":"jǐn","bushou":"亻","zuci":["不仅","仅仅"]},{"char":"浙","pinyin":"zhè","bushou":"氵","zuci":["浙江","江浙"]},{"char":"罗","pinyin":"luó","bushou":"罒","zuci":["罗列","网罗"]},{"char":"杜","pinyin":"dù","bushou":"木","zuci":["杜鹃","杜绝"]},{"char":"鹃","pinyin":"juān","bushou":"鸟","zuci":["杜鹃","杜鹃花"]},{"char":"窄","pinyin":"zhǎi","bushou":"穴","zuci":["狭窄","窄小"]},{"char":"郁","pinyin":"yù","bushou":"阝","zuci":["浓郁","忧郁"]},{"char":"肩","pinyin":"jiān","bushou":"月","zuci":["肩膀","双肩"]},{"char":"移","pinyin":"yí","bushou":"禾","zuci":["移动","转移"]},{"char":"笋","pinyin":"sǔn","bushou":"竹","zuci":["竹笋","春笋"]}]},{"id":"yw-u-14","book":"down","no":6,"name":"第六单元 成长故事","words":[{"char":"晋","pinyin":"jìn","bushou":"日","zuci":["晋级","东晋"]},{"char":"炕","pinyin":"kàng","bushou":"火","zuci":["火炕","土炕"]},{"char":"铅","pinyin":"qiān","bushou":"钅","zuci":["铅笔","铅球"]},{"char":"迈","pinyin":"mài","bushou":"辶","zuci":["迈步","年迈"]},{"char":"栓","pinyin":"shuān","bushou":"木","zuci":["枪栓","门栓"]},{"char":"胳","pinyin":"gē","bushou":"月","zuci":["胳膊","胳臂"]},{"char":"膊","pinyin":"bó","bushou":"月","zuci":["胳膊","赤膊"]},{"char":"劫","pinyin":"jié","bushou":"力","zuci":["抢劫","劫难"]},{"char":"柜","pinyin":"guì","bushou":"木","zuci":["衣柜","书柜"]},{"char":"绸","pinyin":"chóu","bushou":"纟","zuci":["丝绸","绸缎"]},{"char":"扒","pinyin":"bā","bushou":"扌","zuci":["扒开","扒拉"]},{"char":"敌","pinyin":"dí","bushou":"攵","zuci":["敌人","无敌"]},{"char":"尸","pinyin":"shī","bushou":"尸","zuci":["尸体","尸首"]},{"char":"趁","pinyin":"chèn","bushou":"走","zuci":["趁早","趁机"]},{"char":"慌","pinyin":"huāng","bushou":"忄","zuci":["慌张","惊慌"]}]},{"id":"yw-u-15","book":"down","no":7,"name":"第七单元 人物品质","words":[{"char":"芙","pinyin":"fú","bushou":"艹","zuci":["芙蓉","芙蓉花"]},{"char":"蓉","pinyin":"róng","bushou":"艹","zuci":["芙蓉","豆蓉"]},{"char":"洛","pinyin":"luò","bushou":"氵","zuci":["洛阳","洛水"]},{"char":"壶","pinyin":"hú","bushou":"士","zuci":["水壶","茶壶"]},{"char":"雁","pinyin":"yàn","bushou":"隹","zuci":["大雁","雁群"]},{"char":"砚","pinyin":"yàn","bushou":"石","zuci":["砚台","笔砚"]},{"char":"乾","pinyin":"qián","bushou":"乙","zuci":["乾坤","乾隆"]},{"char":"囊","pinyin":"náng","bushou":"口","zuci":["胶囊","行囊"]},{"char":"萤","pinyin":"yíng","bushou":"虫","zuci":["萤火虫","流萤"]},{"char":"勤","pinyin":"qín","bushou":"力","zuci":["勤劳","勤奋"]},{"char":"博","pinyin":"bó","bushou":"十","zuci":["博士","渊博"]},{"char":"贫","pinyin":"pín","bushou":"贝","zuci":["贫穷","贫困"]},{"char":"逢","pinyin":"féng","bushou":"辶","zuci":["相逢","重逢"]},{"char":"剖","pinyin":"pōu","bushou":"刂","zuci":["解剖","剖析"]},{"char":"混","pinyin":"hùn","bushou":"氵","zuci":["混乱","混合"]},{"char":"维","pinyin":"wéi","bushou":"纟","zuci":["维护","维持"]},{"char":"遣","pinyin":"qiǎn","bushou":"辶","zuci":["派遣","调遣"]},{"char":"践","pinyin":"jiàn","bushou":"足","zuci":["实践","践踏"]}]},{"id":"yw-u-16","book":"down","no":8,"name":"第八单元 中外经典童话","words":[{"char":"介","pinyin":"jiè","bushou":"人","zuci":["介绍","介意"]},{"char":"绍","pinyin":"shào","bushou":"纟","zuci":["介绍","绍兴"]},{"char":"妖","pinyin":"yāo","bushou":"女","zuci":["妖怪","妖精"]},{"char":"矩","pinyin":"jǔ","bushou":"矢","zuci":["规矩","矩形"]},{"char":"乖","pinyin":"guāi","bushou":"丿","zuci":["乖巧","乖乖"]},{"char":"撵","pinyin":"niǎn","bushou":"扌","zuci":["撵走","撵跑"]},{"char":"烫","pinyin":"tàng","bushou":"火","zuci":["滚烫","烫伤"]},{"char":"溜","pinyin":"liū","bushou":"氵","zuci":["溜走","溜冰"]},{"char":"福","pinyin":"fú","bushou":"礻","zuci":["幸福","福气"]},{"char":"舔","pinyin":"tiǎn","bushou":"舌","zuci":["舔食","舔嘴唇"]},{"char":"葵","pinyin":"kuí","bushou":"艹","zuci":["向日葵","葵花"]},{"char":"瘦","pinyin":"shòu","bushou":"疒","zuci":["瘦弱","消瘦"]},{"char":"罢","pinyin":"bà","bushou":"罒","zuci":["罢工","罢休"]},{"char":"硕","pinyin":"shuò","bushou":"石","zuci":["硕大","硕果"]},{"char":"允","pinyin":"yǔn","bushou":"儿","zuci":["允许","应允"]},{"char":"砌","pinyin":"qì","bushou":"石","zuci":["砌墙","堆砌"]},{"char":"禁","pinyin":"jìn","bushou":"示","zuci":["禁止","禁区"]},{"char":"拆","pinyin":"chāi","bushou":"扌","zuci":["拆除","拆开"]}]}]};
+window.DATA_ENGLISH_WORDS = {"units":[{"id":"yy-u-1","book":"up","no":1,"name":"Unit 1 This is my new friend 我的新朋友","words":[{"en":"China","zh":"中国","pron":"/ˈtʃaɪnə/ 柴那"},{"en":"America","zh":"美国","pron":"/əˈmerɪkə/ 阿美瑞卡"},{"en":"England","zh":"英国","pron":"/ˈɪŋɡlənd/ 英格蓝的"},{"en":"Singapore","zh":"新加坡","pron":"/ˈsɪŋəpɔː/ 新加坡"},{"en":"Canada","zh":"加拿大","pron":"/ˈkænədə/ 坎那达"},{"en":"good","zh":"好的","pron":"/ɡʊd/ 古德"},{"en":"friend","zh":"朋友","pron":"/frend/ 弗兰德"},{"en":"brother","zh":"兄弟","pron":"/ˈbrʌðə/ 布拉泽"},{"en":"sister","zh":"姐妹","pron":"/ˈsɪstə/ 席斯特"},{"en":"boy","zh":"男孩","pron":"/bɔɪ/ 波伊"},{"en":"girl","zh":"女孩","pron":"/ɡɜːl/ 哥儿"},{"en":"teacher","zh":"教师","pron":"/ˈtiːtʃə/ 提彻"},{"en":"farmer","zh":"农民；农场主","pron":"/ˈfɑːmə/ 法墨"},{"en":"doctor","zh":"医生","pron":"/ˈdɒktə/ 多克特"},{"en":"nurse","zh":"护士","pron":"/nɜːs/ 讷斯"},{"en":"driver","zh":"司机；驾驶员","pron":"/ˈdraɪvə/ 拽沃"}],"sentences":[{"en":"This is my new friend.","zh":"这是我的新朋友。","pron":"兹 衣兹 买 纽 弗兰德。"},{"en":"Where are you from?","zh":"你来自哪里？","pron":"威尔 阿 优 夫若姆？"},{"en":"I'm from Beijing, China.","zh":"我来自中国北京。","pron":"艾姆 夫若姆 北京，柴那。"},{"en":"Who's this boy?","zh":"这个男孩是谁？","pron":"胡兹 兹 波伊？"},{"en":"He's my brother.","zh":"他是我的兄弟。","pron":"嘿兹 买 布拉泽。"},{"en":"What does your father do?","zh":"你的爸爸是做什么工作的？","pron":"沃特 达兹 哟 法泽 杜？"}]},{"id":"yy-u-2","book":"up","no":2,"name":"Unit 2 What's your number? 你的号码是多少","words":[{"en":"class","zh":"班级","pron":"/klɑːs/ 克拉丝"},{"en":"grade","zh":"年级","pron":"/ɡreɪd/ 格瑞德"},{"en":"one","zh":"一","pron":"/wʌn/ 万"},{"en":"two","zh":"二","pron":"/tuː/ 兔"},{"en":"three","zh":"三","pron":"/θriː/ 斯瑞"},{"en":"four","zh":"四","pron":"/fɔː/ 佛"},{"en":"five","zh":"五","pron":"/faɪv/ 法伊夫"},{"en":"six","zh":"六","pron":"/sɪks/ 斯克斯"},{"en":"thirteen","zh":"十三","pron":"/ˌθɜːˈtiːn/ 瑟提恩"},{"en":"fourteen","zh":"十四","pron":"/ˌfɔːˈtiːn/ 佛提恩"},{"en":"fifteen","zh":"十五","pron":"/ˌfɪfˈtiːn/ 菲夫提恩"},{"en":"sixteen","zh":"十六","pron":"/ˌsɪksˈtiːn/ 斯克斯提恩"},{"en":"twenty","zh":"二十","pron":"/ˈtwenti/ 吞提"},{"en":"seven","zh":"七","pron":"/ˈsevən/ 赛文"},{"en":"eight","zh":"八","pron":"/eɪt/ 诶特"},{"en":"nine","zh":"九","pron":"/naɪn/ 奈恩"}],"sentences":[{"en":"What's your number?","zh":"你的号码是多少？","pron":"沃茨 哟 囊波？"},{"en":"I'm number fifteen.","zh":"我是15号。","pron":"艾姆 囊波 菲夫提恩。"},{"en":"What class are you in?","zh":"你在哪个班？","pron":"沃特 克拉丝 阿 优 因？"},{"en":"I'm in Class Three, Grade Four.","zh":"我在四年级三班。","pron":"艾姆 因 克拉丝 斯瑞，格瑞德 佛。"},{"en":"What's nine and seven?","zh":"九加七等于几？","pron":"沃茨 奈恩 安 赛文？"},{"en":"It's sixteen.","zh":"是十六。","pron":"伊茨 斯克斯提恩。"}]},{"id":"yy-u-3","book":"up","no":3,"name":"Unit 3 It's a pineapple 它是菠萝","words":[{"en":"pineapple","zh":"菠萝","pron":"/ˈpaɪnæp(ə)l/ 派奈坡"},{"en":"lemon","zh":"柠檬","pron":"/ˈlemən/ 莱蒙"},{"en":"apple","zh":"苹果","pron":"/ˈæp(ə)l/ 阿坡"},{"en":"pear","zh":"梨","pron":"/peə/ 佩尔"},{"en":"watermelon","zh":"西瓜","pron":"/ˈwɔːtəmelən/ 窝特麦伦"},{"en":"kiwi fruit","zh":"猕猴桃","pron":"/ˈkiːwiː fruːt/ 奇威 夫如特"},{"en":"orange","zh":"橙子；橘子","pron":"/ˈɒrɪndʒ/ 奥润之"},{"en":"banana","zh":"香蕉","pron":"/bəˈnɑːnə/ 波南那"},{"en":"potato","zh":"土豆；马铃薯","pron":"/pəˈteɪtəʊ/ 坡忒托"},{"en":"tomato","zh":"西红柿；番茄","pron":"/təˈmɑːtəʊ/ 特马托"},{"en":"carrot","zh":"胡萝卜","pron":"/ˈkærət/ 凯若特"},{"en":"cucumber","zh":"黄瓜","pron":"/ˈkjuːkʌmbə/ 丘卡姆波"},{"en":"eggplant","zh":"茄子","pron":"/ˈeɡplɑːnt/ 埃格普兰特"},{"en":"green pepper","zh":"青椒","pron":"/ɡriːn ˈpepə/ 格润 派坡"}],"sentences":[{"en":"What's this?","zh":"这是什么？","pron":"沃茨 兹？"},{"en":"It's a pineapple.","zh":"它是一个菠萝。","pron":"伊茨 额 派奈坡。"},{"en":"Is this a watermelon?","zh":"这是一个西瓜吗？","pron":"伊兹 兹 额 窝特麦伦？"},{"en":"Yes, it is.","zh":"是的，它是。","pron":"耶斯，伊特 伊兹。"},{"en":"Do you like apples?","zh":"你喜欢苹果吗？","pron":"杜 优 赖克 阿坡兹？"},{"en":"I like cucumbers.","zh":"我喜欢黄瓜。","pron":"艾 赖克 丘卡姆波兹。"}]},{"id":"yy-u-4","book":"up","no":4,"name":"Unit 4 How's the weather today? 今天天气怎么样","words":[{"en":"fine","zh":"（天气）晴朗的","pron":"/faɪn/ 法因"},{"en":"nice","zh":"好的；令人愉快的","pron":"/naɪs/ 奈斯"},{"en":"warm","zh":"温暖的","pron":"/wɔːm/ 窝姆"},{"en":"cool","zh":"凉爽的","pron":"/kuːl/ 库尔"},{"en":"hot","zh":"炎热的","pron":"/hɒt/ 浩特"},{"en":"cold","zh":"寒冷的","pron":"/kəʊld/ 扣德"},{"en":"sunny","zh":"晴朗的","pron":"/ˈsʌni/ 萨尼"},{"en":"cloudy","zh":"多云的；阴天的","pron":"/ˈklaʊdi/ 克劳迪"},{"en":"windy","zh":"有风的；多风的","pron":"/ˈwɪndi/ 温迪"},{"en":"rainy","zh":"下雨的；多雨的","pron":"/ˈreɪni/ 瑞尼"},{"en":"snowy","zh":"下雪的；多雪的","pron":"/ˈsnəʊi/ 斯诺伊"},{"en":"weather","zh":"天气","pron":"/ˈweðə/ 威泽"}],"sentences":[{"en":"How's the weather today?","zh":"今天天气怎么样？","pron":"浩兹 泽 威泽 特戴？"},{"en":"It's sunny.","zh":"今天是晴天。","pron":"伊茨 萨尼。"},{"en":"It's hot.","zh":"天气很热。","pron":"伊茨 浩特。"},{"en":"It's cold and snowy.","zh":"天气寒冷还下雪。","pron":"伊茨 扣德 安 斯诺伊。"},{"en":"Let's make a snowman.","zh":"我们堆雪人吧。","pron":"莱茨 美克 额 斯诺曼。"},{"en":"What's the weather like?","zh":"天气是什么样的？","pron":"沃茨 泽 威泽 赖克？"}]},{"id":"yy-u-5","book":"up","no":5,"name":"Unit 5 I like those shoes 我喜欢那些鞋","words":[{"en":"cap","zh":"（无边的）帽子","pron":"/kæp/ 凯普"},{"en":"hat","zh":"（有边的）帽子","pron":"/hæt/ 海特"},{"en":"T-shirt","zh":"T恤衫","pron":"/ˈtiːʃɜːt/ 提 瑟特"},{"en":"dress","zh":"连衣裙","pron":"/dres/ 拽斯"},{"en":"blouse","zh":"女衬衫","pron":"/blaʊz/ 布劳兹"},{"en":"jacket","zh":"夹克衫；短上衣","pron":"/ˈdʒækɪt/ 杰基特"},{"en":"raincoat","zh":"雨衣","pron":"/ˈreɪnkəʊt/ 瑞恩扣特"},{"en":"sweater","zh":"毛衣；毛线衫","pron":"/ˈswetə/ 斯威特"},{"en":"skirt","zh":"短裙","pron":"/skɜːt/ 斯格特"},{"en":"shirt","zh":"衬衫","pron":"/ʃɜːt/ 瑟特"},{"en":"shorts","zh":"短裤","pron":"/ʃɔːts/ 硕茨"},{"en":"jeans","zh":"牛仔裤","pron":"/dʒiːnz/ 吉恩兹"},{"en":"socks","zh":"袜子","pron":"/sɒks/ 索克斯"},{"en":"shoes","zh":"鞋","pron":"/ʃuːz/ 术兹"}],"sentences":[{"en":"I like those shoes.","zh":"我喜欢那些鞋。","pron":"艾 赖克 佐兹 术兹。"},{"en":"Can I help you?","zh":"我能帮您吗？","pron":"坎 艾 海尔普 优？"},{"en":"May I try the shoes on?","zh":"我可以试穿这双鞋吗？","pron":"美 艾 揣 泽 术兹 昂？"},{"en":"Here you are.","zh":"给您。","pron":"希尔 优 阿。"},{"en":"Where are my socks?","zh":"我的袜子在哪里？","pron":"威尔 阿 买 索克斯？"},{"en":"Put on your cap, please.","zh":"请戴上你的帽子。","pron":"普特 昂 哟 凯普，普力兹。"}]},{"id":"yy-u-6","book":"up","no":6,"name":"Unit 6 I'm tall 我很高","words":[{"en":"big","zh":"大的","pron":"/bɪɡ/ 比格"},{"en":"small","zh":"小的","pron":"/smɔːl/ 斯莫尔"},{"en":"long","zh":"长的","pron":"/lɒŋ/ 隆"},{"en":"tall","zh":"高的","pron":"/tɔːl/ 托尔"},{"en":"short","zh":"短的；矮的","pron":"/ʃɔːt/ 硕特"},{"en":"fat","zh":"胖的；肥的","pron":"/fæt/ 法特"},{"en":"strong","zh":"强壮的","pron":"/strɒŋ/ 斯壮"},{"en":"thin","zh":"瘦的","pron":"/θɪn/ 斯因"},{"en":"new","zh":"新的","pron":"/njuː/ 纽"},{"en":"old","zh":"旧的；老的","pron":"/əʊld/ 欧德"},{"en":"happy","zh":"高兴的；快乐的","pron":"/ˈhæpi/ 海皮"},{"en":"funny","zh":"有趣的；滑稽的","pron":"/ˈfʌni/ 发尼"},{"en":"look","zh":"看；瞧","pron":"/lʊk/ 卢克"},{"en":"elephant","zh":"大象","pron":"/ˈelɪfənt/ 埃利芬特"}],"sentences":[{"en":"Look at the elephant.","zh":"看这头大象。","pron":"卢克 阿特 泽 埃利芬特。"},{"en":"It's so big.","zh":"它真大。","pron":"伊茨 搜 比格。"},{"en":"It has long ears.","zh":"它长着长耳朵。","pron":"伊特 海兹 隆 伊尔斯。"},{"en":"Look at me.","zh":"看我。","pron":"卢克 阿特 米。"},{"en":"How tall I am!","zh":"我多高啊！","pron":"浩 托尔 艾 艾姆！"},{"en":"I'm short and fat.","zh":"我又矮又胖。","pron":"艾姆 硕特 安 法特。"}]},{"id":"yy-u-7","book":"down","no":1,"name":"Unit 1 Welcome to my new home! 欢迎来到我的新家","words":[{"en":"home","zh":"家","pron":"/həʊm/ 后姆"},{"en":"bedroom","zh":"卧室","pron":"/ˈbedruːm/ 拜德鲁姆"},{"en":"bed","zh":"床","pron":"/bed/ 拜德"},{"en":"desk","zh":"书桌；课桌","pron":"/desk/ 戴斯克"},{"en":"chair","zh":"椅子","pron":"/tʃeə/ 且尔"},{"en":"living room","zh":"起居室","pron":"/ˈlɪvɪŋ ruːm/ 利文 鲁姆"},{"en":"TV","zh":"电视","pron":"/ˌtiːˈviː/ 提 威"},{"en":"sofa","zh":"沙发","pron":"/ˈsəʊfə/ 搜发"},{"en":"armchair","zh":"单人沙发；扶手椅","pron":"/ˈɑːmtʃeə/ 阿姆且尔"},{"en":"ball","zh":"球","pron":"/bɔːl/ 波尔"},{"en":"kite","zh":"风筝","pron":"/kaɪt/ 凯特"},{"en":"kitchen","zh":"厨房","pron":"/ˈkɪtʃɪn/ 克钦"},{"en":"fridge","zh":"冰箱","pron":"/frɪdʒ/ 弗里之"},{"en":"table","zh":"桌子","pron":"/ˈteɪb(ə)l/ 忒波"},{"en":"study","zh":"书房","pron":"/ˈstʌdi/ 斯塔迪"},{"en":"computer","zh":"电脑；计算机","pron":"/kəmˈpjuːtə/ 康皮特"}],"sentences":[{"en":"Welcome to my new home!","zh":"欢迎来到我的新家！","pron":"威尔康 吐 买 纽 后姆！"},{"en":"Look at my bedroom.","zh":"看我的卧室。","pron":"卢克 阿特 买 拜德鲁姆。"},{"en":"There is a new bed.","zh":"有一张新床。","pron":"泽尔 伊兹 额 纽 拜德。"},{"en":"There are two sofas and four armchairs.","zh":"有两张沙发和四把扶手椅。","pron":"泽尔 阿 兔 搜发兹 安 佛 阿姆且尔兹。"},{"en":"What's in the study?","zh":"书房里有什么？","pron":"沃茨 因 泽 斯塔迪？"},{"en":"There is a new computer.","zh":"有一台新电脑。","pron":"泽尔 伊兹 额 纽 康皮特。"}]},{"id":"yy-u-8","book":"down","no":2,"name":"Unit 2 There are forty students in our class. 我们班有四十名学生","words":[{"en":"twenty-one","zh":"二十一","pron":"/ˌtwenti ˈwʌn/ 吞提 万"},{"en":"twenty-two","zh":"二十二","pron":"/ˌtwenti ˈtuː/ 吞提 兔"},{"en":"twenty-three","zh":"二十三","pron":"/ˌtwenti ˈθriː/ 吞提 斯瑞"},{"en":"thirty","zh":"三十","pron":"/ˈθɜːti/ 瑟提"},{"en":"forty","zh":"四十","pron":"/ˈfɔːti/ 佛提"},{"en":"fifty","zh":"五十","pron":"/ˈfɪfti/ 菲夫提"},{"en":"sixty","zh":"六十","pron":"/ˈsɪksti/ 斯克斯提"},{"en":"seventy","zh":"七十","pron":"/ˈsevənti/ 赛文提"},{"en":"eighty","zh":"八十","pron":"/ˈeɪti/ 诶提"},{"en":"ninety","zh":"九十","pron":"/ˈnaɪnti/ 奈恩提"},{"en":"one hundred","zh":"一百","pron":"/wʌn ˈhʌndrəd/ 万 汉卓德"},{"en":"eleven","zh":"十一","pron":"/ɪˈlevən/ 伊莱文"},{"en":"twelve","zh":"十二","pron":"/twelv/ 推欧夫"},{"en":"boy","zh":"男孩","pron":"/bɔɪ/ 波伊"},{"en":"girl","zh":"女孩","pron":"/ɡɜːl/ 哥儿"},{"en":"teacher","zh":"教师","pron":"/ˈtiːtʃə/ 提彻"}],"sentences":[{"en":"There are forty students in our class.","zh":"我们班有四十名学生。","pron":"泽尔 阿 佛提 斯丢登茨 因 奥尔 克拉丝。"},{"en":"How many students are there?","zh":"有多少名学生？","pron":"浩 曼尼 斯丢登茨 阿 泽尔？"},{"en":"There are thirty boys and twenty girls.","zh":"有三十个男孩和二十个女孩。","pron":"泽尔 阿 瑟提 波伊兹 安 吞提 哥儿兹。"},{"en":"How many books do you have?","zh":"你有多少本书？","pron":"浩 曼尼 布克斯 杜 优 海夫？"},{"en":"I have one hundred pens.","zh":"我有一百支钢笔。","pron":"艾 海夫 万 汉卓德 潘兹。"},{"en":"Let me count them.","zh":"让我数一数它们。","pron":"莱特 米 靠恩特 泽姆。"}]},{"id":"yy-u-9","book":"down","no":3,"name":"Unit 3 What subject do you like best? 你最喜欢什么科目","words":[{"en":"maths","zh":"数学","pron":"/mæθs/ 麦斯"},{"en":"PE","zh":"体育","pron":"/ˌpiːˈiː/ 皮 伊"},{"en":"Chinese","zh":"语文；中文","pron":"/ˌtʃaɪˈniːz/ 柴尼兹"},{"en":"English","zh":"英语","pron":"/ˈɪŋɡlɪʃ/ 英格利什"},{"en":"music","zh":"音乐","pron":"/ˈmjuːzɪk/ 缪兹克"},{"en":"art","zh":"美术","pron":"/ɑːt/ 阿特"},{"en":"subject","zh":"科目；学科","pron":"/ˈsʌbdʒekt/ 萨布杰科特"},{"en":"science","zh":"科学","pron":"/ˈsaɪəns/ 赛恩斯"},{"en":"lesson","zh":"课","pron":"/ˈles(ə)n/ 莱森"},{"en":"drama","zh":"戏剧","pron":"/ˈdrɑːmə/ 德拉玛"},{"en":"listen","zh":"听","pron":"/ˈlɪs(ə)n/ 利森"},{"en":"do","zh":"做","pron":"/duː/ 杜"},{"en":"speak","zh":"说；讲","pron":"/spiːk/ 斯皮克"},{"en":"sing","zh":"唱歌","pron":"/sɪŋ/ 斯英"},{"en":"play","zh":"玩","pron":"/pleɪ/ 普雷"},{"en":"act","zh":"表演","pron":"/ækt/ 艾科特"}],"sentences":[{"en":"What subject do you like best?","zh":"你最喜欢什么科目？","pron":"沃特 萨布杰科特 杜 优 赖克 拜斯特？"},{"en":"I like English best.","zh":"我最喜欢英语。","pron":"艾 赖克 英格利什 拜斯特。"},{"en":"Do you like music?","zh":"你喜欢音乐吗？","pron":"杜 优 赖克 缪兹克？"},{"en":"Yes, I do.","zh":"是的，我喜欢。","pron":"耶斯，艾 杜。"},{"en":"We have art today.","zh":"我们今天有美术课。","pron":"威 海夫 阿特 特戴。"},{"en":"I like to sing and act.","zh":"我喜欢唱歌和表演。","pron":"艾 赖克 吐 斯英 安 艾科特。"}]},{"id":"yy-u-10","book":"down","no":4,"name":"Unit 4 There are seven days in a week. 一周有七天","words":[{"en":"day","zh":"天；白天","pron":"/deɪ/ 戴"},{"en":"week","zh":"周；星期","pron":"/wiːk/ 威克"},{"en":"Sunday","zh":"星期日","pron":"/ˈsʌndi/ 桑迪"},{"en":"Monday","zh":"星期一","pron":"/ˈmʌndi/ 曼迪"},{"en":"Tuesday","zh":"星期二","pron":"/ˈtjuːzdi/ 图兹迪"},{"en":"Wednesday","zh":"星期三","pron":"/ˈwenzdi/ 文兹迪"},{"en":"Thursday","zh":"星期四","pron":"/ˈθɜːzdi/ 瑟兹迪"},{"en":"Friday","zh":"星期五","pron":"/ˈfraɪdi/ 弗莱迪"},{"en":"Saturday","zh":"星期六","pron":"/ˈsætədi/ 萨特迪"},{"en":"today","zh":"今天","pron":"/təˈdeɪ/ 特戴"},{"en":"weekend","zh":"周末","pron":"/ˌwiːkˈend/ 威克 恩德"},{"en":"park","zh":"公园","pron":"/pɑːk/ 帕克"},{"en":"theme park","zh":"主题公园；游乐园","pron":"/θiːm pɑːk/ 斯姆 帕克"}],"sentences":[{"en":"There are seven days in a week.","zh":"一周有七天。","pron":"泽尔 阿 赛文 戴兹 因 额 威克。"},{"en":"What day is today?","zh":"今天星期几？","pron":"沃特 戴 伊兹 特戴？"},{"en":"Today is Monday.","zh":"今天是星期一。","pron":"特戴 伊兹 曼迪。"},{"en":"How many days in a week?","zh":"一周有几天？","pron":"浩 曼尼 戴兹 因 额 威克？"},{"en":"I like the weekend.","zh":"我喜欢周末。","pron":"艾 赖克 泽 威克恩德。"},{"en":"Let's go to the park.","zh":"我们去公园吧。","pron":"莱茨 勾 吐 泽 帕克。"}]},{"id":"yy-u-11","book":"down","no":5,"name":"Unit 5 What will you do this weekend? 这个周末你要做什么","words":[{"en":"picnic","zh":"野餐","pron":"/ˈpɪknɪk/ 皮克尼克"},{"en":"sausage","zh":"香肠","pron":"/ˈsɒsɪdʒ/ 索斯之"},{"en":"bread","zh":"面包","pron":"/bred/ 拜瑞德"},{"en":"cake","zh":"蛋糕","pron":"/keɪk/ 凯克"},{"en":"lunch","zh":"午餐","pron":"/lʌntʃ/ 朗赤"},{"en":"pork","zh":"猪肉","pron":"/pɔːk/ 坡克"},{"en":"beef","zh":"牛肉","pron":"/biːf/ 比夫"},{"en":"rice","zh":"米饭","pron":"/raɪs/ 莱斯"},{"en":"chicken","zh":"鸡肉","pron":"/ˈtʃɪkɪn/ 齐金"},{"en":"sing","zh":"唱歌","pron":"/sɪŋ/ 斯英"},{"en":"dance","zh":"跳舞","pron":"/dɑːns/ 当斯"},{"en":"draw","zh":"画","pron":"/drɔː/ 卓"},{"en":"read","zh":"读；阅读","pron":"/riːd/ 瑞德"},{"en":"watch","zh":"看；观看","pron":"/wɒtʃ/ 沃赤"},{"en":"swim","zh":"游泳","pron":"/swɪm/ 斯威姆"},{"en":"go","zh":"去","pron":"/ɡəʊ/ 勾"}],"sentences":[{"en":"What will you do this weekend?","zh":"这个周末你要做什么？","pron":"沃特 威尔 优 杜 兹 威克恩德？"},{"en":"I will go swimming.","zh":"我要去游泳。","pron":"艾 威尔 勾 斯威明。"},{"en":"Let's have a picnic.","zh":"我们去野餐吧。","pron":"莱茨 海夫 额 皮克尼克。"},{"en":"I will read a book.","zh":"我要读一本书。","pron":"艾 威尔 瑞德 额 布克。"},{"en":"Will you go shopping?","zh":"你要去购物吗？","pron":"威尔 优 勾 绍平？"},{"en":"I will watch TV.","zh":"我要看电视。","pron":"艾 威尔 沃赤 提威。"}]},{"id":"yy-u-12","book":"down","no":6,"name":"Unit 6 Would you like to take a trip? 你想去旅行吗","words":[{"en":"zoo","zh":"动物园","pron":"/zuː/ 祖"},{"en":"farm","zh":"农场","pron":"/fɑːm/ 法姆"},{"en":"giraffe","zh":"长颈鹿","pron":"/dʒɪˈrɑːf/ 吉拉夫"},{"en":"camel","zh":"骆驼","pron":"/ˈkæm(ə)l/ 开莫"},{"en":"monkey","zh":"猴子","pron":"/ˈmʌŋki/ 忙基"},{"en":"panda","zh":"熊猫","pron":"/ˈpændə/ 潘达"},{"en":"bear","zh":"熊","pron":"/beə/ 拜尔"},{"en":"seal","zh":"海豹","pron":"/siːl/ 塞尔"},{"en":"dolphin","zh":"海豚","pron":"/ˈdɒlfɪn/ 道尔芬"},{"en":"hippo","zh":"河马","pron":"/ˈhɪpəʊ/ 希坡"},{"en":"tiger","zh":"老虎","pron":"/ˈtaɪɡə/ 泰格"},{"en":"cat","zh":"猫","pron":"/kæt/ 凯特"},{"en":"dog","zh":"狗","pron":"/dɒɡ/ 道格"},{"en":"horse","zh":"马","pron":"/hɔːs/ 霍斯"},{"en":"cow","zh":"母牛；奶牛","pron":"/kaʊ/ 考"}],"sentences":[{"en":"Would you like to take a trip?","zh":"你想去旅行吗？","pron":"伍德 优 赖克 吐 忒克 额 垂普？"},{"en":"Yes, I'd love to.","zh":"是的，我很想去。","pron":"耶斯，艾德 拉夫 吐。"},{"en":"Let's go to the zoo.","zh":"我们去动物园吧。","pron":"莱茨 勾 吐 泽 祖。"},{"en":"I like pandas.","zh":"我喜欢熊猫。","pron":"艾 赖克 潘达兹。"},{"en":"What's this? It's a giraffe.","zh":"这是什么？是长颈鹿。","pron":"沃茨 兹？伊茨 额 吉拉夫。"},{"en":"The tiger is big.","zh":"老虎很大。","pron":"泽 泰格 伊兹 比格。"}]}]};
+/*__B2_GEN__*/
+/* =================== 新增试卷类型生成器（注入到页面） =================== */
+function _gradeOf(sk){ var s = SUBJ[sk]; return (s && s.grade) || '四'; }
+function _bookStr(u){ return _gradeOf(u.subject) + '年级' + (u.book === 'up' ? '上册' : '下册'); }
+function _ppOpen(title, sub, u){
+  return '<div class="pp"><div class="pp-h">'
+    + '<h1>' + esc(_bookStr(u)) + ' ' + esc(title) + '</h1>'
+    + '<div class="pp-sub">' + esc(sub) + '　' + cnDate(ymd()) + '</div></div>'
+    + '<div class="pp-info"><span>姓名：<b>　　</b></span><span>班级：<b>　　</b></span><span>得分：<b>　　</b></span></div>';
+}
+function _ppClose(){ return '</div>'; }
+
+/* —— 语文：生字生词拼音读写练习卷 —— */
+function genPinyinPaper(u, withAns){
+  var cu = (window.DATA_CHARS && window.DATA_CHARS.units.filter(function(x){ return x.id === u.id; })[0]) || null;
+  var h = _ppOpen('生字生词拼音读写练习', '（' + (withAns ? '教师版' : '学生版') + '）', u);
+  if (!cu || !cu.words || !cu.words.length){
+    h += '<div class="pp-sec"><div class="pp-sec-h">提示</div><div class="pp-q">本单元暂未配置生字数据。</div></div>';
+    return h + _ppClose();
+  }
+  var ws = cu.words.slice(0, 8);
+  h += '<div class="pp-sec"><div class="pp-sec-h">一、看拼音，写汉字（' + ws.length + ' 题）</div><div class="pp-py-grid">';
+  ws.forEach(function(w){
+    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.pinyin) + '</div><div class="pp-py-blank"></div>'
+       + (withAns ? '<div class="pp-py-ans">' + esc(w.char) + '</div>' : '') + '</div>';
+  });
+  h += '</div></div>';
+  h += '<div class="pp-sec"><div class="pp-sec-h">二、给汉字注音（' + ws.length + ' 题）</div><div class="pp-py-grid">';
+  ws.forEach(function(w){
+    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.char) + '</div><div class="pp-py-blank"></div>'
+       + (withAns ? '<div class="pp-py-ans">' + esc(w.pinyin) + '</div>' : '') + '</div>';
+  });
+  h += '</div></div>';
+  h += '<div class="pp-sec"><div class="pp-sec-h">三、生字抄写与组词（每个抄写 2 遍）</div>';
+  ws.slice(0, 6).forEach(function(w){
+    h += '<div class="pp-cw"><div class="pp-cw-ch">' + esc(w.char) + '</div>'
+       + '<div class="pp-cw-meta">部首：' + esc(w.bushou || '—') + '　组词：' + esc((w.zuci || []).join('、')) + '</div>'
+       + '<div class="pp-cw-lines"><span></span><span></span></div></div>';
+  });
+  h += '</div>';
+  h += '<div class="pp-sec"><div class="pp-sec-h">四、比一比，再组词</div><div class="pp-py-grid">';
+  ws.slice(0, 6).forEach(function(w){
+    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.char) + '（　　）</div><div class="pp-py-blank"></div></div>';
+  });
+  h += '</div></div>';
+  return h + _ppClose();
+}
+
+/* —— 数学：乘除法计算 + 应用题（留竖式空间） —— */
+function _rnd(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+function genCalcPaper(u, withAns){
+  var h = _ppOpen('乘除法计算与应用题', '（专项练习 · ' + (withAns ? '教师版' : '学生版') + '）', { subject:'sx', book:u.book });
+  var kc = [];
+  for (var i = 0; i < 8; i++){
+    var a = _rnd(2, 19), b = _rnd(2, 9);
+    if (i % 2 === 0) kc.push({ t: a + ' × ' + b + ' =', a: a * b });
+    else { var d = _rnd(2, 9), n = d * b; kc.push({ t: n + ' ÷ ' + d + ' =', a: b }); }
+  }
+  h += '<div class="pp-sec"><div class="pp-sec-h">一、口算（8 题，每题 4 分）</div><div class="pp-kc">';
+  kc.forEach(function(p){
+    h += '<div class="pp-kc-i">' + esc(p.t) + '<span class="pp-kc-b"></span>'
+       + (withAns ? '<b class="pp-kc-ans">' + p.a + '</b>' : '') + '</div>';
+  });
+  h += '</div></div>';
+  var bs = [];
+  for (var j = 0; j < 2; j++){ var m1 = _rnd(120, 980), m2 = _rnd(12, 98); bs.push({ t: m1 + ' × ' + m2 + ' =', a: m1 * m2 }); }
+  for (var k = 0; k < 2; k++){ var dv = _rnd(12, 89), q = _rnd(3, 12), rm = _rnd(0, dv - 1), nd = dv * q + rm; bs.push({ t: nd + ' ÷ ' + dv + ' =', a: q + ' 余 ' + rm }); }
+  h += '<div class="pp-sec"><div class="pp-sec-h">二、笔算（竖式计算，写出过程）</div>';
+  bs.forEach(function(p){
+    h += '<div class="pp-bs"><div class="pp-bs-t">' + esc(p.t) + '</div><div class="pp-calc-box"></div>'
+       + (withAns ? '<div class="pp-bs-ans">= ' + esc(p.a) + '</div>' : '') + '</div>';
+  });
+  h += '</div>';
+  var apps = [
+    { q:'超市里有 24 箱苹果，每箱 12 个，一共有多少个苹果？', a:'24 × 12 = 288（个）' },
+    { q:'把 156 本练习本平均分给 6 个班，每班分到多少本？', a:'156 ÷ 6 = 26（本）' },
+    { q:'一辆汽车每小时行驶 85 千米，4 小时行驶多少千米？', a:'85 × 4 = 340（千米）' },
+    { q:'把 180 名同学平均分成 5 个方队，每个方队多少人？', a:'180 ÷ 5 = 36（人）' }
+  ].slice(0, 3);
+  h += '<div class="pp-sec"><div class="pp-sec-h">三、解决问题（先列式，再计算）</div>';
+  apps.forEach(function(p, idx){
+    h += '<div class="pp-app"><div class="pp-app-q">' + (idx + 1) + '. ' + esc(p.q) + '</div>'
+       + '<div class="pp-calc-box tall"></div>'
+       + (withAns ? '<div class="pp-bs-ans">' + esc(p.a) + '</div>' : '') + '</div>';
+  });
+  h += '</div>';
+  return h + _ppClose();
+}
+
+/* —— 英语：单词 / 句子抄写卷（含读法） —— */
+function genCopyPaper(u, withAns){
+  var src = (u.subject === 'yy3') ? window.DATA_ENGLISH3 : window.DATA_ENGLISH_WORDS;
+  var cu = (src && src.units.filter(function(x){ return x.id === u.id; })[0]) || null;
+  var h = _ppOpen('单词句子抄写卷', '（' + (withAns ? '教师版' : '学生版') + '）', u);
+  if (!cu){
+    h += '<div class="pp-sec"><div class="pp-sec-h">提示</div><div class="pp-q">本单元暂未配置抄写数据。</div></div>';
+    return h + _ppClose();
+  }
+  var words = (cu.words || []).slice(0, 10);
+  var sents = (cu.sentences || []).slice(0, 2);
+  if (words.length){
+    h += '<div class="pp-sec"><div class="pp-sec-h">一、单词抄写（每个抄写 2 遍，并写出中文意思和读法）</div>';
+    words.forEach(function(w){
+      h += '<div class="pp-cp"><div class="pp-cp-en">' + esc(w.en) + '</div>'
+         + '<div class="pp-cp-zh">' + esc(w.zh) + '　<span class="pp-cp-pr">' + esc(w.pron) + '</span></div>'
+         + '<div class="pp-cp-lines"><span></span><span></span></div></div>';
+    });
+    h += '</div>';
+  }
+  if (sents.length){
+    h += '<div class="pp-sec"><div class="pp-sec-h">二、句子抄写（每个抄写 1 遍，注意大小写和标点）</div>';
+    sents.forEach(function(s){
+      h += '<div class="pp-cp"><div class="pp-cp-en">' + esc(s.en) + '</div>'
+         + '<div class="pp-cp-zh">' + esc(s.zh) + '　<span class="pp-cp-pr">' + esc(s.pron) + '</span></div>'
+         + '<div class="pp-cp-lines"><span></span></div></div>';
+    });
+    h += '</div>';
+  }
+  return h + _ppClose();
+}
+
+function paperTypeOpts(sk){
+  var base = '<option value="normal">单元测试卷（选择 / 判断 / 填空）</option>';
+  if (sk === 'yw') return base + '<option value="pinyin">拼音读写练习卷（生字生词）</option>';
+  if (sk === 'sx') return base + '<option value="calc">计算 + 应用题卷（乘除法 · 留竖式）</option>';
+  if (sk === 'yy' || sk === 'yy3') return base + '<option value="copy">单词句子抄写卷（含读法）</option>';
+  return base;
+}
+
 function safeData(o){ return (o && o.units && o.questions) ? o : { units: [], questions: [] }; }
-var RAW = { yw: safeData(window.DATA_CHINESE), sx: safeData(window.DATA_MATH), yy: safeData(window.DATA_ENGLISH) };
+var RAW = { yw: safeData(window.DATA_CHINESE), sx: safeData(window.DATA_MATH), yy: safeData(window.DATA_ENGLISH), yy3: safeData(window.DATA_ENGLISH3) };
 
 var UNITS = [];   // 全部单元
 var QS = [];      // 全部题目
@@ -10530,6 +10697,7 @@ function blank(){
     v:1,
     profile:{ name:'', school:'天津市河东区太阳城小学', klass:'四年级' },
     units:{}, exams:[], wrong:[], tasks:[], checkin:{},
+    del:{ tasks:{}, wrong:{}, exams:{} },
     seeded:false, createdAt:new Date().toISOString()
   };
 }
@@ -10542,7 +10710,9 @@ function load(){
   } catch(e){ S = blank(); }
   if (!S.units) S.units={}; if (!S.exams) S.exams=[]; if (!S.wrong) S.wrong=[];
   if (!S.tasks) S.tasks=[]; if (!S.checkin) S.checkin={};
+  if (!S.del) S.del={ tasks:{}, wrong:{}, exams:{} };
   if (!S.seeded) { seed(); S.seeded = true; save(); }
+  purgeDeleted();
 }
 function save(){
   try { localStorage.setItem(KEY, JSON.stringify(S)); }
@@ -11006,6 +11176,7 @@ function printTestDialog(){
   var body = '<div style="margin-bottom:14px"><b style="font-size:14px">选择科目</b><div class="segs" style="margin-top:6px">'+opts+'</div></div>'
     + '<div style="margin-bottom:14px"><b style="font-size:14px">选择册次</b><div class="segs" style="margin-top:6px">'+bookSegs+'</div></div>'
     + '<div class="fld"><label>选择单元</label><select id="pUnit">'+unitOpts+'</select></div>'
+    + '<div class="fld"><label>试卷类型</label><select id="pType">'+paperTypeOpts(PV.sk)+'</select></div>/*__B2_PT__*/'
     + '<div class="fld"><label>试卷版本</label><select id="pAns"><option value="0">学生版（无答案，方便打印做题）</option><option value="1">教师版（含答案和解析）</option></select></div>'
     + '<div style="font-size:12.5px;color:var(--tx3);line-height:1.7;margin-top:8px">'
     + svg(ICON.report,14)+' 点击「生成试卷」后会打开浏览器打印窗口，在「目标」里选「另存为 PDF」即可保存电子版，'
@@ -11021,28 +11192,29 @@ function setPrint(sk, book, uid_){
   if (uid_) PV.unitId=uid_;
   printTestDialog();
 }
-function doPrintTest(){
+function doPrintTest(){ /*__B2_DOPRINT__*/
   var uid_ = document.getElementById('pUnit').value;
   var withAns = document.getElementById('pAns').value === '1';
+  var pType = (document.getElementById('pType') || {}).value || 'normal';
   var u = UMAP[uid_]; if (!u) { toast('请选择单元'); return; }
-  var qs = qsOfUnit(uid_);
-  if (!qs.length) { toast('这个单元没有题目'); return; }
+  var paperHTML;
+  if (pType === 'pinyin' && u.subject === 'yw') paperHTML = genPinyinPaper(u, withAns);
+  else if (pType === 'calc' && u.subject === 'sx') paperHTML = genCalcPaper(u, withAns);
+  else if (pType === 'copy' && (u.subject === 'yy' || u.subject === 'yy3')) paperHTML = genCopyPaper(u, withAns);
+  else {
+    var qs = qsOfUnit(uid_);
+    if (!qs.length) { toast('这个单元没有题目，可换其他试卷类型'); return; }
+    paperHTML = generatePaper(u, qs, withAns);
+  }
   closeModal();
-  // 生成试卷 HTML
-  var paperHTML = generatePaper(u, qs, withAns);
   var pa = document.getElementById('printArea');
   pa.innerHTML = paperHTML;
-  // 延迟一下让浏览器渲染完
-  setTimeout(function(){
-    window.print();
-    // 打印结束后清空
-    setTimeout(function(){ pa.innerHTML = ''; }, 500);
-  }, 200);
+  setTimeout(function(){ window.print(); setTimeout(function(){ pa.innerHTML = ''; }, 500); }, 200);
 }
 
 function generatePaper(u, qs, withAns){
   var sj = SUBJ[u.subject]||SUBJ.yw;
-  var bookStr = u.book==='up' ? '四年级上册' : '四年级下册';
+  var bookStr = _gradeOf(u.subject)+'年级'+(u.book==='up'?'上册':'下册'); /*__B2_GRADE__*/
   var verStr = withAns ? '（教师版·含答案）' : '（学生版）';
   var dateStr = (function(){ var d=new Date(); return d.getFullYear()+'年'+(d.getMonth()+1)+'月'; })();
 
@@ -11307,6 +11479,27 @@ function closeModal(){ document.getElementById('modalHost').innerHTML=''; }
 
 function checkin(){ var t=ymd(); S.checkin[t]=(S.checkin[t]||0)+1; }
 
+/* ---------- 删除标记（tombstone）：保证删除项在任何云端恢复后都不会回来 ---------- */
+function markDeleted(kind, id){ try { if(!S.del[kind]) S.del[kind]={}; S.del[kind][id] = ymd(); } catch(e){} }
+function purgeDeleted(){
+  if (!S.del) return;
+  ['tasks','wrong','exams'].forEach(function(k){
+    var d = S.del[k]||{};
+    if (k==='tasks') S.tasks = S.tasks.filter(function(x){ return !d[x.id]; });
+    else if (k==='wrong') S.wrong = S.wrong.filter(function(x){ return !d[x.qid]; });
+    else if (k==='exams') S.exams = S.exams.filter(function(x){ return !d[x.id]; });
+  });
+}
+function mergeDel(a, b){
+  var o = { tasks:{}, wrong:{}, exams:{} };
+  [a,b].forEach(function(x){
+    if (!x) return;
+    ['tasks','wrong','exams'].forEach(function(k){
+      if (x[k]) for (var id in x[k]) if (Object.prototype.hasOwnProperty.call(x[k], id)) o[k][id] = x[k][id];
+    });
+  });
+  return o;
+}
 function refresh(){ save(); go(cur); }
 
 /* --- 今日 --- */
@@ -11321,7 +11514,9 @@ function finishTask(id){
   toast('已完成，真棒！'); refresh();
 }
 function delTask(id){
-  S.tasks = S.tasks.filter(function(a){return a.id!==id;}); toast('已删除'); refresh();
+  S.tasks = S.tasks.filter(function(a){return a.id!==id;});
+  markDeleted('tasks', id);
+  toast('已删除'); refresh();
 }
 function handleTask(id){
   var x = S.tasks.filter(function(a){return a.id===id;})[0]; if(!x) return;
@@ -11471,6 +11666,7 @@ function toggleMaster(qid){
 }
 function delWrong(qid){
   S.wrong = S.wrong.filter(function(a){return a.qid!==qid;});
+  markDeleted('wrong', qid);
   save(); viewWrong(); renderNav(); toast('已从错题本移除');
 }
 var RD = { qid:null, ua:undefined };
@@ -11583,7 +11779,10 @@ function importJSON(input){
 }
 function doImport(){
   var st = window.__pendingImport; if(!st) return;
+  var localDel = (S && S.del) ? S.del : { tasks:{}, wrong:{}, exams:{} };
   S = Object.assign(blank(), st); S.seeded = true;
+  S.del = mergeDel(S.del, localDel);   // 合并本机删除标记，已删项不再回来
+  purgeDeleted();
   save(); closeModal(); go('today'); toast('导入成功，数据已恢复');
   window.__pendingImport = null;
 }
@@ -11610,9 +11809,9 @@ function clearDemo(){
     '<button class="btn" onclick="App.closeModal()">取消</button><button class="btn dgr" onclick="App.doClearDemo()">确定清空</button>');
 }
 function doClearDemo(){
-  S.tasks = S.tasks.filter(function(x){ return !x.demo; });
-  S.exams = S.exams.filter(function(x){ return !x.demo; });
-  S.wrong = S.wrong.filter(function(x){ return !x.demo; });
+  S.tasks = S.tasks.filter(function(x){ if(x.demo){ markDeleted('tasks', x.id); return false; } return true; });
+  S.exams = S.exams.filter(function(x){ if(x.demo){ markDeleted('exams', x.id); return false; } return true; });
+  S.wrong = S.wrong.filter(function(x){ if(x.demo){ markDeleted('wrong', x.qid); return false; } return true; });
   save(); closeModal(); go(cur); toast('示例数据已清空');
 }
 function clearAll(){
@@ -11648,7 +11847,7 @@ function scheduleSync(){
   var c = getSyncCfg();
   if (!c.autoGist && !c.autoSb) return;
   if (_syncTimer) return;
-  _syncTimer = setTimeout(function(){ _syncTimer = null; runSync(); }, 4000);
+  _syncTimer = setTimeout(function(){ _syncTimer = null; runSync(); }, 1500);
 }
 function runSync(){
   var c = getSyncCfg();
