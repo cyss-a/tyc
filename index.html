@@ -16,6 +16,7 @@
   --yw:#E8663D; --yw-l:#FDF0EB;
   --sx:#2F6FEB; --sx-l:#EAF1FE;
   --yy:#12A150; --yy-l:#E8F7EE;
+  --yy3:#0E9F6E; --yy3-l:#E6F7EF;
   --red:#DC2626; --red-l:#FDECEC;
   --green:#12A150; --green-l:#E8F7EE;
   --amber:#D97706; --amber-l:#FEF3E2;
@@ -111,6 +112,7 @@ main{padding:18px 0 30px}
 .pill.yw{background:var(--yw-l);color:var(--yw)}
 .pill.sx{background:var(--sx-l);color:var(--sx)}
 .pill.yy{background:var(--yy-l);color:var(--yy)}
+.pill.yy3{background:var(--yy3-l);color:var(--yy3)}
 .pill.ok{background:var(--green-l);color:var(--green)}
 .pill.gray{background:#F1F3F8;color:var(--tx3)}
 
@@ -125,6 +127,7 @@ main{padding:18px 0 30px}
 .seg.on[data-s="yw"]{background:var(--yw)}
 .seg.on[data-s="sx"]{background:var(--sx)}
 .seg.on[data-s="yy"]{background:var(--yy)}
+.seg.on[data-s="yy3"]{background:var(--yy3)}
 .seg.on.plain{background:var(--main)}
 
 /* 单元卡 */
@@ -10539,7 +10542,7 @@ function genPinyinPaper(u, withAns){
     h += '<div class="pp-sec"><div class="pp-sec-h">提示</div><div class="pp-q">本单元暂未配置生字数据。</div></div>';
     return h + _ppClose();
   }
-  var ws = cu.words.slice(0, 8);
+  var ws = cu.words.slice(0, 10);
   h += '<div class="pp-sec"><div class="pp-sec-h">一、看拼音，写汉字（' + ws.length + ' 题）</div><div class="pp-py-grid">';
   ws.forEach(function(w){
     h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.pinyin) + '</div><div class="pp-py-blank"></div>'
@@ -10553,48 +10556,56 @@ function genPinyinPaper(u, withAns){
   });
   h += '</div></div>';
   h += '<div class="pp-sec"><div class="pp-sec-h">三、生字抄写与组词（每个抄写 2 遍）</div>';
-  ws.slice(0, 6).forEach(function(w){
+  ws.forEach(function(w){
     h += '<div class="pp-cw"><div class="pp-cw-ch">' + esc(w.char) + '</div>'
        + '<div class="pp-cw-meta">部首：' + esc(w.bushou || '—') + '　组词：' + esc((w.zuci || []).join('、')) + '</div>'
        + '<div class="pp-cw-lines"><span></span><span></span></div></div>';
   });
   h += '</div>';
   h += '<div class="pp-sec"><div class="pp-sec-h">四、比一比，再组词</div><div class="pp-py-grid">';
-  ws.slice(0, 6).forEach(function(w){
+  ws.slice(0, 8).forEach(function(w){
     h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.char) + '（　　）</div><div class="pp-py-blank"></div></div>';
   });
   h += '</div></div>';
   return h + _ppClose();
 }
 
-/* —— 数学：乘除法计算 + 应用题（紧凑版，草稿纸自备） —— */
+/* —— 数学：乘除法计算 + 应用题（留竖式空间） —— */
 function _rnd(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
 function genCalcPaper(u, withAns){
   var h = _ppOpen('乘除法计算与应用题', '（专项练习 · ' + (withAns ? '教师版' : '学生版') + '）', { subject:'sx', book:u.book });
   var kc = [];
-  for (var i = 0; i < 10; i++){
+  for (var i = 0; i < 8; i++){
     var a = _rnd(2, 19), b = _rnd(2, 9);
     if (i % 2 === 0) kc.push({ t: a + ' × ' + b + ' =', a: a * b });
     else { var d = _rnd(2, 9), n = d * b; kc.push({ t: n + ' ÷ ' + d + ' =', a: b }); }
   }
-  h += '<div class="pp-sec"><div class="pp-sec-h">一、口算（10 题）</div><div class="pp-kc">';
+  h += '<div class="pp-sec"><div class="pp-sec-h">一、口算（8 题，每题 4 分）</div><div class="pp-kc">';
   kc.forEach(function(p){
     h += '<div class="pp-kc-i">' + esc(p.t) + '<span class="pp-kc-b"></span>'
        + (withAns ? '<b class="pp-kc-ans">' + p.a + '</b>' : '') + '</div>';
   });
   h += '</div></div>';
+  var bs = [];
+  for (var j = 0; j < 2; j++){ var m1 = _rnd(120, 980), m2 = _rnd(12, 98); bs.push({ t: m1 + ' × ' + m2 + ' =', a: m1 * m2 }); }
+  for (var k = 0; k < 2; k++){ var dv = _rnd(12, 89), q = _rnd(3, 12), rm = _rnd(0, dv - 1), nd = dv * q + rm; bs.push({ t: nd + ' ÷ ' + dv + ' =', a: q + ' 余 ' + rm }); }
+  h += '<div class="pp-sec"><div class="pp-sec-h">二、笔算（竖式计算，写出过程）</div>';
+  bs.forEach(function(p){
+    h += '<div class="pp-bs"><div class="pp-bs-t">' + esc(p.t) + '</div><div class="pp-calc-box"></div>'
+       + (withAns ? '<div class="pp-bs-ans">= ' + esc(p.a) + '</div>' : '') + '</div>';
+  });
+  h += '</div>';
   var apps = [
     { q:'超市里有 24 箱苹果，每箱 12 个，一共有多少个苹果？', a:'24 × 12 = 288（个）' },
     { q:'把 156 本练习本平均分给 6 个班，每班分到多少本？', a:'156 ÷ 6 = 26（本）' },
     { q:'一辆汽车每小时行驶 85 千米，4 小时行驶多少千米？', a:'85 × 4 = 340（千米）' },
-    { q:'把 180 名同学平均分成 5 个方队，每个方队多少人？', a:'180 ÷ 5 = 36（人）' },
-    { q:'一本故事书有 240 页，小明每天看 15 页，多少天看完？', a:'240 ÷ 15 = 16（天）' }
+    { q:'把 180 名同学平均分成 5 个方队，每个方队多少人？', a:'180 ÷ 5 = 36（人）' }
   ].slice(0, 3);
-  h += '<div class="pp-sec"><div class="pp-sec-h">二、解决问题（列式计算，草稿纸自备）</div>';
+  h += '<div class="pp-sec"><div class="pp-sec-h">三、解决问题（先列式，再计算）</div>';
   apps.forEach(function(p, idx){
     h += '<div class="pp-app"><div class="pp-app-q">' + (idx + 1) + '. ' + esc(p.q) + '</div>'
-       + '<div style="margin-top:2px;padding-left:18px;font-size:10.5pt">答：______________________________</div>'
-       + (withAns ? '<div class="pp-bs-ans" style="margin-left:18px;margin-top:1px">' + esc(p.a) + '</div>' : '') + '</div>';
+       + '<div class="pp-calc-box tall"></div>'
+       + (withAns ? '<div class="pp-bs-ans">' + esc(p.a) + '</div>' : '') + '</div>';
   });
   h += '</div>';
   return h + _ppClose();
@@ -10610,7 +10621,7 @@ function genCopyPaper(u, withAns){
     return h + _ppClose();
   }
   var words = (cu.words || []).slice(0, 10);
-  var sents = (cu.sentences || []).slice(0, 2);
+  var sents = (cu.sentences || []).slice(0, 4);
   if (words.length){
     h += '<div class="pp-sec"><div class="pp-sec-h">一、单词抄写（每个抄写 2 遍，并写出中文意思和读法）</div>';
     words.forEach(function(w){
@@ -10632,14 +10643,351 @@ function genCopyPaper(u, withAns){
   return h + _ppClose();
 }
 
-function paperTypeOpts(sk){
-  var base = '<option value="normal">单元测试卷（选择 / 判断 / 填空）</option>';
-  if (sk === 'yw') return base + '<option value="pinyin">拼音读写练习卷（生字生词）</option>';
-  if (sk === 'sx') return base + '<option value="calc">计算 + 应用题卷（乘除法 · 留竖式）</option>';
-  if (sk === 'yy' || sk === 'yy3') return base + '<option value="copy">单词句子抄写卷（含读法）</option>';
-  return base;
+/* ============================================================
+   期中期末试卷（覆盖整册 · ≤ 4 页 A4）
+   ============================================================ */
+
+/* 同册所有单元 */
+function _bookUnits(u){
+  var sk = u.subject, bk = u.book;
+  return UNITS.filter(function(x){ return x.subject === sk && x.book === bk; });
 }
 
+/* —— ① 英语单词测验（期中期末 · 全册） —— */
+function genWordTest(u, withAns){
+  var src = (u.subject === 'yy3') ? window.DATA_ENGLISH3 : window.DATA_ENGLISH_WORDS;
+  var bus = _bookUnits(u);
+  var allW = [];
+  bus.forEach(function(b){
+    var cu = src && src.units && src.units.find(function(x){ return x.id === b.id; });
+    if (cu && cu.words) allW = allW.concat(cu.words);
+  });
+  var h = _ppOpen('英语单词测验（期中期末）', '（' + (withAns ? '教师版' : '学生版') + ' · 全册）', u);
+  if (!allW.length){
+    h += '<div class="pp-sec"><div class="pp-q">本册暂无单词数据。</div></div>';
+    return h + _ppClose();
+  }
+  /* 一、看中文写英文（听写） */
+  var s1 = allW.slice(0, Math.min(20, allW.length));
+  h += '<div class="pp-sec"><div class="pp-sec-h">一、看中文写英文（' + s1.length + ' 题）</div>';
+  s1.forEach(function(w, i){
+    h += '<div class="pp-q">' + (i+1) + '. ' + esc(w.zh) + ' ＿＿＿＿＿＿＿＿'
+       + (withAns ? ' <span class="pp-ans-inline">（' + esc(w.en) + '）</span>' : '') + '</div>';
+  });
+  h += '</div>';
+  /* 二、看英文写中文 */
+  var s2 = allW.slice(0, Math.min(15, allW.length));
+  s2.forEach(function(w, i){ w._no = i + 1; });
+  h += '<div class="pp-sec"><div class="pp-sec-h">二、看英文写中文（' + s2.length + ' 题）</div>';
+  s2.forEach(function(w){
+    h += '<div class="pp-q">' + w._no + '. ' + esc(w.en) + ' ＿＿＿＿＿'
+       + (withAns ? ' <span class="pp-ans-inline">（' + esc(w.zh) + '）</span>' : '') + '</div>';
+  });
+  h += '</div>';
+  /* 三、选词填空 */
+  var wb = allW.slice(0, 12);
+  var allS = [];
+  bus.forEach(function(b){
+    var cu = src && src.units && src.units.find(function(x){ return x.id === b.id; });
+    if (cu && cu.sentences) allS = allS.concat(cu.sentences);
+  });
+  var fills = [];
+  for (var fi = 0; fi < allS.length && fills.length < 8; fi++){
+    var sen = allS[fi];
+    var hit = null;
+    for (var wi = 0; wi < wb.length; wi++){
+      var w = wb[wi];
+      var re = new RegExp('\\b' + w.en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b','i');
+      if (re.test(sen.en)){ hit = w; break; }
+    }
+    if (hit) fills.push({ sen: sen, w: hit });
+  }
+  if (fills.length){
+    h += '<div class="pp-sec"><div class="pp-sec-h">三、选词填空（' + fills.length + ' 题）</div>';
+    h += '<div class="pp-sub" style="font-size:11px;color:#555;margin-bottom:6px">词库：'
+       + wb.map(function(w){ return esc(w.en); }).join(' · ') + '</div>';
+    fills.forEach(function(it, i){
+      var re2 = new RegExp('\\b' + it.w.en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b','i');
+      var q = esc(it.sen.en).replace(re2, '＿＿');
+      h += '<div class="pp-q">' + (i+1) + '. ' + q
+         + ' <span style="color:#888">（' + esc(it.sen.zh) + '）</span>'
+         + (withAns ? ' <span class="pp-ans-inline">→ ' + esc(it.w.en) + '</span>' : '') + '</div>';
+    });
+    h += '</div>';
+  }
+  /* 四、单词配对（左英右中，打乱） */
+  var pairs = allW.slice(0, 10);
+  if (pairs.length >= 4){
+    var rights = pairs.slice().sort(function(){ return Math.random() - 0.5; });
+    h += '<div class="pp-sec"><div class="pp-sec-h">四、单词配对（' + pairs.length + ' 题，把左右对应的连起来）</div>';
+    h += '<div style="display:flex;gap:40px;font-size:12px"><div style="flex:1">';
+    pairs.forEach(function(w, i){
+      h += '<div style="padding:3px 0">' + (i+1) + '. ' + esc(w.en) + '</div>';
+    });
+    h += '</div><div style="flex:1">';
+    rights.forEach(function(w, i){
+      h += '<div style="padding:3px 0">' + String.fromCharCode(65+i) + '. ' + esc(w.zh) + '</div>';
+    });
+    h += '</div></div>';
+    if (withAns){
+      h += '<div class="pp-sub" style="font-size:10px;color:#c0392b;margin-top:6px">参考答案：';
+      pairs.forEach(function(w, i){
+        var idx = rights.findIndex(function(x){ return x.en === w.en; });
+        h += (i+1) + '—' + String.fromCharCode(65+idx) + '　';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+  return h + _ppClose();
+}
+
+/* —— ② 英语词语（句子）测验（期中期末 · 全册） —— */
+function genPhraseTest(u, withAns){
+  var src = (u.subject === 'yy3') ? window.DATA_ENGLISH3 : window.DATA_ENGLISH_WORDS;
+  var bus = _bookUnits(u);
+  var allS = [];
+  bus.forEach(function(b){
+    var cu = src && src.units && src.units.find(function(x){ return x.id === b.id; });
+    if (cu && cu.sentences) allS = allS.concat(cu.sentences);
+  });
+  var h = _ppOpen('英语词语（句子）测验（期中期末）', '（' + (withAns ? '教师版' : '学生版') + ' · 全册）', u);
+  if (!allS.length){
+    h += '<div class="pp-sec"><div class="pp-q">本册暂无句子数据。</div></div>';
+    return h + _ppClose();
+  }
+  /* 一、英译汉 */
+  var s1 = allS.slice(0, Math.min(8, allS.length));
+  h += '<div class="pp-sec"><div class="pp-sec-h">一、英译汉（看英文写中文意思，' + s1.length + ' 题）</div>';
+  s1.forEach(function(s, i){
+    h += '<div class="pp-q">' + (i+1) + '. ' + esc(s.en)
+       + '<br><span style="display:inline-block;min-width:260px;border-bottom:1px solid #555">'
+       + (withAns ? ' <span class="pp-ans-inline">' + esc(s.zh) + '</span>' : '')
+       + '</span></div>';
+  });
+  h += '</div>';
+  /* 二、汉译英 */
+  var s2 = allS.slice(0, Math.min(8, allS.length));
+  h += '<div class="pp-sec"><div class="pp-sec-h">二、汉译英（看中文写英文，' + s2.length + ' 题）</div>';
+  s2.forEach(function(s, i){
+    h += '<div class="pp-q">' + (i+1) + '. ' + esc(s.zh) + ' ＿＿＿＿＿＿＿＿＿＿＿'
+       + (withAns ? ' <span class="pp-ans-inline">（' + esc(s.en) + '）</span>' : '') + '</div>';
+  });
+  h += '</div>';
+  /* 三、完成句子（从词库选词填入空格） */
+  var allW = [];
+  bus.forEach(function(b){
+    var cu = src && src.units && src.units.find(function(x){ return x.id === b.id; });
+    if (cu && cu.words) allW = allW.concat(cu.words);
+  });
+  var wb = allW.slice(0, 12);
+  var fills = [];
+  for (var fi = 0; fi < allS.length && fills.length < 8; fi++){
+    var sen = allS[fi];
+    var hit = null;
+    for (var wi = 0; wi < wb.length; wi++){
+      var w = wb[wi];
+      var re = new RegExp('\\b' + w.en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b','i');
+      if (re.test(sen.en)){ hit = w; break; }
+    }
+    if (hit) fills.push({ sen: sen, w: hit });
+  }
+  if (fills.length){
+    h += '<div class="pp-sec"><div class="pp-sec-h">三、完成句子（从词库选词填入，' + fills.length + ' 题）</div>';
+    h += '<div class="pp-sub" style="font-size:11px;color:#555;margin-bottom:6px">词库：'
+       + wb.map(function(w){ return esc(w.en); }).join(' · ') + '</div>';
+    fills.forEach(function(it, i){
+      var re2 = new RegExp('\\b' + it.w.en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b','i');
+      var q = esc(it.sen.en).replace(re2, '＿＿');
+      h += '<div class="pp-q">' + (i+1) + '. ' + q
+         + ' <span style="color:#888">（' + esc(it.sen.zh) + '）</span>'
+         + (withAns ? ' <span class="pp-ans-inline">→ ' + esc(it.w.en) + '</span>' : '') + '</div>';
+    });
+    h += '</div>';
+  }
+  /* 四、连词成句（排序） */
+  var sorts = [];
+  for (var si = 0; si < allS.length && sorts.length < 4; si++){
+    var ss = allS[si];
+    var toks = ss.en.replace(/[.,!?;:]$/,'').split(/\s+/);
+    if (toks.length >= 3 && toks.length <= 8){
+      var shuf = toks.slice().sort(function(){ return Math.random() - 0.5; });
+      if (shuf.join(' ') !== toks.join(' ')) sorts.push({ orig: ss, shuf: shuf });
+    }
+  }
+  if (sorts.length){
+    h += '<div class="pp-sec"><div class="pp-sec-h">四、连词成句（把下列打乱的单词排成正确顺序，' + sorts.length + ' 题）</div>';
+    sorts.forEach(function(it, i){
+      h += '<div class="pp-q">' + (i+1) + '. '
+         + esc(it.shuf.join(' / '))
+         + ' <span style="color:#888">（' + esc(it.orig.zh) + '）</span>'
+         + (withAns ? ' <span class="pp-ans-inline">→ ' + esc(it.orig.en) + '</span>' : '')
+         + '</div>';
+    });
+    h += '</div>';
+  }
+  return h + _ppClose();
+}
+
+/* —— ③ 语文基础字词测验（期中期末 · 全册） —— */
+function genCharTest(u, withAns){
+  var bus = _bookUnits(u);
+  var allC = [];
+  bus.forEach(function(b){
+    var cu = window.DATA_CHARS && window.DATA_CHARS.units && window.DATA_CHARS.units.find(function(x){ return x.id === b.id; });
+    if (cu && cu.words) allC = allC.concat(cu.words);
+  });
+  var h = _ppOpen('语文基础字词测验（期中期末）', '（' + (withAns ? '教师版' : '学生版') + ' · 全册）', u);
+  if (!allC.length){
+    h += '<div class="pp-sec"><div class="pp-q">本册暂未配置生字数据。</div></div>';
+    return h + _ppClose();
+  }
+  /* 一、看拼音写汉字 */
+  var s1 = allC.slice(0, Math.min(15, allC.length));
+  h += '<div class="pp-sec"><div class="pp-sec-h">一、看拼音写汉字（' + s1.length + ' 题）</div><div class="pp-py-grid">';
+  s1.forEach(function(w){
+    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.pinyin) + '</div><div class="pp-py-blank"></div>'
+       + (withAns ? '<div class="pp-py-ans">' + esc(w.char) + '</div>' : '') + '</div>';
+  });
+  h += '</div></div>';
+  /* 二、给汉字注音 */
+  var s2 = allC.slice(0, Math.min(12, allC.length));
+  h += '<div class="pp-sec"><div class="pp-sec-h">二、给汉字注音（' + s2.length + ' 题）</div><div class="pp-py-grid">';
+  s2.forEach(function(w){
+    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.char) + '</div><div class="pp-py-blank"></div>'
+       + (withAns ? '<div class="pp-py-ans">' + esc(w.pinyin) + '</div>' : '') + '</div>';
+  });
+  h += '</div></div>';
+  /* 三、比一比再组词 */
+  var s3 = allC.slice(0, Math.min(10, allC.length));
+  h += '<div class="pp-sec"><div class="pp-sec-h">三、比一比，再组词（' + s3.length + ' 题）</div><div class="pp-py-grid">';
+  s3.forEach(function(w){
+    var zuci = (w.zuci && w.zuci[0]) ? w.zuci[0] : '';
+    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.char) + '（　　）　' + esc(zuci) + '</div><div class="pp-py-blank"></div></div>';
+  });
+  h += '</div></div>';
+  /* 四、多音字组词（常见多音字） */
+  var duo = [
+    { c:'长', p1:'cháng', w1:'长短', p2:'zhǎng', w2:'长大' },
+    { c:'行', p1:'háng', w1:'银行', p2:'xíng', w2:'行走' },
+    { c:'好', p1:'hǎo', w1:'好看', p2:'hào', w2:'爱好' },
+    { c:'背', p1:'bēi', w1:'背包', p2:'bèi', w2:'背诵' },
+    { c:'没', p1:'méi', w1:'没有', p2:'mò', w2:'淹没' },
+    { c:'得', p1:'dé', w1:'得到', p2:'děi', w2:'得亏' },
+    { c:'只', p1:'zhī', w1:'一只', p2:'zhǐ', w2:'只有' },
+    { c:'种', p1:'zhǒng', w1:'种子', p2:'zhòng', w2:'种地' }
+  ];
+  h += '<div class="pp-sec"><div class="pp-sec-h">四、多音字组词（' + duo.length + ' 题）</div><div class="pp-py-grid">';
+  duo.forEach(function(d){
+    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(d.c) + '</div>'
+       + '<div style="font-size:11px">① ' + esc(d.p1) + '（<span style="border-bottom:1px solid #555;min-width:60px;display:inline-block">'
+       + (withAns ? esc(d.w1) : '') + '</span>）　② '
+       + esc(d.p2) + '（<span style="border-bottom:1px solid #555;min-width:60px;display:inline-block">'
+       + (withAns ? esc(d.w2) : '') + '</span>）</div></div>';
+  });
+  h += '</div></div>';
+  /* 五、选字填空 */
+  var s5 = allC.slice(0, Math.min(8, allC.length));
+  h += '<div class="pp-sec"><div class="pp-sec-h">五、选字填空（' + s5.length + ' 题）</div>';
+  s5.forEach(function(w, i){
+    var zuci = (w.zuci && w.zuci[0]) ? w.zuci[0] : ('＿＿＿');
+    h += '<div class="pp-q">' + (i+1) + '. 用 <b>' + esc(w.char) + '</b> 字组词填空：' + esc(zuci).replace(w.char,'＿＿')
+       + (withAns ? ' <span class="pp-ans-inline">→ ' + esc(w.char) + '</span>' : '') + '</div>';
+  });
+  h += '</div>';
+  return h + _ppClose();
+}
+
+/* —— ④ 数学乘除法练习（期中期末） —— */
+function genCalcMidterm(u, withAns){
+  var h = _ppOpen('数学乘除法练习（期中期末）', '（' + (withAns ? '教师版' : '学生版') + '）', { subject:'sx', book:u.book });
+  /* 一、口算（20 题，4 列网格） */
+  var kc = [];
+  for (var i = 0; i < 20; i++){
+    if (i % 2 === 0){
+      var a = _rnd(11, 99), b = _rnd(2, 9);
+      kc.push({ t: a + ' × ' + b + ' =', a: a * b });
+    } else {
+      var dv = _rnd(2, 9), q = _rnd(11, 99), nd = dv * q;
+      kc.push({ t: nd + ' ÷ ' + dv + ' =', a: q });
+    }
+  }
+  h += '<div class="pp-sec"><div class="pp-sec-h">一、口算（20 题，每题 2 分）</div><div class="pp-kc">';
+  kc.forEach(function(p){
+    h += '<div class="pp-kc-i">' + esc(p.t) + '<span class="pp-kc-b"></span>'
+       + (withAns ? '<b class="pp-kc-ans">' + p.a + '</b>' : '') + '</div>';
+  });
+  h += '</div></div>';
+  /* 二、笔算（6 题，留竖式框） */
+  var bs = [];
+  for (var j = 0; j < 3; j++){
+    var m1 = _rnd(120, 980), m2 = _rnd(12, 98);
+    bs.push({ t: m1 + ' × ' + m2 + ' =', a: m1 * m2 });
+  }
+  for (var k = 0; k < 3; k++){
+    var dv2 = _rnd(12, 89), q2 = _rnd(3, 12), rm = _rnd(0, dv2 - 1), nd2 = dv2 * q2 + rm;
+    bs.push({ t: nd2 + ' ÷ ' + dv2 + ' =', a: q2 + ' 余 ' + rm });
+  }
+  h += '<div class="pp-sec"><div class="pp-sec-h">二、用竖式计算（6 题，每题 4 分）</div>';
+  bs.forEach(function(p, idx){
+    h += '<div class="pp-bs"><div class="pp-bs-t">' + (idx+1) + '. ' + esc(p.t) + '</div><div class="pp-calc-box"></div>'
+       + (withAns ? '<div class="pp-bs-ans">= ' + esc(p.a) + '</div>' : '') + '</div>';
+  });
+  h += '</div>';
+  /* 三、估算（4 题） */
+  var est = [];
+  for (var e = 0; e < 4; e++){
+    var a3 = _rnd(100, 999), b3 = _rnd(10, 99);
+    var ea = Math.round(a3 / 100) * 100, eb = Math.round(b3 / 10) * 10;
+    est.push({ t: a3 + ' × ' + b3 + ' ≈ ？', a: '≈ ' + (ea * eb) + '（约）' });
+  }
+  h += '<div class="pp-sec"><div class="pp-sec-h">三、估算（4 题，每题 3 分）</div><div class="pp-py-grid">';
+  est.forEach(function(p, i){
+    h += '<div class="pp-py-cell"><div class="pp-py-py">' + (i+1) + '. ' + esc(p.t) + '</div><div class="pp-py-blank"></div>'
+       + (withAns ? '<div class="pp-py-ans">' + esc(p.a) + '</div>' : '') + '</div>';
+  });
+  h += '</div></div>';
+  /* 四、应用题（4 题，留答题区） */
+  var templates = [
+    { qFn: function(){ var p=_rnd(15,45), s=_rnd(20,150); return ['水果店运来 '+p+' 箱苹果，每箱 '+s+' 个，一共有多少个苹果？', p+' × '+s+' = '+(p*s)+'（个）']; } },
+    { qFn: function(){ var t=_rnd(120,300), c=_rnd(4,9); return ['同学们收集了 '+t+' 节废电池，平均分给 '+c+' 个环保小组，每个小组分到多少节？', t+' ÷ '+c+' = '+(t/c)+'（节）']; } },
+    { qFn: function(){ var s=_rnd(60,100), d=_rnd(3,8); return ['一辆汽车每小时行驶 '+s+' 千米，'+d+' 小时行驶多少千米？', s+' × '+d+' = '+(s*d)+'（千米）']; } },
+    { qFn: function(){ var p=_rnd(150,300), r=_rnd(5,9); return ['学校买了 '+p+' 本新书，平均分给 '+r+' 个班，每班分到多少本？', p+' ÷ '+r+' = '+(p/r)+'（本）']; } },
+    { qFn: function(){ var a=_rnd(8,16), s=_rnd(50,120); return ['一套书 '+a+' 本，每本 '+s+' 页，一共有多少页？', a+' × '+s+' = '+(a*s)+'（页）']; } },
+    { qFn: function(){ var a=_rnd(200,500), w=_rnd(40,90); return ['一辆卡车每次运货 '+w+' 箱，'+a+' 箱货物需要运多少次？', a+' ÷ '+w+' = '+(a/w)+'（次）']; } }
+  ];
+  var apps = [];
+  for (var t = 0; t < 4; t++){
+    var idx2 = (t + Math.floor(Math.random() * templates.length)) % templates.length;
+    var r2 = templates[idx2].qFn();
+    apps.push({ q: r2[0], a: r2[1] });
+  }
+  h += '<div class="pp-sec"><div class="pp-sec-h">四、解决问题（4 题，每题 6 分。先列式，再计算）</div>';
+  apps.forEach(function(p, idx){
+    h += '<div class="pp-app"><div class="pp-app-q">' + (idx+1) + '. ' + esc(p.q) + '</div>'
+       + '<div style="min-height:14px"></div>'
+       + '<div class="pp-calc-box tall"></div>'
+       + (withAns ? '<div class="pp-bs-ans">' + esc(p.a) + '</div>' : '') + '</div>';
+  });
+  h += '</div>';
+  h += '<div style="margin-top:10px;font-size:10.5px;color:#888">※ 应用题请先列出算式，再计算作答。</div>';
+  return h + _ppClose();
+}
+
+function paperTypeOpts(sk){
+  var base = '<option value="normal">单元测试卷（选择 / 判断 / 填空）</option>';
+  if (sk === 'yw') return base
+    + '<option value="pinyin">拼音读写练习卷（生字生词）</option>'
+    + '<option value="charcheck">期中期末·语文基础字词测验（全册）</option>';
+  if (sk === 'sx') return base
+    + '<option value="calc">计算 + 应用题卷（乘除法 · 留竖式）</option>'
+    + '<option value="calcmid">期中期末·乘除法练习（口算/笔算/估算/应用题）</option>';
+  if (sk === 'yy' || sk === 'yy3') return base
+    + '<option value="copy">单词句子抄写卷（含读法）</option>'
+    + '<option value="word">期中期末·英语单词测验（全册）</option>'
+    + '<option value="phrase">期中期末·英语词语（句子）测验（全册）</option>';
+  return base;
+}
 function safeData(o){ return (o && o.units && o.questions) ? o : { units: [], questions: [] }; }
 var RAW = { yw: safeData(window.DATA_CHINESE), sx: safeData(window.DATA_MATH), yy: safeData(window.DATA_ENGLISH), yy3: safeData(window.DATA_ENGLISH3) };
 
@@ -11193,6 +11541,10 @@ function doPrintTest(){ /*__B2_DOPRINT__*/
   if (pType === 'pinyin' && u.subject === 'yw') paperHTML = genPinyinPaper(u, withAns);
   else if (pType === 'calc' && u.subject === 'sx') paperHTML = genCalcPaper(u, withAns);
   else if (pType === 'copy' && (u.subject === 'yy' || u.subject === 'yy3')) paperHTML = genCopyPaper(u, withAns);
+  else if (pType === 'word' && (u.subject === 'yy' || u.subject === 'yy3')) paperHTML = genWordTest(u, withAns);
+  else if (pType === 'phrase' && (u.subject === 'yy' || u.subject === 'yy3')) paperHTML = genPhraseTest(u, withAns);
+  else if (pType === 'charcheck' && u.subject === 'yw') paperHTML = genCharTest(u, withAns);
+  else if (pType === 'calcmid' && u.subject === 'sx') paperHTML = genCalcMidterm(u, withAns);
   else {
     var qs = qsOfUnit(uid_);
     if (!qs.length) { toast('这个单元没有题目，可换其他试卷类型'); return; }
