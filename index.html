@@ -11660,7 +11660,7 @@ function printTestDialog(){
     + '<div class="fld"><label>试卷类型</label><select id="pType">'+paperTypeOpts(PV.sk)+'</select></div>'
     + '<div class="fld"><label>试卷版本</label><select id="pAns"><option value="0">学生版（无答案，方便打印做题）</option><option value="1">教师版（含答案和解析）</option></select></div>'
     + '<div style="font-size:12.5px;color:var(--tx3);line-height:1.7;margin-top:8px">'
-    + svg(ICON.report,14)+' 点击「生成试卷」后会打开浏览器打印窗口，在「目标」里选「另存为 PDF」即可保存电子版，'
+    + svg(ICON.report,14)+' 点击「生成试卷」后：电脑会直接弹出打印窗口；手机会先显示 A4 打印预览（和电脑完全一致），再点「打印 / 存PDF」会新开打印页，在「目标」里选「另存为 PDF」即可保存，'
     + '或选已连接的打印机直接打印。试卷已按 A4 纸张自动分页。</div>';
 
   var btns = '<button class="btn" onclick="App.closeModal()">取消</button>'
@@ -11701,142 +11701,191 @@ function doPrintTest(){ /*__B2_DOPRINT__*/
     setTimeout(function(){ window.print(); setTimeout(function(){ pa.innerHTML = ''; }, 500); }, 200);
   }
 }
-function paperToImage(el, cb){
-  try{
-    var clone = el.cloneNode(true);
-    var w = Math.max(el.scrollWidth, 360);
-    var h = Math.max(el.scrollHeight, 600);
-    var scale = 2;
-    var styleText = '';
-    var st = document.getElementById('pvStyle'); if(st) styleText += st.textContent + '\n';
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + (w*scale) + '" height="' + (h*scale) + '">'
-      + '<foreignObject x="0" y="0" width="' + w + '" height="' + h + '">'
-      + '<div xmlns="http://www.w3.org/1999/xhtml" style="width:' + w + 'px">'
-      + '<style>' + styleText + '</style>'
-      + clone.outerHTML
-      + '</div></foreignObject></svg>';
-    var blob = new Blob([svg], {type:'image/svg+xml;charset=utf-8'});
-    var url = URL.createObjectURL(blob);
-    var img = new Image();
-    img.onload = function(){
-      var canvas = document.createElement('canvas');
-      canvas.width = w*scale; canvas.height = h*scale;
-      var ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
-      ctx.scale(scale,scale);
-      ctx.drawImage(img,0,0);
-      URL.revokeObjectURL(url);
-      canvas.toBlob(function(b){ cb(b, canvas.toDataURL('image/png')); }, 'image/png');
-    };
-    img.onerror = function(){ URL.revokeObjectURL(url); cb(null,null); };
-    img.src = url;
-  }catch(e){ cb(null,null); }
+function ppRules(pfx){
+  var p = pfx ? pfx + ' ' : '';
+  var r = [
+    '.pp{padding:0 0 2mm}',
+    '.pp:last-child{padding-bottom:0}',
+    '.pp-h{text-align:center;border-bottom:1.5px solid #333;padding-bottom:2mm;margin-bottom:2mm}',
+    '.pp-h h1{font-size:12pt;margin:0 0 .5mm;font-weight:700}',
+    '.pp-h .pp-sub{font-size:8.5pt;color:#555}',
+    '.pp-info{display:flex;justify-content:space-between;font-size:8.5pt;margin-bottom:2mm;border:1px solid #999;padding:1mm 2.5mm;border-radius:2px}',
+    '.pp-info span{display:inline-block;min-width:28%}',
+    '.pp-info b{font-weight:400}',
+    '.pp-sec{margin-bottom:2mm}',
+    '.pp-sec-h{font-size:10pt;font-weight:700;margin-bottom:1mm;border-left:2.5px solid #333;padding-left:1.5mm;page-break-after:avoid;break-after:avoid}',
+    '.pp-py-cell,.pp-kc-i,.pp-bs,.pp-app,.pp-cp,.pp-cw{page-break-inside:avoid;break-inside:avoid}',
+    '.pp-q{font-size:10pt;line-height:1.55;margin-bottom:1mm;page-break-inside:avoid;break-inside:avoid}',
+    '.pp-q-n{font-weight:700;margin-right:1mm}',
+    '.pp-opts{margin-left:4mm;margin-top:.5mm;line-height:1.7;display:grid;grid-template-columns:1fr 1fr;gap:0 8mm}',
+    '.pp-opt{display:inline-block;white-space:nowrap}',
+    '.pp-fill-line{display:inline-block;min-width:22mm;border-bottom:1px solid #666;height:.9em;vertical-align:bottom}',
+    '.pp-judge-box{display:inline-block;width:7mm;border-bottom:1px solid #666;text-align:center;margin-left:2mm}',
+    '.pp-ans{margin-left:3mm;font-size:9pt;color:#c0392b;border:1px dashed #c0392b;padding:.5mm 2mm;border-radius:2px;margin-top:.5mm;display:inline-block}',
+    '.pp-ans b{font-weight:700}',
+    '.pp-opts-inline{margin-left:18px;margin-top:1px;line-height:1.6}',
+    '.pp-opt-inline{display:inline;font-size:10pt;margin-right:10px;white-space:nowrap}',
+    '.pp-ans-inline{margin-left:18px;font-size:8.5pt;color:#c0392b;margin-top:1px;line-height:1.5}',
+    '.pp-ans-inline b{font-weight:700}',
+    '.pp-note{font-size:8.5pt;color:#888;margin-top:.5mm}',
+    '.pp-py-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px;margin:2px 0}',
+    '.pp-py-cell{display:flex;align-items:flex-end;gap:8px;font-size:13px;padding:2px 0;line-height:1.4}',
+    '.pp-py-py{min-width:60px;color:#333;font-weight:600}',
+    '.pp-py-blank{flex:1;border-bottom:1px solid #555;height:1.1em;min-width:30px}',
+    '.pp-py-ans{color:#c0392b;font-weight:600}',
+    '.pp-cw{display:flex;align-items:center;gap:10px;padding:2px 0;border-bottom:1px dashed #e6e6e6}',
+    '.pp-cw-ch{font-size:18px;font-weight:700;color:#222;min-width:34px;text-align:center}',
+    '.pp-cw-meta{font-size:12px;color:#666;flex:1}',
+    '.pp-cw-lines{display:flex;gap:10px}',
+    '.pp-cw-lines span{width:48px;border-bottom:1px solid #999;height:1em}',
+    '.pp-kc{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px 12px;font-size:13px}',
+    '.pp-kc-i{display:flex;align-items:center;gap:4px;padding:2px 0}',
+    '.pp-kc-b{flex:1;border-bottom:1px solid #555;min-width:24px}',
+    '.pp-kc-ans{color:#c0392b;font-weight:600}',
+    '.pp-app{padding:4px 0}',
+    '.pp-app-q{font-size:12.5px;margin-bottom:2px;line-height:1.45}',
+    '.pp-cp{padding:3px 0;border-bottom:1px dashed #e6e6e6}',
+    '.pp-cp-en{font-size:14px;font-weight:600;color:#1f3a93}',
+    '.pp-cp-zh{font-size:11px;color:#555;margin:1px 0}',
+    '.pp-cp-pr{color:#0a7d3b}',
+    '.pp-cp-lines{display:flex;gap:16px;margin-top:2px}',
+    '.pp-cp-lines span{flex:1;max-width:260px;border-bottom:1px solid #999;height:1em}'
+  ];
+  var out = [];
+  for (var i=0;i<r.length;i++){
+    var rule = r[i];
+    var br = rule.indexOf('{');
+    var sels = rule.slice(0,br).split(',');
+    for (var j=0;j<sels.length;j++) sels[j] = p + sels[j].trim();
+    out.push(sels.join(',') + rule.slice(br));
+  }
+  return out.join('\n');
 }
-function paperViewerExport(){
+function buildPaperDoc(inner){
+  var css = [
+    '*{box-sizing:border-box}',
+    'html,body{margin:0;padding:0;background:#fff;color:#222;-webkit-text-size-adjust:100%;text-size-adjust:100%}',
+    'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Roboto,sans-serif;font-size:11pt;line-height:1.5}',
+    '.paper-wrap{width:190mm;margin:0 auto;padding:6mm 0 16mm}',
+    '.tb{position:sticky;top:0;z-index:9;display:flex;align-items:center;gap:10px;padding:8px 10px;background:#2d2d2d;color:#fff}',
+    '.tb-b{background:#D4A84B;color:#1a1a2e;font-weight:700;border:0;border-radius:8px;padding:10px 14px;font-size:15px;cursor:pointer;flex:none}',
+    '.tb-t{font-size:12px;color:#ddd;line-height:1.35}',
+    ppRules(''),
+    '@media print{',
+    '  @page{size:A4;margin:8mm 10mm}',
+    '  .tb{display:none !important}',
+    '  .paper-wrap{width:auto;margin:0;padding:0}',
+    '}'
+  ].join('\n');
+  return '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">'
+    + '<meta name="viewport" content="width=760,initial-scale=1">'
+    + '<title>\u56db\u5e74\u7ea7\u8bd5\u5377</title><style>' + css + '</style></head><body>'
+    + '<div class="tb"><button class="tb-b" onclick="window.print()">\u6253\u5370 / \u5b58\u4e3aPDF</button>'
+    + '<span class="tb-t">\u6ca1\u5f39\u51fa\u6253\u5370\u7a97\u53e3\uff1f\u7528\u6d4f\u89c8\u5668\u83dc\u5355\u91cc\u7684\u300c\u6253\u5370\u300d\uff0c\u76ee\u6807\u9009\u300c\u53e6\u5b58\u4e3a PDF\u300d</span></div>'
+    + '<div class="paper-wrap">' + inner + '</div>'
+    + '<scr' + 'ipt>window.addEventListener("load",function(){setTimeout(function(){try{window.print();}catch(e){}},700);});</scr' + 'ipt>'
+    + '</body></html>';
+}
+function pvHelpShow(html){
+  var host = document.getElementById('pvHelp');
+  if (!host) return;
+  host.innerHTML = html;
+  host.style.display = 'block';
+}
+function openPaperPrintPage(){
   var pg = document.getElementById('pvPage');
-  if(!pg) return;
+  if (!pg) return;
   var ua = navigator.userAgent || '';
-  var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-  var isWeChat = /MicroMessenger/i.test(ua);
-  if(!isMobile || (window.print && !isWeChat)){
-    var pa2 = document.getElementById('printArea');
-    pa2.innerHTML = pg.innerHTML;
-    var x = document.getElementById('paperViewer');
-    x.style.display = 'none';
-    window.print();
-    setTimeout(function(){ x.style.display = 'flex'; pa2.innerHTML = ''; }, 500);
+  var isWX = /MicroMessenger|QQ\//i.test(ua);
+  if (isWX){
+    pvHelpShow('<b>\u5fae\u4fe1\u5185\u7f6e\u6d4f\u89c8\u5668\u4e0d\u652f\u6301\u6253\u5370</b>\uff1a\u8bf7\u70b9\u53f3\u4e0a\u89d2 <b>\u00b7\u00b7\u00b7</b> \u2192 <b>\u5728\u6d4f\u89c8\u5668\u6253\u5f00</b>\uff0c\u518d\u56de\u5230\u8fd9\u4e00\u6b65\u70b9\u300c\u6253\u5370 / \u5b58PDF\u300d\u5373\u53ef\u3002');
     return;
   }
-  paperToImage(pg, function(blob, dataUrl){
-    if(!blob){ toast('截图保存：长按页面即可保存图片'); return; }
-    var file = new File([blob], '试卷.png', {type:'image/png'});
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      navigator.share({files:[file], title:'四年级试卷'}).catch(function(){ paperImgFallback(dataUrl); });
-    } else if(navigator.share){
-      navigator.share({title:'四年级试卷', text:'已生成试卷图片，可保存或打印'}).catch(function(){ paperImgFallback(dataUrl); });
-    } else {
-      paperImgFallback(dataUrl);
-    }
-  });
-}
-function paperImgFallback(dataUrl){
-  try{
-    var a = document.createElement('a'); a.href = dataUrl; a.download = '试卷.png';
-    document.body.appendChild(a); a.click(); a.remove();
-  }catch(e){}
-  var host = document.getElementById('pvPage');
-  if(host && host.parentNode){
-    var prev = document.getElementById('pvImgPreview');
-    if(!prev){ prev = document.createElement('img'); prev.id = 'pvImgPreview'; prev.style.cssText = 'width:100%;margin-top:12px;border:1px solid #ccc;border-radius:6px'; host.parentNode.appendChild(prev); }
-    prev.src = dataUrl;
+  var url = '';
+  try {
+    url = URL.createObjectURL(new Blob([buildPaperDoc(pg.innerHTML)], {type:'text/html;charset=utf-8'}));
+  } catch(e){ url = ''; }
+  if (!url){
+    pvHelpShow('\u672c\u6d4f\u89c8\u5668\u4e0d\u652f\u6301\u65b0\u5f00\u9875\u9762\uff0c\u8bf7\u76f4\u63a5\u7528\u6d4f\u89c8\u5668\u83dc\u5355\u91cc\u7684\u300c\u6253\u5370\u300d\u3002');
+    return;
   }
-  toast('图片已生成：可长按保存，或用浏览器菜单打印');
+  var opened = false;
+  try {
+    var a = document.createElement('a');
+    a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); a.remove();
+    opened = true;
+  } catch(e){ opened = false; }
+  pvHelpShow('\u5df2\u6253\u5f00\u6253\u5370\u9875\uff08\u65b0\u6807\u7b7e\u9875\uff09\uff0c\u5728\u6253\u5370\u7a97\u53e3\u91cc\u9009\u300c\u53e6\u5b58\u4e3a PDF\u300d\u5373\u53ef\u4fdd\u5b58\u3002'
+    + '<br>\u6ca1\u6709\u8df3\u8f6c\uff1f<a href="' + url + '" target="_blank" rel="noopener" style="color:#D4A84B;font-weight:700;text-decoration:underline">\u70b9\u8fd9\u91cc\u624b\u52a8\u6253\u5f00\u6253\u5370\u9875</a>');
+  if (!opened){ /* noop */ }
+}
+var PV_FITMODE = 1;
+function pvFit(){
+  var pg = document.getElementById('pvPage');
+  if (!pg) return;
+  var box = pg.parentNode, sc = box.parentNode;
+  var avail = (sc.clientWidth || 360) - 12;
+  var base = pg.offsetWidth || 746;
+  var s = PV_FITMODE ? Math.min(1, avail / base) : 1;
+  if (!(s > 0)) s = 1;
+  pg.style.transformOrigin = 'top left';
+  pg.style.transform = 'scale(' + s + ')';
+  box.style.width = Math.round(base * s) + 'px';
+  box.style.height = Math.round((pg.offsetHeight || 800) * s) + 'px';
 }
 function showPaperViewer(html){
   var v = document.getElementById('paperViewer');
-  if(!v){
+  if (!v){
     v = document.createElement('div');
     v.id = 'paperViewer';
     v.innerHTML = '<div class="pv-bar">'
-      + '<button class="btn" onclick="App.closePaperViewer()">关闭</button>'
-      + '<span class="pv-tip">试卷已生成：可长按截图，或点「存为图片/PDF」分享保存</span>'
-      + '<button class="btn pri" onclick="App.printFromViewer()">存为图片/PDF</button>'
-      + '</div><div class="pv-scroll"><div class="pv-page" id="pvPage"></div></div>';
+      + '<button class="btn" onclick="App.closePaperViewer()">\u5173\u95ed</button>'
+      + '<button class="btn" id="pvZoomBtn" onclick="App.pvZoom()">\u653e\u5927</button>'
+      + '<span class="pv-tip">\u9884\u89c8 = \u7535\u8111\u6253\u5370\u6548\u679c\uff08A4\uff09</span>'
+      + '<button class="btn pri" onclick="App.printFromViewer()">\u6253\u5370 / \u5b58PDF</button>'
+      + '</div><div class="pv-help" id="pvHelp"></div>'
+      + '<div class="pv-scroll"><div class="pv-fit"><div class="pv-page" id="pvPage"></div></div></div>';
     document.body.appendChild(v);
-    if(!document.getElementById('pvStyle')){
+    if (!document.getElementById('pvStyle')){
       var st = document.createElement('style'); st.id = 'pvStyle';
       st.textContent = [
-        '#paperViewer{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:none;flex-direction:column}',
-        '.pv-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#2d2d2d;color:#fff}',
-        '.pv-bar .btn{font-size:14px;padding:8px 12px;border:0;border-radius:8px;cursor:pointer}',
+        '#paperViewer{position:fixed;inset:0;background:#e9e9ed;z-index:99999;display:none;flex-direction:column}',
+        '.pv-bar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#2d2d2d;color:#fff;flex:none}',
+        '.pv-bar .btn{font-size:14px;padding:9px 12px;border:0;border-radius:8px;cursor:pointer;flex:none;min-height:40px}',
         '.pv-bar .btn.pri{background:#D4A84B;color:#1a1a2e;font-weight:700}',
-        '.pv-bar .pv-tip{font-size:12px;color:#ddd;flex:1;line-height:1.3}',
-        '.pv-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#e9e9ed;padding:10px}',
-        '.pv-page{background:#fff;max-width:780px;margin:0 auto;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.2);font-size:15px;line-height:1.7;color:#222;overflow-wrap:anywhere}',
-        '.pv-page .pp-h{text-align:center;border-bottom:1.5px solid #333;padding-bottom:6px;margin-bottom:10px}',
-        '.pv-page .pp-h h1{font-size:18px;margin:0 0 4px;font-weight:700}',
-        '.pv-page .pp-h .pp-sub{font-size:12px;color:#555}',
-        '.pv-page .pp-info{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px;border:1px solid #999;padding:4px 8px;border-radius:2px}',
-        '.pv-page .pp-sec{margin-bottom:10px}',
-        '.pv-page .pp-sec-h{font-size:15px;font-weight:700;margin-bottom:6px;border-left:3px solid #333;padding-left:6px}',
-        '.pv-page .pp-q{font-size:15px;line-height:1.7;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid}',
-        '.pv-page .pp-q-n{font-weight:700;margin-right:4px}',
-        '.pv-page .pp-opts{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;margin-left:18px;margin-top:4px;line-height:1.8}',
-        '.pv-page .pp-opts-inline{margin-left:18px;margin-top:4px;line-height:1.7}',
-        '.pv-page .pp-fill-line{display:inline-block;min-width:50px;border-bottom:1px solid #666;height:1em;vertical-align:bottom}',
-        '.pv-page .pp-ans{color:#c0392b;font-size:13px;margin-left:8px}',
-        '.pv-page .pp-ans-inline{color:#c0392b;font-size:13px;margin-left:18px;margin-top:2px}',
-        '.pv-page .pp-py-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px}',
-        '.pv-page .pp-py-cell{border:1px solid #ccc;border-radius:4px;padding:6px;text-align:center;font-size:14px}',
-        '.pv-page .pp-kc{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 14px}',
-        '.pv-page .pp-kc-i{font-size:14px;padding:4px 0}',
-        '.pv-page .pp-judge-box{border-bottom:1px solid #666}',
-        '@media (max-width:768px){',
-        '  .pv-scroll{padding:6px}',
-        '  .pv-page{padding:14px;font-size:14px;line-height:1.6;max-width:100%}',
-        '  .pv-page .pp-h h1{font-size:16px}',
-        '  .pv-page .pp-q{font-size:14px}',
-        '  .pv-page .pp-opts{grid-template-columns:1fr;margin-left:14px}',
-        '  .pv-page .pp-py-grid{grid-template-columns:1fr 1fr}',
-        '  .pv-page .pp-kc{grid-template-columns:1fr 1fr}',
-        '  .pv-page .pp-py-cell{font-size:13px;padding:5px}',
-        '  .pv-page .pp-kc-i{font-size:13px}',
-        '  .pv-bar .pv-tip{display:none}',
-        '  .pv-bar{padding:8px}',
-        '}',
+        '.pv-bar .pv-tip{font-size:12px;color:#ddd;flex:1;line-height:1.3;text-align:center}',
+        '@media (max-width:520px){.pv-bar .pv-tip{display:none}.pv-bar{gap:6px;padding:8px 8px}.pv-bar .btn{padding:9px 10px;font-size:13px}}',
+        '.pv-help{display:none;background:#3a3320;color:#ffe9b0;font-size:13px;line-height:1.6;padding:8px 12px;flex:none}',
+        '.pv-help b{color:#ffd27a}',
+        '.pv-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:6px;padding-bottom:calc(12px + env(safe-area-inset-bottom))}',
+        '.pv-fit{margin:0 auto;position:relative}',
+        '.pv-page{width:746px;background:#fff;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.2);color:#222;'
+          + 'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Roboto,sans-serif;'
+          + 'font-size:11pt;line-height:1.5;-webkit-text-size-adjust:100%;text-size-adjust:100%;box-sizing:border-box}',
+        ppRules('.pv-page'),
         '@media print{#paperViewer{display:none !important}}'
       ].join('\n');
       document.head.appendChild(st);
     }
+    window.addEventListener('resize', function(){ if (v.style.display === 'flex') pvFit(); });
   }
-  document.getElementById('pvPage').innerHTML = html;
+  var help = document.getElementById('pvHelp');
+  if (help){ help.style.display = 'none'; help.innerHTML = ''; }
+  PV_FITMODE = 1;
+  var zb = document.getElementById('pvZoomBtn'); if (zb) zb.textContent = '\u653e\u5927';
+  var pg = document.getElementById('pvPage');
+  pg.style.transform = 'none';
+  pg.innerHTML = html;
   v.style.display = 'flex';
-  if(!App.closePaperViewer){
-    App.closePaperViewer = function(){ var x = document.getElementById('paperViewer'); if(x) x.style.display = 'none'; };
-    App.printFromViewer = function(){ paperViewerExport(); };
+  pvFit();
+  setTimeout(pvFit, 60);
+  if (!App.closePaperViewer){
+    App.closePaperViewer = function(){ var x = document.getElementById('paperViewer'); if (x) x.style.display = 'none'; };
+    App.pvZoom = function(){ PV_FITMODE = PV_FITMODE ? 0 : 1; var b = document.getElementById('pvZoomBtn'); if (b) b.textContent = PV_FITMODE ? '\u653e\u5927' : '\u9002\u5e94\u5bbd\u5ea6'; pvFit(); };
+    App.printFromViewer = function(){ try { openPaperPrintPage(); } catch(e){ pvHelpShow('\u751f\u6210\u6253\u5370\u9875\u5931\u8d25\uff0c\u8bf7\u7528\u6d4f\u89c8\u5668\u83dc\u5355\u91cc\u7684\u300c\u6253\u5370\u300d\u3002'); } };
   }
 }
-
 function generatePaper(u, qs, withAns){
   var sj = SUBJ[u.subject]||SUBJ.yw;
   var bookStr = _gradeOf(u.subject)+'年级'+(u.book==='up'?'上册':'下册'); /*__B2_GRADE__*/
