@@ -11752,10 +11752,90 @@ function generatePaper(u, qs, withAns){
     });
     h += '</div>';
   }
-  h += '</div>';
 
+  /* ===== 数学单元自动补充：题量不足时生成额外题目填满页面 ===== */
+  if (u.subject === 'sx' && choices.length + judges.length + fills.length < 28) {
+    var needChoice = Math.max(0, 8 - choices.length);
+    var needJudge  = Math.max(0, 8 - judges.length);
+    var needFill   = Math.max(0, 12 - fills.length);
+
+    /* 补充选择题 */
+    if (needChoice > 0) {
+      if (!choices.length) { secIdx++; h += '<div class="pp-sec"><div class="pp-sec-h">'+cnNum(secIdx)+'、选择题（共'+needChoice+'题，每题 4 分）</div>'; }
+      var extraC = [
+        {q:'下面各数中，最大的数是（ ）。',o:['A. 99999999','B. 100000000','C. 99990000','D. 10000000'],a:1,ex:'100000000＝一亿，最大。'},
+        {q:'一个数的近似数是8万，这个数最大是（ ）。',o:['A. 74999','B. 79999','C. 84999','D. 80001'],a:2,ex:'四舍五入到万位看千位，84999千位4≤4舍去得8万，最大。'},
+        {q:'最小的自然数是（ ）。',o:['A. 0','B. 1','C. -1','D. 没有最小的'],a:0,ex:'自然数从0开始。'},
+        {q:'把整万数改写成用"万"作单位的数时（ ）。',o:['A. 去掉末尾4个0','B. 去掉末尾4个数','C. 除以10000','D. 加上"万"字'],a:0,ex:'去掉末尾4个0再写"万"。'},
+        {q:'0除以任何不是0的数都得（ ）。',o:['A. 0','B. 1','C. 不确定','D. 原数'],a:0,ex:'0除以非零数商为0。'},
+        {q:'在乘法算式中，一个因数不变，另一个因数扩大10倍，积（ ）。',o:['A. 不变','B. 扩大10倍','C. 缩小10倍','D. 无法确定'],a:1,ex:'积随因数同倍变化。'},
+        {q:'计算 125×8 时，最简便的方法是（ ）。',o:['A. 竖式计算','B. 125×2×4','C. 125×4×2','D. 100×8+25×8'],a:3,ex:'100×8+25×8=800+200=1000，最简便。'},
+        {q:'下面算式中，结果最大的是（ ）。',o:['A. 360÷9','B. 240÷6','C. 400÷8','D. 180÷3'],a:3,ex:'180÷3=60，结果最大。'}
+      ];
+      for (var ci = 0; ci < needChoice; ci++) {
+        var ec = extraC[ci % extraC.length];
+        var baseIdx = choices.length + ci + 1;
+        h += '<div class="pp-q"><span class="pp-q-n">'+baseIdx+'.</span>'+esc(ec.q)+'</div>';
+        h += '<div class="pp-opts-inline">';
+        (ec.o||[]).forEach(function(op, oi){ var letter = String.fromCharCode(65+oi); h += '<span class="pp-opt-inline">'+letter+'. '+esc(op)+'</span>'; });
+        h += '</div>';
+        if (withAns) h += '<div class="pp-ans-inline"><b>【'+String.fromCharCode(65+ec.a)+'】</b> '+esc(ec.ex)+'</div>';
+      }
+      if (!choices.length) h += '</div>';
+    }
+    /* 补充判断题 */
+    if (needJudge > 0) {
+      if (!judges.length) { secIdx++; h += '<div class="pp-sec"><div class="pp-sec-h">'+cnNum(secIdx)+'、判断题（共'+needJudge+'题，对的打 ✓，错的打 ✗）</div>'; }
+      var extraJ = [
+        {q:'两个因数的积一定大于其中任何一个因数。',a:false,ex:'如 1×0=0，积小于因数。'},
+        {q:'0乘任何数都等于0。',a:true,ex:'0乘法性质。'},
+        {q:'除以一个不为0的数等于乘这个数的倒数。',a:true,ex:'除法与乘法的互逆关系。'},
+        {q:'三位数除以两位数，商一定是两位数。',a:false,ex:'如 100÷25=4 商是一位数。'},
+        {q:'估算的结果比精确计算的结果更准确。',a:false,ex:'估算只是近似值。'},
+        {q:'在有余数的除法中，余数一定要比除数小。',a:true,ex:'余数的基本性质。'},
+        {q:'一个数的近似数可能比原数大也可能比原数小。',a:true,ex:'四舍变小，五入变大。'},
+        {q:'所有的偶数都是合数。',a:false,ex:'2是偶数但不是合数。'}
+      ];
+      for (var ji = 0; ji < needJudge; ji++) {
+        var ej = extraJ[ji % extraJ.length];
+        var baseIdx2 = judges.length + ji + 1;
+        h += '<div class="pp-q"><span class="pp-q-n">'+baseIdx2+'.</span>'+esc(ej.q)+'<span class="pp-judge-box">　</span></div>';
+        if (withAns) h += '<div class="pp-ans-inline"><b>【'+(ej.a?'✓':'✗')+'】</b> '+esc(ej.ex)+'</div>';
+      }
+      if (!judges.length) h += '</div>';
+    }
+    /* 补充填空题 */
+    if (needFill > 0) {
+      if (!fills.length) { secIdx++; h += '<div class="pp-sec"><div class="pp-sec-h">'+cnNum(secIdx)+'、填空题（共'+needFill+'题，将答案写在横线上）</div>'; }
+      var extraF = [
+        {q:'由5个亿、608个万和30个一组成的数是 ______。',a:'50608030',ex:'按数位组合。'},
+        {q:'把 420000 改写成用"万"作单位的数是 ______ 万。',a:'42',ex:'去掉末尾4个0。'},
+        {q:'386420 省略万位后面的尾数约是 ______ 万。',a:'39',ex:'千位6≥5进1。'},
+        {q:'7800000000 改写成用"亿"作单位是 ______ 亿。',a:'78',ex:'去掉末尾8个0。'},
+        {q:'写出下面各数：二亿六千六百七十五万 读作 ______。',a:'266750000',ex:'中文数字转阿拉伯数字。'},
+        {q:'写出下面各数：34781034 读作 ______。',a:'三千四百七十八万一千零三十四',ex:'分级读数。'},
+        {q:'比较大小：65373033 ______ 65335212（填＞、＜或＝）。',a:'>',ex:'逐位比较。'},
+        {q:'23435212 读作 ______。',a:'二千三百四十三万五千二百一十二',ex:'四位一级读数。'},
+        {q:'37854415 读作 ______。',a:'三千七百八十五万四千四百一十五',ex:'先分级再读。'},
+        {q:'97565069 读作 ______。',a:'九千七百五十六万五千零六十九',ex:'注意中间的0要读。'},
+        {q:'把 350000 改写成用"万"作单位的数是 ______。',a:'35',ex:'简单改写。'},
+        {q:'900000000 改成用"亿"作单位是 ______ 亿。',a:'9',ex:'九亿。'}
+      ];
+      for (var fi = 0; fi < needFill; fi++) {
+        var ef = extraF[fi % extraF.length];
+        var baseIdx3 = fills.length + fi + 1;
+        var qText2 = esc(ef.q).replace(/_{2,}/g,'<span class="pp-fill-line"></span>');
+        h += '<div class="pp-q"><span class="pp-q-n">'+baseIdx3+'.</span>'+qText2+'</div>';
+        if (withAns) h += '<div class="pp-ans-inline"><b>【'+esc(ef.a.split('|')[0])+'】</b> '+esc(ef.ex)+'</div>';
+      }
+      if (!fills.length) h += '</div>';
+    }
+  }
+
+  h += '</div>';
   return h;
 }
+
 
 function cnNum(n){
   var arr = ['','一','二','三','四','五','六','七','八','九','十'];
