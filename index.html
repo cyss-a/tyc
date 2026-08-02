@@ -313,8 +313,9 @@ main{padding:18px 0 30px}
   .pp-info{ display:flex; justify-content:space-between; font-size:8.5pt; margin-bottom:2mm; border:1px solid #999; padding:1mm 2.5mm; border-radius:2px }
   .pp-info span{ display:inline-block; min-width:28% }
   .pp-info b{ font-weight:400 }
-  .pp-sec{ margin-bottom:2mm; page-break-inside:avoid }
-  .pp-sec-h{ font-size:10pt; font-weight:700; margin-bottom:1mm; border-left:2.5px solid #333; padding-left:1.5mm }
+  .pp-sec{ margin-bottom:2mm; page-break-inside:auto }
+  .pp-sec-h{ font-size:10pt; font-weight:700; margin-bottom:1mm; border-left:2.5px solid #333; padding-left:1.5mm; page-break-after:avoid }
+  .pp-py-cell,.pp-kc-i,.pp-bs,.pp-app,.pp-cp,.pp-cw{ page-break-inside:avoid }
   .pp-q{ font-size:10pt; line-height:1.55; margin-bottom:1mm; page-break-inside:avoid }
   .pp-q-n{ font-weight:700; margin-right:1mm }
   .pp-opts{ margin-left:4mm; margin-top:0.5mm; line-height:1.7; display:grid; grid-template-columns:1fr 1fr; gap:0 8mm }
@@ -10526,6 +10527,52 @@ window.DATA_ENGLISH_WORDS = {"units":[{"id":"yy-u-1","book":"up","no":1,"name":"
 /* =================== 新增试卷类型生成器（注入到页面） =================== */
 function _gradeOf(sk){ var s = SUBJ[sk]; return (s && s.grade) || '四'; }
 function _bookStr(u){ return _gradeOf(u.subject) + '年级' + (u.book === 'up' ? '上册' : '下册'); }
+
+/* —— 日期种子随机（让期中期末试卷每天自动更新，但当天师生版一致） —— */
+function _seedFromDate(){
+  var s = ymd();
+  var h = 2166136261;
+  for (var i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function _mkRng(seed){
+  var st = (seed >>> 0) || 1;
+  return function(){
+    st = (st + 0x6D2B79F5) >>> 0;
+    var t = st;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function _paperSeed(subject, book, type){
+  var base = _seedFromDate();
+  var s = '' + subject + book + type;
+  var h = (base ^ 0x811c9dc5) >>> 0;
+  for (var i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function _shuffle(arr, rng){
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(rng() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+/* —— 源数据单元定位（按 book+no 位置匹配，规避 id 命名不一致） —— */
+function _srcUnitAt(src, u){
+  if (!src || !src.units) return null;
+  var same = src.units.filter(function(x){ return (x.book || '') === (u.book || ''); })
+    .sort(function(a, b){ return (a.no || 0) - (b.no || 0); });
+  var bus = UNITS.filter(function(x){ return x.subject === u.subject && x.book === u.book; })
+    .sort(function(a, b){ return (a.no || 0) - (b.no || 0); });
+  var pos = 0;
+  for (var i = 0; i < bus.length; i++){ if (bus[i].id === u.id){ pos = i; break; } }
+  return same[pos] || null;
+}
+
 function _ppOpen(title, sub, u){
   return '<div class="pp"><div class="pp-h">'
     + '<h1>' + esc(_bookStr(u)) + ' ' + esc(title) + '</h1>'
@@ -10536,7 +10583,7 @@ function _ppClose(){ return '</div>'; }
 
 /* —— 语文：生字生词拼音读写练习卷（单元级，保留原逻辑） —— */
 function genPinyinPaper(u, withAns){
-  var cu = (window.DATA_CHARS && window.DATA_CHARS.units.filter(function(x){ return x.id === u.id; })[0]) || null;
+  var cu = _srcUnitAt(window.DATA_CHARS, u);
   var h = _ppOpen('生字生词拼音读写练习', '（' + (withAns ? '教师版' : '学生版') + '）', u);
   if (!cu || !cu.words || !cu.words.length){
     h += '<div class="pp-sec"><div class="pp-sec-h">提示</div><div class="pp-q">本单元暂未配置生字数据。</div></div>';
@@ -10570,7 +10617,7 @@ function genPinyinPaper(u, withAns){
   return h + _ppClose();
 }
 
-/* —— 数学：乘除法计算 + 应用题（单元级，保留原逻辑） —— */
+/* —— 数学：乘除法计算 + 应用题（单元级，保留原逻辑，非期中期末，不随机） —— */
 function _rnd(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
 function genCalcPaper(u, withAns){
   var h = _ppOpen('乘除法计算与应用题', '（专项练习 · ' + (withAns ? '教师版' : '学生版') + '）', { subject:'sx', book:u.book });
@@ -10612,7 +10659,7 @@ function genCalcPaper(u, withAns){
 }
 
 /* ============================================================
-   期中期末试卷（覆盖整册 · ≤ 4 页 A4 · 全量数据 · 紧凑排版）
+   期中期末试卷（覆盖整册 · ≤ 4 页 A4 · 全量数据 · 紧凑排版 · 每日随机）
    ============================================================ */
 
 /* 同册所有单元 */
@@ -10627,7 +10674,7 @@ function genCopyPaper(u, withAns){
   var bus = _bookUnits(u);
   var allW = [], allS = [];
   bus.forEach(function(b){
-    var cu = src && src.units && src.units.find(function(x){ return x.id === b.id; });
+    var cu = _srcUnitAt(src, b);
     if (cu){
       if (cu.words) allW = allW.concat(cu.words);
       if (cu.sentences) allS = allS.concat(cu.sentences);
@@ -10662,13 +10709,13 @@ function genCopyPaper(u, withAns){
   return h + _ppClose();
 }
 
-/* —— ② 英语单词测验（期中期末 · 全册 · 紧凑） —— */
+/* —— ② 英语单词测验（期中期末 · 全册 · 紧凑 · 每日随机） —— */
 function genWordTest(u, withAns){
   var src = (u.subject === 'yy3') ? window.DATA_ENGLISH3 : window.DATA_ENGLISH_WORDS;
   var bus = _bookUnits(u);
   var allW = [], allS = [];
   bus.forEach(function(b){
-    var cu = src && src.units && src.units.find(function(x){ return x.id === b.id; });
+    var cu = _srcUnitAt(src, b);
     if (cu){
       if (cu.words) allW = allW.concat(cu.words);
       if (cu.sentences) allS = allS.concat(cu.sentences);
@@ -10678,11 +10725,11 @@ function genWordTest(u, withAns){
   if (!allW.length){
     h += '<div class="pp-sec"><div class="pp-q">本册暂无单词数据。</div></div>'; return h + _ppClose();
   }
+  var rng = _mkRng(_paperSeed(u.subject, u.book, 'word'));
 
-  /* 一、看中文写英文（听写）— 全部单词 */
-  var s1 = allW.slice(); // 不截断
+  /* 一、看中文写英文（听写）— 全部单词，顺序每日随机 */
+  var s1 = _shuffle(allW, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">一、看中文写英文（共 ' + s1.length + ' 题）</div>';
-  // 双列紧凑
   h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 20px">';
   s1.forEach(function(w, i){
     h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10.5pt;line-height:1.5">'
@@ -10692,8 +10739,8 @@ function genWordTest(u, withAns){
   });
   h += '</div></div>';
 
-  /* 二、看英文写中文 — 全部单词 */
-  var s2 = allW.slice();
+  /* 二、看英文写中文 — 全部单词，顺序每日随机 */
+  var s2 = _shuffle(allW, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">二、看英文写中文（共 ' + s2.length + ' 题）</div>';
   h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 20px">';
   s2.forEach(function(w, i){
@@ -10704,11 +10751,12 @@ function genWordTest(u, withAns){
   });
   h += '</div></div>';
 
-  /* 三、选词填空 — 尽量多题 */
+  /* 三、选词填空 — 尽量多题，句子每日随机选取 */
   var wb = allW.slice();
+  var shufS = _shuffle(allS, rng);
   var fills = [];
-  for (var fi = 0; fi < allS.length && fills.length < Math.min(allS.length, 30); fi++){
-    var sen = allS[fi];
+  for (var fi = 0; fi < shufS.length && fills.length < Math.min(shufS.length, 30); fi++){
+    var sen = shufS[fi];
     var hit = null;
     for (var wi = 0; wi < wb.length; wi++){
       var w = wb[wi];
@@ -10735,10 +10783,10 @@ function genWordTest(u, withAns){
     h += '</div></div>';
   }
 
-  /* 四、单词配对 — 增加到最多 20 对 */
+  /* 四、单词配对 — 最多 20 对，左右顺序每日随机 */
   var pairs = allW.slice(0, Math.min(20, allW.length));
   if (pairs.length >= 4){
-    var rights = pairs.slice().sort(function(){ return Math.random() - 0.5; });
+    var rights = _shuffle(pairs, rng);
     h += '<div class="pp-sec"><div class="pp-sec-h">四、单词配对（共 ' + pairs.length + ' 题，把左右对应的连起来）</div>';
     h += '<div style="display:flex;gap:50px;font-size:10.5pt"><div style="flex:1">';
     pairs.forEach(function(w, i){
@@ -10762,13 +10810,13 @@ function genWordTest(u, withAns){
   return h + _ppClose();
 }
 
-/* —— ③ 英语词语（句子）测验（期中期末 · 全册 · 紧凑） —— */
+/* —— ③ 英语词语（句子）测验（期中期末 · 全册 · 紧凑 · 每日随机） —— */
 function genPhraseTest(u, withAns){
   var src = (u.subject === 'yy3') ? window.DATA_ENGLISH3 : window.DATA_ENGLISH_WORDS;
   var bus = _bookUnits(u);
   var allS = [], allW = [];
   bus.forEach(function(b){
-    var cu = src && src.units && src.units.find(function(x){ return x.id === b.id; });
+    var cu = _srcUnitAt(src, b);
     if (cu){
       if (cu.sentences) allS = allS.concat(cu.sentences);
       if (cu.words) allW = allW.concat(cu.words);
@@ -10778,9 +10826,10 @@ function genPhraseTest(u, withAns){
   if (!allS.length){
     h += '<div class="pp-sec"><div class="pp-q">本册暂无句子数据。</div></div>'; return h + _ppClose();
   }
+  var rng = _mkRng(_paperSeed(u.subject, u.book, 'phrase'));
 
-  /* 一、英译汉 — 全部句子 */
-  var s1 = allS.slice();
+  /* 一、英译汉 — 全部句子，顺序每日随机 */
+  var s1 = _shuffle(allS, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">一、英译汉（写出中文意思，共 ' + s1.length + ' 题）</div>';
   h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 16px">';
   s1.forEach(function(s, i){
@@ -10792,8 +10841,8 @@ function genPhraseTest(u, withAns){
   });
   h += '</div></div>';
 
-  /* 二、汉译英 — 全部句子 */
-  var s2 = allS.slice();
+  /* 二、汉译英 — 全部句子，顺序每日随机 */
+  var s2 = _shuffle(allS, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">二、汉译英（写出英文，共 ' + s2.length + ' 题）</div>';
   h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 16px">';
   s2.forEach(function(s, i){
@@ -10804,11 +10853,12 @@ function genPhraseTest(u, withAns){
   });
   h += '</div></div>';
 
-  /* 三、完成句子 — 尽量多题 */
+  /* 三、完成句子 — 尽量多题，句子每日随机选取 */
   var wb = allW.slice();
+  var shufS = _shuffle(allS, rng);
   var fills = [];
-  for (var fi = 0; fi < allS.length && fills.length < Math.min(allS.length, 25); fi++){
-    var sen = allS[fi]; var hit = null;
+  for (var fi = 0; fi < shufS.length && fills.length < Math.min(shufS.length, 25); fi++){
+    var sen = shufS[fi]; var hit = null;
     for (var wi = 0; wi < wb.length; wi++){
       var w = wb[wi];
       try { var re = new RegExp('\\b' + w.en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b','i'); if(re.test(sen.en)){hit=w;break;} } catch(e){}
@@ -10834,13 +10884,14 @@ function genPhraseTest(u, withAns){
     h += '</div></div>';
   }
 
-  /* 四、连词成句 — 尽量多题 */
+  /* 四、连词成句 — 尽量多题，顺序每日随机 */
   var sorts = [];
-  for (var si = 0; si < allS.length && sorts.length < Math.min(allS.length, 15); si++){
-    var ss = allS[si];
+  var shufS2 = _shuffle(allS, rng);
+  for (var si = 0; si < shufS2.length && sorts.length < Math.min(shufS2.length, 15); si++){
+    var ss = shufS2[si];
     var toks = ss.en.replace(/[.,!?;:]$/,'').split(/\s+/);
     if (toks.length >= 3 && toks.length <= 8){
-      var shuf = toks.slice().sort(function(){ return Math.random() - 0.5; });
+      var shuf = _shuffle(toks, rng);
       if (shuf.join(' ') !== toks.join(' ')) sorts.push({ orig: ss, shuf: shuf });
     }
   }
@@ -10860,21 +10911,22 @@ function genPhraseTest(u, withAns){
   return h + _ppClose();
 }
 
-/* —— ④ 语文基础字词测验（期中期末 · 全册 · 紧凑） —— */
+/* —— ④ 语文基础字词测验（期中期末 · 全册 · 紧凑 · 每日随机） —— */
 function genCharTest(u, withAns){
   var bus = _bookUnits(u);
   var allC = [];
   bus.forEach(function(b){
-    var cu = window.DATA_CHARS && window.DATA_CHARS.units && window.DATA_CHARS.units.find(function(x){ return x.id === b.id; });
+    var cu = _srcUnitAt(window.DATA_CHARS, b);
     if (cu && cu.words) allC = allC.concat(cu.words);
   });
   var h = _ppOpen('语文基础字词测验（期中期末）', '（' + (withAns ? '教师版' : '学生版') + ' · 全册）', u);
   if (!allC.length){
     h += '<div class="pp-sec"><div class="pp-q">本册暂未配置生字数据。</div></div>'; return h + _ppClose();
   }
+  var rng = _mkRng(_paperSeed(u.subject, u.book, 'char'));
 
-  /* 一、看拼音写汉字 — 全部生字 */
-  var s1 = allC.slice();
+  /* 一、看拼音写汉字 — 全部生字，顺序每日随机 */
+  var s1 = _shuffle(allC, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">一、看拼音写汉字（共 ' + s1.length + ' 题）</div><div class="pp-py-grid">';
   s1.forEach(function(w){
     h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.pinyin) + '</div><div class="pp-py-blank"></div>'
@@ -10882,8 +10934,8 @@ function genCharTest(u, withAns){
   });
   h += '</div></div>';
 
-  /* 二、给汉字注音 — 全部生字 */
-  var s2 = allC.slice();
+  /* 二、给汉字注音 — 全部生字，顺序每日随机 */
+  var s2 = _shuffle(allC, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">二、给汉字注音（共 ' + s2.length + ' 题）</div><div class="pp-py-grid">';
   s2.forEach(function(w){
     h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.char) + '</div><div class="pp-py-blank"></div>'
@@ -10891,16 +10943,18 @@ function genCharTest(u, withAns){
   });
   h += '</div></div>';
 
-  /* 三、比一比再组词 — 全部 */
-  var s3 = allC.slice();
+  /* 三、比一比再组词 — 全部，顺序每日随机（学生版不给示例答案） */
+  var s3 = _shuffle(allC, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">三、比一比，再组词（共 ' + s3.length + ' 题）</div><div class="pp-py-grid">';
   s3.forEach(function(w){
     var zuci = (w.zuci && w.zuci[0]) ? w.zuci[0] : '';
-    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.char) + '（　　）　' + esc(zuci) + '</div><div class="pp-py-blank"></div></div>';
+    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.char) + '（　　）'
+       + (withAns && zuci ? '　例：' + esc(zuci) : '')
+       + '</div><div class="pp-py-blank"></div></div>';
   });
   h += '</div></div>';
 
-  /* 四、多音字组词 */
+  /* 四、多音字组词（每日随机顺序） */
   var duo = [
     { c:'长', p1:'cháng', w1:'长短', p2:'zhǎng', w2:'长大' },
     { c:'行', p1:'háng', w1:'银行', p2:'xíng', w2:'行走' },
@@ -10919,8 +10973,9 @@ function genCharTest(u, withAns){
     { c:'转', p1:'zhuǎn', w1:'转身', p2:'zhuàn', w2:'转动' },
     { c:'重', p1:'zhòng', w1:'重量', p2:'chóng', w2:'重复' }
   ];
-  h += '<div class="pp-sec"><div class="pp-sec-h">四、多音字组词（共 ' + duo.length + ' 题）</div><div class="pp-py-grid">';
-  duo.forEach(function(d){
+  var duoShuf = _shuffle(duo, rng);
+  h += '<div class="pp-sec"><div class="pp-sec-h">四、多音字组词（共 ' + duoShuf.length + ' 题）</div><div class="pp-py-grid">';
+  duoShuf.forEach(function(d){
     h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(d.c) + '</div>'
        + '<div style="font-size:10pt">① ' + esc(d.p1) + '（<span style="border-bottom:1px solid #555;min-width:50px;display:inline-block">'
        + (withAns ? esc(d.w1) : '') + '</span>）　② '
@@ -10929,92 +10984,96 @@ function genCharTest(u, withAns){
   });
   h += '</div></div>';
 
-  /* 五、选字填空 — 用全部生字 */
-  var s5 = allC.slice();
-  h += '<div class="pp-sec"><div class="pp-sec-h">五、选字填空（用「' + esc(s5[0]&&s5[0].char||'') + '」等字组词填空，共 ' + Math.min(s5.length, 16) + ' 题）</div>';
+  /* 五、选字填空 — 全部生字（学生版只给空格，不给答案提示） */
+  var s5 = _shuffle(allC, rng);
+  h += '<div class="pp-sec"><div class="pp-sec-h">五、选字填空（用本册生字组词填空，共 ' + Math.min(s5.length, 16) + ' 题）</div>';
+  h += '<div style="font-size:9pt;color:#555;margin-bottom:1mm">请从本册生字中任选合适的字组词填入括号。</div>';
   s5.slice(0, 16).forEach(function(w, i){
     var zuci = (w.zuci && w.zuci[0]) ? w.zuci[0] : '';
     h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10.5pt;line-height:1.5">'
-       + (i+1) + '. 用 <b>' + esc(w.char) + '</b> 字组词填空：' + esc(zuci).replace(w.char,'＿＿')
-       + (withAns ? ' <span class="pp-ans-inline">→ ' + esc(w.char) + '</span>' : '')
+       + (i+1) + '. （　　）　　用「' + esc(w.char) + '」字组词示例：＿＿＿＿＿＿＿＿'
+       + (withAns && zuci ? ' <span class="pp-ans-inline">（如：' + esc(zuci) + '）</span>' : '')
        + '</div>';
   });
   h += '</div>';
   return h + _ppClose();
 }
 
-/* —— ⑤ 数学乘除法练习（期中期末 · 紧凑 · 大量题目） —— */
+/* —— ⑤ 数学乘除法练习（期中期末 · 紧凑 · 大量题目 · 每日随机） —— */
 function genCalcMidterm(u, withAns){
+  var rng = _mkRng(_paperSeed(u.subject, u.book, 'calc'));
+  function ri(a, b){ return a + Math.floor(rng() * (b - a + 1)); }
   var h = _ppOpen('数学乘除法练习（期中期末）', '（' + (withAns ? '教师版' : '学生版') + '）', { subject:'sx', book:u.book });
 
-  /* 一、口算（30 题，4 列网格） */
+  /* 一、口算（40 题，4 列网格） */
   var kc = [];
-  for (var i = 0; i < 30; i++){
+  for (var i = 0; i < 40; i++){
     if (i % 2 === 0){
-      var a = _rnd(11, 99), b = _rnd(2, 9);
+      var a = ri(11, 99), b = ri(2, 9);
       kc.push({ t: a + ' × ' + b + ' =', a: a * b });
     } else {
-      var dv = _rnd(2, 9), q = _rnd(11, 99), nd = dv * q;
+      var dv = ri(2, 9), q = ri(11, 99), nd = dv * q;
       kc.push({ t: nd + ' ÷ ' + dv + ' =', a: q });
     }
   }
-  h += '<div class="pp-sec"><div class="pp-sec-h">一、口算（30 题，每题 1 分）</div><div class="pp-kc">';
+  h += '<div class="pp-sec"><div class="pp-sec-h">一、口算（40 题，每题 1 分）</div><div class="pp-kc">';
   kc.forEach(function(p){
     h += '<div class="pp-kc-i">' + esc(p.t) + '<span class="pp-kc-b"></span>'
        + (withAns ? '<b class="pp-kc-ans">' + p.a + '</b>' : '') + '</div>';
   });
   h += '</div></div>';
 
-  /* 二、笔算（8 题，留竖式框） */
+  /* 二、笔算（12 题，留竖式框） */
   var bs = [];
-  for (var j = 0; j < 4; j++){
-    var m1 = _rnd(120, 980), m2 = _rnd(12, 98);
+  for (var j = 0; j < 6; j++){
+    var m1 = ri(120, 980), m2 = ri(12, 98);
     bs.push({ t: m1 + ' × ' + m2 + ' =', a: m1 * m2 });
   }
-  for (var k = 0; k < 4; k++){
-    var dv2 = _rnd(12, 89), q2 = _rnd(3, 12), rm = _rnd(0, dv2 - 1), nd2 = dv2 * q2 + rm;
+  for (var k = 0; k < 6; k++){
+    var dv2 = ri(12, 89), q2 = ri(3, 12), rm = ri(0, dv2 - 1), nd2 = dv2 * q2 + rm;
     bs.push({ t: nd2 + ' ÷ ' + dv2 + ' =', a: q2 + ' 余 ' + rm });
   }
-  h += '<div class="pp-sec"><div class="pp-sec-h">二、用竖式计算（8 题，每题 3 分）</div>';
+  h += '<div class="pp-sec"><div class="pp-sec-h">二、用竖式计算（12 题，每题 3 分）</div>';
   bs.forEach(function(p, idx){
     h += '<div class="pp-bs"><div class="pp-bs-t">' + (idx+1) + '. ' + esc(p.t) + '</div><div class="pp-calc-box"></div>'
        + (withAns ? '<div class="pp-bs-ans">= ' + esc(p.a) + '</div>' : '') + '</div>';
   });
   h += '</div>';
 
-  /* 三、估算（8 题） */
+  /* 三、估算（12 题） */
   var est = [];
-  for (var e = 0; e < 8; e++){
-    var a3 = _rnd(100, 999), b3 = _rnd(10, 99);
+  for (var e = 0; e < 12; e++){
+    var a3 = ri(100, 999), b3 = ri(10, 99);
     est.push({ t: a3 + ' × ' + b3 + ' ≈ ？', a: '≈ ' + (Math.round(a3/100)*100) + '×' + (Math.round(b3/10)*10) + '=' + (Math.round(a3/100)*100)*(Math.round(b3/10)*10) });
   }
-  h += '<div class="pp-sec"><div class="pp-sec-h">三、估算（8 题，每题 2 分）</div><div class="pp-py-grid">';
+  h += '<div class="pp-sec"><div class="pp-sec-h">三、估算（12 题，每题 2 分）</div><div class="pp-py-grid">';
   est.forEach(function(p, i){
     h += '<div class="pp-py-cell"><div class="pp-py-py" style="font-size:10.5pt">' + (i+1) + '. ' + esc(p.t) + '</div><div class="pp-py-blank"></div>'
        + (withAns ? '<div class="pp-py-ans">' + esc(p.a) + '</div>' : '') + '</div>';
   });
   h += '</div></div>';
 
-  /* 四、应用题（8 题，留答题区） */
+  /* 四、应用题（12 题，留答题区） */
   var templates = [
-    function(){ var p=_rnd(15,45), s=_rnd(20,150); return ['水果店运来 '+p+' 箱苹果，每箱 '+s+' 个，一共有多少个苹果？', p+' × '+s+' = '+(p*s)+'（个）']; },
-    function(){ var t=_rnd(120,300), c=_rnd(4,9); return ['同学们收集了 '+t+' 节废电池，平均分给 '+c+' 个环保小组，每个小组分到多少节？', t+' ÷ '+c+' = '+(t/c)+'（节）']; },
-    function(){ var s=_rnd(60,100), d=_rnd(3,8); return ['一辆汽车每小时行驶 '+s+' 千米，'+d+' 小时行驶多少千米？', s+' × '+d+' = '+(s*d)+'（千米）']; },
-    function(){ var p=_rnd(150,300), r=_rnd(5,9); return ['学校买了 '+p+' 本新书，平均分给 '+r+' 个班，每班分到多少本？', p+' ÷ '+r+' = '+(p/r)+'（本）']; },
-    function(){ var a=_rnd(8,16), s=_rnd(50,120); return ['一套书 '+a+' 本，每本 '+s+' 页，一共有多少页？', a+' × '+s+' = '+(a*s)+'（页）']; },
-    function(){ var a=_rnd(200,500), w=_rnd(40,90); return ['一辆卡车每次运货 '+w+' 箱，'+a+' 箱货物需要运多少次？', a+' ÷ '+w+' = '+(a/w)+'（次）']; },
-    function(){ var d=_rnd(200,600), p=_rnd(3,7); return ['图书馆有 '+d+' 本书，平均放在 '+p+' 个书架上，每个书架放多少本？', d+' ÷ '+p+' = '+(d/p)+'（本）']; },
-    function(){ var s=_rnd(40,90), d=_rnd(5,12); return ['小明每天练字 '+d+' 张，'+s+' 天一共可以练多少张？', d+' × '+s+' = '+(d*s)+'（张）']; },
-    function(){ var t=_rnd(180,360), n=_rnd(20,50); return ['工厂生产了 '+t+' 个零件，每箱装 '+n+' 个，需要多少个箱子？', t+' ÷ '+n+' = '+(t/n)+'（箱）']; },
-    function(){ var a=_rnd(25,80), b=_rnd(3,9); return ['食堂每天用大米 '+a+' 千克，'+b+' 天共用多少千克？', a+' × '+b+' = '+(a*b)+'（千克）']; }
+    function(){ var p=ri(15,45), s=ri(20,150); return ['水果店运来 '+p+' 箱苹果，每箱 '+s+' 个，一共有多少个苹果？', p+' × '+s+' = '+(p*s)+'（个）']; },
+    function(){ var t=ri(120,300), c=ri(4,9); return ['同学们收集了 '+t+' 节废电池，平均分给 '+c+' 个环保小组，每个小组分到多少节？', t+' ÷ '+c+' = '+(t/c)+'（节）']; },
+    function(){ var s=ri(60,100), d=ri(3,8); return ['一辆汽车每小时行驶 '+s+' 千米，'+d+' 小时行驶多少千米？', s+' × '+d+' = '+(s*d)+'（千米）']; },
+    function(){ var p=ri(150,300), r=ri(5,9); return ['学校买了 '+p+' 本新书，平均分给 '+r+' 个班，每班分到多少本？', p+' ÷ '+r+' = '+(p/r)+'（本）']; },
+    function(){ var a=ri(8,16), s=ri(50,120); return ['一套书 '+a+' 本，每本 '+s+' 页，一共有多少页？', a+' × '+s+' = '+(a*s)+'（页）']; },
+    function(){ var a=ri(200,500), w=ri(40,90); return ['一辆卡车每次运货 '+w+' 箱，'+a+' 箱货物需要运多少次？', a+' ÷ '+w+' = '+(a/w)+'（次）']; },
+    function(){ var d=ri(200,600), p=ri(3,7); return ['图书馆有 '+d+' 本书，平均放在 '+p+' 个书架上，每个书架放多少本？', d+' ÷ '+p+' = '+(d/p)+'（本）']; },
+    function(){ var s=ri(40,90), d=ri(5,12); return ['小明每天练字 '+d+' 张，'+s+' 天一共可以练多少张？', d+' × '+s+' = '+(d*s)+'（张）']; },
+    function(){ var t=ri(180,360), n=ri(20,50); return ['工厂生产了 '+t+' 个零件，每箱装 '+n+' 个，需要多少个箱子？', t+' ÷ '+n+' = '+(t/n)+'（箱）']; },
+    function(){ var a=ri(25,80), b=ri(3,9); return ['食堂每天用大米 '+a+' 千克，'+b+' 天共用多少千克？', a+' × '+b+' = '+(a*b)+'（千克）']; }
   ];
   var apps = [];
-  for (var t = 0; t < 8; t++){
-    var idx2 = (t + Math.floor(Math.random() * templates.length)) % templates.length;
-    var r2 = templates[idx2]();
+  var tIdx = _shuffle(templates.map(function(_, i){ return i; }), rng);
+  for (var t = 0; t < 12; t++){
+    var tmpl = templates[tIdx[t % tIdx.length]];
+    var r2 = tmpl();
     apps.push({ q: r2[0], a: r2[1] });
   }
-  h += '<div class="pp-sec"><div class="pp-sec-h">四、解决问题（8 题，每题 4 分。先列式，再计算）</div>';
+  h += '<div class="pp-sec"><div class="pp-sec-h">四、解决问题（12 题，每题 4 分。先列式，再计算）</div>';
   apps.forEach(function(p, idx){
     h += '<div class="pp-app"><div class="pp-app-q">' + (idx+1) + '. ' + esc(p.q) + '</div>'
        + '<div class="pp-calc-box tall"></div>'
