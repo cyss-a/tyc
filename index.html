@@ -10617,44 +10617,72 @@ function genPinyinPaper(u, withAns){
   return h + _ppClose();
 }
 
-/* —— 数学：乘除法计算 + 应用题（单元级，保留原逻辑，非期中期末，不随机） —— */
+/* —— 数学：乘除法计算 + 应用题（单元级 · 填满 A4 一页） —— */
 function _rnd(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
 function genCalcPaper(u, withAns){
   var h = _ppOpen('乘除法计算与应用题', '（专项练习 · ' + (withAns ? '教师版' : '学生版') + '）', { subject:'sx', book:u.book });
+
+  /* 一、口算（24 题，4 列 × 6 行紧凑网格） */
   var kc = [];
-  for (var i = 0; i < 10; i++){
-    var a = _rnd(2, 19), b = _rnd(2, 9);
-    if (i % 2 === 0) kc.push({ t: a + ' × ' + b + ' =', a: a * b });
-    else { var d = _rnd(2, 9), n = d * b; kc.push({ t: n + ' ÷ ' + d + ' =', a: b }); }
+  for (var i = 0; i < 24; i++){
+    if (i % 2 === 0){ var a = _rnd(11, 99), b = _rnd(2, 9); kc.push({ t: a + ' × ' + b + ' =', a: a * b }); }
+    else { var d = _rnd(2, 9), q = _rnd(11, 99), nd = d * q; kc.push({ t: nd + ' ÷ ' + d + ' =', a: q }); }
   }
-  h += '<div class="pp-sec"><div class="pp-sec-h">一、口算（10 题，每题 4 分）</div><div class="pp-kc">';
+  h += '<div class="pp-sec"><div class="pp-sec-h">一、口算（24 题，每题 2 分）</div><div class="pp-kc" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px 14px">';
   kc.forEach(function(p){
-    h += '<div class="pp-kc-i">' + esc(p.t) + '<span class="pp-kc-b"></span>'
+    h += '<div class="pp-kc-i" style="font-size:11pt">' + esc(p.t) + '<span class="pp-kc-b"></span>'
        + (withAns ? '<b class="pp-kc-ans">' + p.a + '</b>' : '') + '</div>';
   });
   h += '</div></div>';
+
+  /* 二、笔算（10 题，留竖式框） */
   var bs = [];
-  for (var j = 0; j < 3; j++){ var m1 = _rnd(120, 980), m2 = _rnd(12, 98); bs.push({ t: m1 + ' × ' + m2 + ' =', a: m1 * m2 }); }
-  for (var k = 0; k < 3; k++){ var dv = _rnd(12, 89), q = _rnd(3, 12), rm = _rnd(0, dv - 1), nd = dv * q + rm; bs.push({ t: nd + ' ÷ ' + dv + ' =', a: q + ' 余 ' + rm }); }
-  h += '<div class="pp-sec"><div class="pp-sec-h">二、笔算（竖式计算，写出过程）</div>';
-  bs.forEach(function(p){
-    h += '<div class="pp-bs"><div class="pp-bs-t">' + esc(p.t) + '</div><div class="pp-calc-box"></div>'
+  for (var j = 0; j < 5; j++){ var m1 = _rnd(120, 980), m2 = _rnd(12, 98); bs.push({ t: m1 + ' × ' + m2 + ' =', a: m1 * m2 }); }
+  for (var k = 0; k < 5; k++){ var dv = _rnd(12, 89), q2 = _rnd(3, 12), rm = _rnd(0, dv - 1), nd = dv * q2 + rm; bs.push({ t: nd + ' ÷ ' + dv + ' =', a: q2 + ' 余 ' + rm }); }
+  h += '<div class="pp-sec"><div class="pp-sec-h">二、用竖式计算（10 题，每题 3 分。写出计算过程）</div>';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 16px">';
+  bs.forEach(function(p, idx){
+    h += '<div class="pp-bs"><div class="pp-bs-t">' + (idx+1) + '. ' + esc(p.t) + '</div><div class="pp-calc-box"></div>'
        + (withAns ? '<div class="pp-bs-ans">= ' + esc(p.a) + '</div>' : '') + '</div>';
   });
-  h += '</div>';
-  var apps = [
-    { q:'超市里有 24 箱苹果，每箱 12 个，一共有多少个苹果？', a:'24 × 12 = 288（个）' },
-    { q:'把 156 本练习本平均分给 6 个班，每班分到多少本？', a:'156 ÷ 6 = 26（本）' },
-    { q:'一辆汽车每小时行驶 85 千米，4 小时行驶多少千米？', a:'85 × 4 = 340（千米）' },
-    { q:'把 180 名同学平均分成 5 个方队，每个方队多少人？', a:'180 ÷ 5 = 36（人）' }
-  ].slice(0, 4);
-  h += '<div class="pp-sec"><div class="pp-sec-h">三、解决问题（先列式，再计算）</div>';
+  h += '</div></div>';
+
+  /* 三、估算（8 题） */
+  var est = [];
+  for (var e = 0; e < 8; e++){
+    var a3 = _rnd(100, 999), b3 = _rnd(10, 99);
+    est.push({ t: a3 + ' × ' + b3 + ' ≈ ？', a: '≈ ' + (Math.round(a3/100)*100) + '×' + (Math.round(b3/10)*10) + '=' + (Math.round(a3/100)*100)*(Math.round(b3/10)*10) });
+  }
+  h += '<div class="pp-sec"><div class="pp-sec-h">三、估算（8 题，每题 2 分）</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 20px">';
+  est.forEach(function(p, i){
+    h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10.5pt;line-height:1.5">'
+       + (i+1) + '. ' + esc(p.t) + ' ＿＿＿＿＿'
+       + (withAns ? ' <span class="pp-ans-inline">' + esc(p.a) + '</span>' : '')
+       + '</div>';
+  });
+  h += '</div></div>';
+
+  /* 四、解决问题（8 题，留答题区） */
+  var templates = [
+    function(){ var p=_rnd(15,45), s=_rnd(20,150); return ['水果店运来 '+p+' 箱苹果，每箱 '+s+' 个，一共有多少个苹果？', p+' × '+s+' = '+(p*s)+'（个）']; },
+    function(){ var t=_rnd(120,300), c=_rnd(4,9); return ['同学们收集了 '+t+' 节废电池，平均分给 '+c+' 个环保小组，每个小组分到多少节？', t+' ÷ '+c+' = '+(t/c)+'（节）']; },
+    function(){ var s=_rnd(60,100), d=_rnd(3,8); return ['一辆汽车每小时行驶 '+s+' 千米，'+d+' 小时行驶多少千米？', s+' × '+d+' = '+(s*d)+'（千米）']; },
+    function(){ var p=_rnd(150,300), r=_rnd(5,9); return ['学校买了 '+p+' 本新书，平均分给 '+r+' 个班，每班分到多少本？', p+' ÷ '+r+' = '+(p/r)+'（本）']; },
+    function(){ var a=_rnd(8,16), s=_rnd(50,120); return ['一套书 '+a+' 本，每本 '+s+' 页，一共有多少页？', a+' × '+s+' = '+(a*s)+'（页）']; },
+    function(){ var a=_rnd(200,500), w=_rnd(40,90); return ['一辆卡车每次运货 '+w+' 箱，'+a+' 箱货物需要运多少次？', a+' ÷ '+w+' = '+(a/w)+'（次）']; },
+    function(){ var d=_rnd(200,600), p=_rnd(3,7); return ['图书馆有 '+d+' 本书，平均放在 '+p+' 个书架上，每个书架放多少本？', d+' ÷ '+p+' = '+(d/p)+'（本）']; },
+    function(){ var s=_rnd(40,90), d=_rnd(5,12); return ['小明每天练字 '+d+' 张，'+s+' 天一共可以练多少张？', d+' × '+s+' = '+(d*s)+'（张）']; }
+  ];
+  var apps = [];
+  for (var t = 0; t < 8; t++) apps.push(templates[t]());
+  h += '<div class="pp-sec"><div class="pp-sec-h">四、解决问题（8 题，每题 4 分。先列式，再计算）</div>';
   apps.forEach(function(p, idx){
-    h += '<div class="pp-app"><div class="pp-app-q">' + (idx + 1) + '. ' + esc(p.q) + '</div>'
+    h += '<div class="pp-app"><div class="pp-app-q">' + (idx+1) + '. ' + esc(p[0]) + '</div>'
        + '<div class="pp-calc-box tall"></div>'
-       + (withAns ? '<div class="pp-bs-ans">' + esc(p.a) + '</div>' : '') + '</div>';
+       + (withAns ? '<div class="pp-bs-ans">' + esc(p[1]) + '</div>' : '') + '</div>';
   });
   h += '</div>';
+  h += '<div style="margin-top:4px;font-size:9pt;color:#888">※ 应用题请先列出算式，再计算作答。</div>';
   return h + _ppClose();
 }
 
