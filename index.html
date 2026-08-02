@@ -11798,27 +11798,35 @@ function openPaperPrintPage(){
   var ua = navigator.userAgent || '';
   var isWX = /MicroMessenger|QQ\//i.test(ua);
   if (isWX){
-    pvHelpShow('<b>\u5fae\u4fe1\u5185\u7f6e\u6d4f\u89c8\u5668\u4e0d\u652f\u6301\u6253\u5370</b>\uff1a\u8bf7\u70b9\u53f3\u4e0a\u89d2 <b>\u00b7\u00b7\u00b7</b> \u2192 <b>\u5728\u6d4f\u89c8\u5668\u6253\u5f00</b>\uff0c\u518d\u56de\u5230\u8fd9\u4e00\u6b65\u70b9\u300c\u6253\u5370 / \u5b58PDF\u300d\u5373\u53ef\u3002');
+    pvHelpShow('<b>微信内置浏览器不支持打印</b>：点右上角 <b>···</b> → <b>在浏览器打开</b>，再点「打印 / 存PDF」即可。');
     return;
   }
-  var url = '';
-  try {
-    url = URL.createObjectURL(new Blob([buildPaperDoc(pg.innerHTML)], {type:'text/html;charset=utf-8'}));
-  } catch(e){ url = ''; }
-  if (!url){
-    pvHelpShow('\u672c\u6d4f\u89c8\u5668\u4e0d\u652f\u6301\u65b0\u5f00\u9875\u9762\uff0c\u8bf7\u76f4\u63a5\u7528\u6d4f\u89c8\u5668\u83dc\u5355\u91cc\u7684\u300c\u6253\u5370\u300d\u3002');
+  var doc = buildPaperDoc(pg.innerHTML);
+  var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+  if (isMobile){
+    // 移动端：直接把当前页换成打印文档并调起系统打印/存PDF（避免新标签页被拦截）
+    try { App.closePaperViewer(); } catch(e){}
+    var back = window.location.href;
+    window.onafterprint = function(){ try { window.location.replace(back); } catch(e){ window.location.href = back; } };
+    document.open(); document.write(doc); document.close();
+    setTimeout(function(){ try { window.print(); } catch(e){ try{window.location.replace(back);}catch(_){window.location.href=back;} } }, 400);
     return;
   }
-  var opened = false;
-  try {
-    var a = document.createElement('a');
-    a.href = url; a.target = '_blank'; a.rel = 'noopener';
-    document.body.appendChild(a); a.click(); a.remove();
-    opened = true;
-  } catch(e){ opened = false; }
-  pvHelpShow('\u5df2\u6253\u5f00\u6253\u5370\u9875\uff08\u65b0\u6807\u7b7e\u9875\uff09\uff0c\u5728\u6253\u5370\u7a97\u53e3\u91cc\u9009\u300c\u53e6\u5b58\u4e3a PDF\u300d\u5373\u53ef\u4fdd\u5b58\u3002'
-    + '<br>\u6ca1\u6709\u8df3\u8f6c\uff1f<a href="' + url + '" target="_blank" rel="noopener" style="color:#D4A84B;font-weight:700;text-decoration:underline">\u70b9\u8fd9\u91cc\u624b\u52a8\u6253\u5f00\u6253\u5370\u9875</a>');
-  if (!opened){ /* noop */ }
+  // 桌面端：新标签页打开打印页（文档内已自带 window.print）
+  var w = null;
+  try { w = window.open('', '_blank'); } catch(e){ w = null; }
+  if (w){
+    w.document.open(); w.document.write(doc); w.document.close();
+    try { w.focus(); } catch(e){}
+    pvHelpShow('已在新标签页打开打印页，在打印窗口里选「另存为 PDF」即可保存。');
+    return;
+  }
+  // 弹窗被拦截兜底：仍用当前页打印
+  try { App.closePaperViewer(); } catch(e){}
+  var back2 = window.location.href;
+  window.onafterprint = function(){ try { window.location.replace(back2); } catch(e){ window.location.href = back2; } };
+  document.open(); document.write(doc); document.close();
+  setTimeout(function(){ try { window.print(); } catch(e){ try{window.location.replace(back2);}catch(_){window.location.href=back2;} } }, 400);
 }
 var PV_FITMODE = 1;
 function pvFit(){
