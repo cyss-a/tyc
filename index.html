@@ -11694,7 +11694,68 @@ function doPrintTest(){ /*__B2_DOPRINT__*/
   closeModal();
   var pa = document.getElementById('printArea');
   pa.innerHTML = paperHTML;
-  setTimeout(function(){ window.print(); setTimeout(function(){ pa.innerHTML = ''; }, 500); }, 200);
+  // 移动端（安卓/微信内置浏览器等）window.print 经常无效，改用全屏预览兜底
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent)) {
+    showPaperViewer(paperHTML);
+  } else {
+    setTimeout(function(){ window.print(); setTimeout(function(){ pa.innerHTML = ''; }, 500); }, 200);
+  }
+}
+function showPaperViewer(html){
+  var v = document.getElementById('paperViewer');
+  if(!v){
+    v = document.createElement('div');
+    v.id = 'paperViewer';
+    v.innerHTML = '<div class="pv-bar">'
+      + '<button class="btn" onclick="App.closePaperViewer()">关闭</button>'
+      + '<span class="pv-tip">已生成试卷：可长按截图，或用浏览器菜单「分享→打印」存为PDF</span>'
+      + '<button class="btn pri" onclick="App.printFromViewer()">打印/存PDF</button>'
+      + '</div><div class="pv-scroll"><div class="pv-page" id="pvPage"></div></div>';
+    document.body.appendChild(v);
+    if(!document.getElementById('pvStyle')){
+      var st = document.createElement('style'); st.id = 'pvStyle';
+      st.textContent = '#paperViewer{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:none;flex-direction:column}'
+        + '.pv-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#2d2d2d;color:#fff}'
+        + '.pv-bar .btn{font-size:14px;padding:8px 12px}'
+        + '.pv-bar .pv-tip{font-size:12px;color:#ddd;flex:1;line-height:1.3}'
+        + '.pv-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#e9e9ed;padding:12px}'
+        + '.pv-page{background:#fff;max-width:780px;margin:0 auto;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.2);font-size:15px;line-height:1.7;color:#222}'
+        + '.pv-page .pp-h{text-align:center;border-bottom:1.5px solid #333;padding-bottom:6px;margin-bottom:10px}'
+        + '.pv-page .pp-h h1{font-size:18px;margin:0 0 4px;font-weight:700}'
+        + '.pv-page .pp-h .pp-sub{font-size:12px;color:#555}'
+        + '.pv-page .pp-info{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px;border:1px solid #999;padding:4px 8px;border-radius:2px}'
+        + '.pv-page .pp-sec{margin-bottom:10px}'
+        + '.pv-page .pp-sec-h{font-size:15px;font-weight:700;margin-bottom:6px;border-left:3px solid #333;padding-left:6px}'
+        + '.pv-page .pp-q{font-size:15px;line-height:1.7;margin-bottom:8px}'
+        + '.pv-page .pp-q-n{font-weight:700;margin-right:4px}'
+        + '.pv-page .pp-opts{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;margin-left:18px;margin-top:4px;line-height:1.8}'
+        + '.pv-page .pp-opts-inline{margin-left:18px;margin-top:4px;line-height:1.7}'
+        + '.pv-page .pp-fill-line{display:inline-block;min-width:50px;border-bottom:1px solid #666;height:1em;vertical-align:bottom}'
+        + '.pv-page .pp-ans{color:#c0392b;font-size:13px;margin-left:8px}'
+        + '.pv-page .pp-ans-inline{color:#c0392b;font-size:13px;margin-left:18px;margin-top:2px}'
+        + '.pv-page .pp-py-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px}'
+        + '.pv-page .pp-py-cell{border:1px solid #ccc;border-radius:4px;padding:6px;text-align:center;font-size:14px}'
+        + '.pv-page .pp-kc{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 14px}'
+        + '.pv-page .pp-kc-i{font-size:14px;padding:4px 0}'
+        + '.pv-page .pp-judge-box{border-bottom:1px solid #666}'
+        + '@media print{#paperViewer{display:none !important}}';
+      document.head.appendChild(st);
+    }
+  }
+  document.getElementById('pvPage').innerHTML = html;
+  v.style.display = 'flex';
+  if(!App.closePaperViewer){
+    App.closePaperViewer = function(){ var x=document.getElementById('paperViewer'); if(x) x.style.display='none'; };
+    App.printFromViewer = function(){
+      var pg = document.getElementById('pvPage');
+      var pa2 = document.getElementById('printArea');
+      pa2.innerHTML = pg.innerHTML;
+      var x = document.getElementById('paperViewer');
+      x.style.display='none';
+      window.print();
+      setTimeout(function(){ x.style.display='flex'; pa2.innerHTML=''; }, 400);
+    };
+  }
 }
 
 function generatePaper(u, qs, withAns){
