@@ -355,7 +355,7 @@ main{padding:18px 0 30px}
 .pp-cw-ch{ font-size:16px; font-weight:700; color:#222; min-width:30px; text-align:center }
 .pp-cw-meta{ font-size:11px; color:#666; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
 .pp-cw-lines{ display:flex; gap:6px }
-.pp-cw-lines span{ width:40px; border-bottom:1px solid #999; height:1em; flex:none }
+.pp-cw-lines span{ width:55px; border-bottom:1px solid #999; height:1em; flex:none }
 .pp-kc{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:1px 8px; font-size:11px }
 .pp-kc-i{ display:flex; align-items:center; gap:2px; padding:1px 0; white-space:nowrap }
 .pp-kc-b{ width:14mm; flex:none; border-bottom:1px solid #555; height:1.1em }
@@ -10609,11 +10609,11 @@ function genPinyinPaper(u, withAns){
        + (withAns ? '<div class="pp-py-ans">' + esc(w.pinyin) + '</div>' : '') + '</div>';
   });
   h += '</div></div>';
-  h += '<div class="pp-sec"><div class="pp-sec-h">三、生字抄写与组词（每个抄写 2 遍）</div>';
+  h += '<div class="pp-sec"><div class="pp-sec-h">三、生字抄写与组词（每个抄写 4 遍）</div>';
   ws.forEach(function(w){
     h += '<div class="pp-cw"><div class="pp-cw-ch">' + esc(w.char) + '</div>'
        + '<div class="pp-cw-meta">部首：' + esc(w.bushou || '—') + '　组词：' + esc((w.zuci || []).join('、')) + '</div>'
-       + '<div class="pp-cw-lines"><span></span><span></span></div></div>';
+       + '<div class="pp-cw-lines"><span></span><span></span><span></span><span></span></div></div>';
   });
   h += '</div>';
   h += '<div class="pp-sec"><div class="pp-sec-h">四、比一比，再组词</div><div class="pp-py-grid">';
@@ -10671,14 +10671,14 @@ function genCalcPaper(u, withAns){
 
   /* 四、解决问题（8 题，留答题区） */
   var templates = [
-    function(){ var p=_rnd(15,45), s=_rnd(20,150); return ['水果店运来 '+p+' 箱苹果，每箱 '+s+' 个，一共有多少个苹果？', p+' × '+s+' = '+(p*s)+'（个）']; },
-    function(){ var t=_rnd(120,300), c=_rnd(4,9); return ['同学们收集了 '+t+' 节废电池，平均分给 '+c+' 个环保小组，每个小组分到多少节？', t+' ÷ '+c+' = '+(t/c)+'（节）']; },
-    function(){ var s=_rnd(60,100), d=_rnd(3,8); return ['一辆汽车每小时行驶 '+s+' 千米，'+d+' 小时行驶多少千米？', s+' × '+d+' = '+(s*d)+'（千米）']; },
-    function(){ var p=_rnd(150,300), r=_rnd(5,9); return ['学校买了 '+p+' 本新书，平均分给 '+r+' 个班，每班分到多少本？', p+' ÷ '+r+' = '+(p/r)+'（本）']; },
-    function(){ var a=_rnd(8,16), s=_rnd(50,120); return ['一套书 '+a+' 本，每本 '+s+' 页，一共有多少页？', a+' × '+s+' = '+(a*s)+'（页）']; },
-    function(){ var a=_rnd(200,500), w=_rnd(40,90); return ['一辆卡车每次运货 '+w+' 箱，'+a+' 箱货物需要运多少次？', a+' ÷ '+w+' = '+(a/w)+'（次）']; },
-    function(){ var d=_rnd(200,600), p=_rnd(3,7); return ['图书馆有 '+d+' 本书，平均放在 '+p+' 个书架上，每个书架放多少本？', d+' ÷ '+p+' = '+(d/p)+'（本）']; },
-    function(){ var s=_rnd(40,90), d=_rnd(5,12); return ['小明每天练字 '+d+' 张，'+s+' 天一共可以练多少张？', d+' × '+s+' = '+(d*s)+'（张）']; }
+    function(){ var p=_rnd(10,25), n=_rnd(2,5), cost=p*n; while(cost>90){ p=_rnd(10,25); n=_rnd(2,5); cost=p*n; } return ['一种文具每个 '+p+' 元，小红买了 '+n+' 个，付给售货员 100 元，应找回多少元？', '100 - '+p+'×'+n+' = '+(100-cost)+'（元）']; },
+    function(){ var y=_rnd(4,8), z=_rnd(20,40), x=y*z+_rnd(20,80); return ['学校买来 '+x+' 本故事书，平均分给 '+y+' 个班，每班 '+z+' 本，还剩多少本？', x+' - '+z+'×'+y+' = '+(x-y*z)+'（本）']; },
+    function(){ var s=_rnd(50,80), t=_rnd(3,6), rem=_rnd(30,120); return ['一辆汽车每小时行驶 '+s+' 千米，行驶了 '+t+' 小时后，距离目的地还有 '+rem+' 千米。出发地到目的地一共多少千米？', s+'×'+t+' + '+rem+' = '+(s*t+rem)+'（千米）']; },
+    function(){ var daily=_rnd(30,80), days=_rnd(3,8), rem=daily*days, done=_rnd(100,300); var total=done+rem; return ['修路队要修一条 '+total+' 米长的路，已经修了 '+done+' 米，剩下的每天修 '+daily+' 米，还要多少天修完？', '('+total+' - '+done+') ÷ '+daily+' = '+days+'（天）']; },
+    function(){ var z=_rnd(15,35), y=_rnd(3,7), read=z*y, total=read+_rnd(50,150); return ['一本故事书有 '+total+' 页，小明前 '+y+' 天每天看 '+z+' 页，还剩多少页没有看？', total+' - '+z+'×'+y+' = '+(total-read)+'（页）']; },
+    function(){ var g=_rnd(4,9), n=_rnd(5,12), add=_rnd(5,20); return ['同学们分组做游戏，每组 '+g+' 人，分成了 '+n+' 组，后来又来了 '+add+' 人。现在一共有多少人？', g+'×'+n+' + '+add+' = '+(g*n+add)+'（人）']; },
+    function(){ var per=_rnd(5,15), cars=_rnd(5,15), total=per*cars+_rnd(10,50); return ['仓库原有 '+total+' 吨大米，运走了 '+cars+' 车，每车 '+per+' 吨，还剩多少吨？', total+' - '+per+'×'+cars+' = '+(total-per*cars)+'（吨）']; },
+    function(){ var l=_rnd(8,25), w=_rnd(5,15), fence=2*(l+w); return ['一块长方形菜地，长 '+l+' 米，宽 '+w+' 米。如果在四周围上篱笆，篱笆长多少米？', '('+l+' + '+w+')×2 = '+fence+'（米）']; }
   ];
   var apps = [];
   for (var t = 0; t < 8; t++) apps.push(templates[t]());
@@ -10880,12 +10880,13 @@ function genPhraseTest(u, withAns){
   /* 二、汉译英 — 全部句子，顺序每日随机 */
   var s2 = _shuffle(allS, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">二、汉译英（写出英文，共 ' + s2.length + ' 题）</div>';
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 12px">';
   s2.forEach(function(s, i){
-    h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10pt;line-height:1.5">'
-       + (i+1) + '. ' + esc(s.zh) + ' ＿＿＿'
-       + (withAns ? ' <span class="pp-ans-inline">（' + esc(s.en) + '）</span>' : '')
-       + '</div>';
+    h += '<div class="pp-q" style="margin-bottom:1.5mm;font-size:10pt;line-height:1.6">'
+       + (i+1) + '. ' + esc(s.zh)
+       + '<span style="display:inline-block;min-width:170px;border-bottom:1px solid #555;height:1em;margin-left:6px">'
+       + (withAns ? '<span class="pp-ans-inline">' + esc(s.en) + '</span>' : '')
+       + '</span></div>';
   });
   h += '</div></div>';
 
@@ -11022,12 +11023,12 @@ function genCharTest(u, withAns){
 
   /* 五、选字填空 — 全部生字（学生版只给空格，不给答案提示） */
   var s5 = _shuffle(allC, rng);
-  h += '<div class="pp-sec"><div class="pp-sec-h">五、选字填空（用本册生字组词填空，共 ' + Math.min(s5.length, 16) + ' 题）</div>';
-  h += '<div style="font-size:9pt;color:#555;margin-bottom:1mm">请从本册生字中任选合适的字组词填入括号。</div>';
+  h += '<div class="pp-sec"><div class="pp-sec-h">五、生字组词（用指定生字组词，共 ' + Math.min(s5.length, 16) + ' 题）</div>';
+  h += '<div style="font-size:9pt;color:#555;margin-bottom:1mm">用题目给出的生字组一个词，写在横线上。</div>';
   s5.slice(0, 16).forEach(function(w, i){
     var zuci = (w.zuci && w.zuci[0]) ? w.zuci[0] : '';
     h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10.5pt;line-height:1.5">'
-       + (i+1) + '. （　　）　　用「' + esc(w.char) + '」字组词示例：＿＿＿'
+       + (i+1) + '. 用「' + esc(w.char) + '」字组词：＿＿＿＿'
        + (withAns && zuci ? ' <span class="pp-ans-inline">（如：' + esc(zuci) + '）</span>' : '')
        + '</div>';
   });
@@ -11092,16 +11093,18 @@ function genCalcMidterm(u, withAns){
 
   /* 四、应用题（12 题，留答题区） */
   var templates = [
-    function(){ var p=ri(15,45), s=ri(20,150); return ['水果店运来 '+p+' 箱苹果，每箱 '+s+' 个，一共有多少个苹果？', p+' × '+s+' = '+(p*s)+'（个）']; },
-    function(){ var t=ri(120,300), c=ri(4,9); return ['同学们收集了 '+t+' 节废电池，平均分给 '+c+' 个环保小组，每个小组分到多少节？', t+' ÷ '+c+' = '+(t/c)+'（节）']; },
-    function(){ var s=ri(60,100), d=ri(3,8); return ['一辆汽车每小时行驶 '+s+' 千米，'+d+' 小时行驶多少千米？', s+' × '+d+' = '+(s*d)+'（千米）']; },
-    function(){ var p=ri(150,300), r=ri(5,9); return ['学校买了 '+p+' 本新书，平均分给 '+r+' 个班，每班分到多少本？', p+' ÷ '+r+' = '+(p/r)+'（本）']; },
-    function(){ var a=ri(8,16), s=ri(50,120); return ['一套书 '+a+' 本，每本 '+s+' 页，一共有多少页？', a+' × '+s+' = '+(a*s)+'（页）']; },
-    function(){ var a=ri(200,500), w=ri(40,90); return ['一辆卡车每次运货 '+w+' 箱，'+a+' 箱货物需要运多少次？', a+' ÷ '+w+' = '+(a/w)+'（次）']; },
-    function(){ var d=ri(200,600), p=ri(3,7); return ['图书馆有 '+d+' 本书，平均放在 '+p+' 个书架上，每个书架放多少本？', d+' ÷ '+p+' = '+(d/p)+'（本）']; },
-    function(){ var s=ri(40,90), d=ri(5,12); return ['小明每天练字 '+d+' 张，'+s+' 天一共可以练多少张？', d+' × '+s+' = '+(d*s)+'（张）']; },
-    function(){ var t=ri(180,360), n=ri(20,50); return ['工厂生产了 '+t+' 个零件，每箱装 '+n+' 个，需要多少个箱子？', t+' ÷ '+n+' = '+(t/n)+'（箱）']; },
-    function(){ var a=ri(25,80), b=ri(3,9); return ['食堂每天用大米 '+a+' 千克，'+b+' 天共用多少千克？', a+' × '+b+' = '+(a*b)+'（千克）']; }
+    function(){ var p=ri(10,25), n=ri(2,5), cost=p*n; while(cost>90){ p=ri(10,25); n=ri(2,5); cost=p*n; } return ['一种文具每个 '+p+' 元，小红买了 '+n+' 个，付给售货员 100 元，应找回多少元？', '100 - '+p+'×'+n+' = '+(100-cost)+'（元）']; },
+    function(){ var y=ri(4,8), z=ri(20,40), x=y*z+ri(20,80); return ['学校买来 '+x+' 本故事书，平均分给 '+y+' 个班，每班 '+z+' 本，还剩多少本？', x+' - '+z+'×'+y+' = '+(x-y*z)+'（本）']; },
+    function(){ var s=ri(50,80), t=ri(3,6), rem=ri(30,120); return ['一辆汽车每小时行驶 '+s+' 千米，行驶了 '+t+' 小时后，距离目的地还有 '+rem+' 千米。出发地到目的地一共多少千米？', s+'×'+t+' + '+rem+' = '+(s*t+rem)+'（千米）']; },
+    function(){ var daily=ri(30,80), days=ri(3,8), rem=daily*days, done=ri(100,300); var total=done+rem; return ['修路队要修一条 '+total+' 米长的路，已经修了 '+done+' 米，剩下的每天修 '+daily+' 米，还要多少天修完？', '('+total+' - '+done+') ÷ '+daily+' = '+days+'（天）']; },
+    function(){ var z=ri(15,35), y=ri(3,7), read=z*y, total=read+ri(50,150); return ['一本故事书有 '+total+' 页，小明前 '+y+' 天每天看 '+z+' 页，还剩多少页没有看？', total+' - '+z+'×'+y+' = '+(total-read)+'（页）']; },
+    function(){ var g=ri(4,9), n=ri(5,12), add=ri(5,20); return ['同学们分组做游戏，每组 '+g+' 人，分成了 '+n+' 组，后来又来了 '+add+' 人。现在一共有多少人？', g+'×'+n+' + '+add+' = '+(g*n+add)+'（人）']; },
+    function(){ var per=ri(5,15), cars=ri(5,15), total=per*cars+ri(10,50); return ['仓库原有 '+total+' 吨大米，运走了 '+cars+' 车，每车 '+per+' 吨，还剩多少吨？', total+' - '+per+'×'+cars+' = '+(total-per*cars)+'（吨）']; },
+    function(){ var l=ri(8,25), w=ri(5,15), fence=2*(l+w); return ['一块长方形菜地，长 '+l+' 米，宽 '+w+' 米。如果在四周围上篱笆，篱笆长多少米？', '('+l+' + '+w+')×2 = '+fence+'（米）']; },
+    function(){ var rows=ri(5,12), per=ri(8,20), total=rows*per, apple=ri(30,total-10); return ['果园里有 '+rows+' 行果树，每行 '+per+' 棵，其中苹果树有 '+apple+' 棵，其余是梨树。梨树有多少棵？', rows+'×'+per+' - '+apple+' = '+(total-apple)+'（棵）']; },
+    function(){ var x=ri(10,50), y=ri(2,8), z=ri(5,30); return ['甲筐有 '+x+' 个苹果，乙筐比甲筐的 '+y+' 倍还多 '+z+' 个。乙筐有多少个苹果？', x+'×'+y+' + '+z+' = '+(x*y+z)+'（个）']; },
+    function(){ var n=ri(3,8), p1=ri(15,40), p2=ri(10,p1-5); return ['学校要买 '+n+' 个同样的篮球。甲店每个 '+p1+' 元，乙店每个 '+p2+' 元。在乙店买比甲店买便宜多少元？', '('+p1+' - '+p2+')×'+n+' = '+((p1-p2)*n)+'（元）']; },
+    function(){ var total=ri(200,500), n=ri(4,9), each=Math.floor(total/n), left=total-each*n; return ['把 '+total+' 本书平均放在 '+n+' 个书架上，每个书架放多少本？还剩多少本？', total+' ÷ '+n+' = '+each+'（本）……'+left+'（本）']; }
   ];
   var apps = [];
   var tIdx = _shuffle(templates.map(function(_, i){ return i; }), rng);
@@ -11752,7 +11755,7 @@ function ppRules(pfx){
     '.pp-cw-ch{font-size:16px;font-weight:700;color:#222;min-width:30px;text-align:center}',
     '.pp-cw-meta{font-size:11px;color:#666;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
     '.pp-cw-lines{display:flex;gap:6px}',
-    '.pp-cw-lines span{width:40px;border-bottom:1px solid #999;height:1em;flex:none}',
+    '.pp-cw-lines span{width:55px;border-bottom:1px solid #999;height:1em;flex:none}',
     '.pp-kc{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:1px 8px;font-size:11px}',
     '.pp-kc-i{display:flex;align-items:center;gap:2px;padding:1px 0;white-space:nowrap}',
     '.pp-kc-b{width:14mm;flex:none;border-bottom:1px solid #555;height:1.1em}',
