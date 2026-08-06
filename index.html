@@ -10618,11 +10618,31 @@ function genPinyinPaper(u, withAns){
        + '<div class="pp-cw-lines"><span></span><span></span><span></span><span></span></div></div>';
   });
   h += '</div>';
-  h += '<div class="pp-sec"><div class="pp-sec-h">四、比一比，再组词</div><div class="pp-py-grid">';
-  ws.slice(0, 8).forEach(function(w){
-    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.char) + '（　　）</div><div class="pp-py-blank"></div></div>';
+  h += '<div class="pp-sec"><div class="pp-sec-h">四、比一比，再组词（' + ws.length + ' 题，每字写两个词）</div><div class="pp-py-grid" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr">';
+  ws.forEach(function(w){
+    var zuci = (w.zuci && w.zuci.length) ? w.zuci.slice(0, 2) : [];
+    h += '<div class="pp-py-cell"><div class="pp-py-py">' + esc(w.char) + '（　　）</div><div class="pp-py-blank"></div><div class="pp-py-blank"></div>'
+       + (withAns ? '<div class="pp-py-ans">' + esc(zuci.join('、')) + '</div>' : '') + '</div>';
   });
   h += '</div></div>';
+
+  /* 五、我会写句子：用本单元生字造句，填满底部空白 */
+  var senTpl = ['（字）的景象真壮观。', '我喜欢（字）。', '爸爸给我讲了关于（字）的故事。', '（字）让我很难忘。', '妈妈用（字）给我做了一顿好吃的。'];
+  function makeSentence(z){
+    var t = senTpl[Math.floor(Math.random() * senTpl.length)];
+    return t.replace(/（字）/g, z);
+  }
+  var senWords = ws.slice().sort(function(){ return Math.random() - 0.5; }).slice(0, 5);
+  h += '<div class="pp-sec"><div class="pp-sec-h">五、我会写句子（用下面 5 个生字各写一句话）</div>';
+  senWords.forEach(function(w, idx){
+    var zuci = (w.zuci && w.zuci[0]) ? w.zuci[0] : w.char;
+    h += '<div class="pp-q" style="margin-bottom:2mm;font-size:10.5pt;line-height:1.5">'
+       + (idx+1) + '. 用「' + esc(w.char) + '」字写一句话：'
+       + '<span style="display:inline-block;width:140px;border-bottom:1px solid #555;height:1.1em;margin-left:4px;vertical-align:bottom"></span>'
+       + (withAns ? ' <span style="color:#c0392b;font-size:10px">示例：' + esc(makeSentence(zuci)) + '</span>' : '')
+       + '</div>';
+  });
+  h += '</div>';
   return h + _ppClose();
 }
 
