@@ -318,21 +318,26 @@ main{padding:18px 0 30px}
   .pp-sec{ margin-bottom:2mm; page-break-inside:auto }
   .pp-sec-h{ font-size:10pt; font-weight:700; margin-bottom:1mm; border-left:2.5px solid #333; padding-left:1.5mm; page-break-after:avoid }
   .pp-py-cell,.pp-kc-i,.pp-bs,.pp-app,.pp-cp,.pp-cw{ page-break-inside:avoid }
-  .pp-q{ font-size:10pt; line-height:1.55; margin-bottom:1mm; page-break-inside:avoid }
+  .pp-q{ font-size:10pt; line-height:1.5; margin-bottom:1mm; page-break-inside:avoid }
   .pp-q-n{ font-weight:700; margin-right:1mm }
-  .pp-opts{ margin-left:4mm; margin-top:0.5mm; line-height:1.7; display:grid; grid-template-columns:1fr 1fr; gap:0 8mm }
+  .pp-opts{ margin-left:4mm; margin-top:0.5mm; line-height:1.6; display:grid; grid-template-columns:1fr 1fr; gap:0 4mm }
   .pp-opt{ display:inline-block; white-space:nowrap }
   .pp-fill-line{ display:inline-block; min-width:22mm; border-bottom:1px solid #666; height:0.9em; vertical-align:bottom }
   .pp-judge-box{ display:inline-block; width:7mm; border-bottom:1px solid #666; text-align:center; margin-left:2mm }
   .pp-ans{ margin-left:3mm; font-size:9pt; color:#c0392b; border:1px dashed #c0392b; padding:0.5mm 2mm; border-radius:2px; margin-top:0.5mm; display:inline-block }
   .pp-ans b{ font-weight:700 }
-  /* 内联选项（一行显示ABCD） */
   .pp-opts-inline{ margin-left:18px; margin-top:1px; line-height:1.6 }
   .pp-opt-inline{ display:inline; font-size:10pt; margin-right:10px; white-space:nowrap }
-  /* 内联答案（紧跟题目，不换块） */
   .pp-ans-inline{ margin-left:18px; font-size:8.5pt; color:#c0392b; margin-top:1px; line-height:1.5 }
   .pp-ans-inline b{ font-weight:700 }
   .pp-note{ font-size:8.5pt; color:#888; margin-top:0.5mm }
+  .pp-bs{ padding:1px 0; page-break-inside:avoid }
+  .pp-bs-t{ font-size:10.5pt; margin-bottom:1px; line-height:1.4 }
+  .pp-bs-ans{ font-size:9pt; color:#c0392b; margin-top:1px }
+  .pp-calc-box{ border:1px solid #bbb; height:16mm; margin:1px 0 2px }
+  .pp-calc-box.tall{ height:22mm }
+  .pp-app-ans{ display:flex; gap:8px; margin:1px 0 0 18px }
+  .pp-app-ans span{ width:55px; border-bottom:1px solid #555; height:1em; flex:none }
   .no-print{ display:none !important }
   header.top,nav.tabs,.mnav,#modalHost,#toastHost{ display:none !important }
 }
@@ -341,31 +346,31 @@ main{padding:18px 0 30px}
 }
 
 /* ===== 新增试卷样式（拼音 / 计算 / 英语抄写） __B2_CSS__ ===== */
-.pp-py-grid{ display:grid; grid-template-columns:1fr 1fr; gap:2px 20px; margin:2px 0 }
-.pp-py-cell{ display:flex; align-items:flex-end; gap:8px; font-size:13px; padding:2px 0; line-height:1.4 }
-.pp-py-py{ min-width:60px; color:#333; font-weight:600 }
-.pp-py-blank{ flex:1; border-bottom:1px solid #555; height:1.1em; min-width:30px }
-.pp-py-ans{ color:#c0392b; font-weight:600 }
-.pp-cw{ display:flex; align-items:center; gap:10px; padding:2px 0; border-bottom:1px dashed #e6e6e6 }
-.pp-cw-ch{ font-size:18px; font-weight:700; color:#222; min-width:34px; text-align:center }
-.pp-cw-meta{ font-size:12px; color:#666; flex:1 }
-.pp-cw-lines{ display:flex; gap:10px }
-.pp-cw-lines span{ width:48px; border-bottom:1px solid #999; height:1em }
-.pp-kc{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px 12px; font-size:13px }
-.pp-kc-i{ display:flex; align-items:center; gap:4px; padding:2px 0 }
-.pp-kc-b{ flex:1; border-bottom:1px solid #555; min-width:24px }
-.pp-kc-ans{ color:#c0392b; font-weight:600 }
-.pp-app{ padding:4px 0 }
-.pp-app-q{ font-size:12.5px; margin-bottom:2px; line-height:1.45 }
-.pp-cp{ padding:3px 0; border-bottom:1px dashed #e6e6e6 }
-.pp-cp-en{ font-size:14px; font-weight:600; color:#1f3a93 }
-.pp-cp-zh{ font-size:11px; color:#555; margin:1px 0 }
+.pp-py-grid{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:1px 10px; margin:1px 0 }
+.pp-py-cell{ display:flex; align-items:flex-end; gap:4px; font-size:12px; padding:1px 0; line-height:1.25; white-space:nowrap }
+.pp-py-py{ min-width:auto; color:#333; font-weight:600; white-space:nowrap }
+.pp-py-blank{ width:45px; flex:none; border-bottom:1px solid #555; height:1.1em }
+.pp-py-ans{ color:#c0392b; font-weight:600; font-size:10px; margin-left:2px; white-space:nowrap }
+.pp-cw{ display:flex; align-items:center; gap:6px; padding:1px 0; border-bottom:1px dashed #e6e6e6 }
+.pp-cw-ch{ font-size:16px; font-weight:700; color:#222; min-width:30px; text-align:center }
+.pp-cw-meta{ font-size:11px; color:#666; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.pp-cw-lines{ display:flex; gap:6px }
+.pp-cw-lines span{ width:40px; border-bottom:1px solid #999; height:1em; flex:none }
+.pp-kc{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:1px 8px; font-size:11px }
+.pp-kc-i{ display:flex; align-items:center; gap:2px; padding:1px 0; white-space:nowrap }
+.pp-kc-b{ width:14mm; flex:none; border-bottom:1px solid #555; height:1.1em }
+.pp-kc-ans{ color:#c0392b; font-weight:600; font-size:10px; margin-left:1px }
+.pp-app{ padding:2px 0 }
+.pp-app-q{ font-size:11px; margin-bottom:1px; line-height:1.35 }
+.pp-cp{ padding:1px 0; border-bottom:1px dashed #e6e6e6 }
+.pp-cp-en{ font-size:12px; font-weight:600; color:#1f3a93 }
+.pp-cp-zh{ font-size:10px; color:#555; margin:0 }
 .pp-cp-pr{ color:#0a7d3b }
-.pp-cp-lines{ display:flex; gap:16px; margin-top:2px }
-.pp-cp-lines span{ flex:1; max-width:260px; border-bottom:1px solid #999; height:1em }
+.pp-cp-lines{ display:flex; gap:8px; margin-top:1px }
+.pp-cp-lines span{ width:45px; border-bottom:1px solid #999; height:1em; flex:none }
 @media print{
-  .pp-py-grid{ grid-template-columns:1fr 1fr }
-  .pp-kc{ grid-template-columns:1fr 1fr 1fr 1fr }
+  .pp-py-grid{ grid-template-columns:1fr 1fr 1fr 1fr }
+  .pp-kc{ grid-template-columns:1fr 1fr 1fr 1fr 1fr }
 }
 </style>
 </head>
@@ -10630,9 +10635,9 @@ function genCalcPaper(u, withAns){
     if (i % 2 === 0){ var a = _rnd(11, 99), b = _rnd(2, 9); kc.push({ t: a + ' × ' + b + ' =', a: a * b }); }
     else { var d = _rnd(2, 9), q = _rnd(11, 99), nd = d * q; kc.push({ t: nd + ' ÷ ' + d + ' =', a: q }); }
   }
-  h += '<div class="pp-sec"><div class="pp-sec-h">一、口算（24 题，每题 2 分）</div><div class="pp-kc" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px 14px">';
+  h += '<div class="pp-sec"><div class="pp-sec-h">一、口算（24 题，每题 2 分）</div><div class="pp-kc">';
   kc.forEach(function(p){
-    h += '<div class="pp-kc-i" style="font-size:11pt">' + esc(p.t) + '<span class="pp-kc-b"></span>'
+    h += '<div class="pp-kc-i">' + esc(p.t) + '<span class="pp-kc-b"></span>'
        + (withAns ? '<b class="pp-kc-ans">' + p.a + '</b>' : '') + '</div>';
   });
   h += '</div></div>';
@@ -10642,7 +10647,7 @@ function genCalcPaper(u, withAns){
   for (var j = 0; j < 5; j++){ var m1 = _rnd(120, 980), m2 = _rnd(12, 98); bs.push({ t: m1 + ' × ' + m2 + ' =', a: m1 * m2 }); }
   for (var k = 0; k < 5; k++){ var dv = _rnd(12, 89), q2 = _rnd(3, 12), rm = _rnd(0, dv - 1), nd = dv * q2 + rm; bs.push({ t: nd + ' ÷ ' + dv + ' =', a: q2 + ' 余 ' + rm }); }
   h += '<div class="pp-sec"><div class="pp-sec-h">二、用竖式计算（10 题，每题 3 分。写出计算过程）</div>';
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 16px">';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
   bs.forEach(function(p, idx){
     h += '<div class="pp-bs"><div class="pp-bs-t">' + (idx+1) + '. ' + esc(p.t) + '</div><div class="pp-calc-box"></div>'
        + (withAns ? '<div class="pp-bs-ans">= ' + esc(p.a) + '</div>' : '') + '</div>';
@@ -10655,10 +10660,10 @@ function genCalcPaper(u, withAns){
     var a3 = _rnd(100, 999), b3 = _rnd(10, 99);
     est.push({ t: a3 + ' × ' + b3 + ' ≈ ？', a: '≈ ' + (Math.round(a3/100)*100) + '×' + (Math.round(b3/10)*10) + '=' + (Math.round(a3/100)*100)*(Math.round(b3/10)*10) });
   }
-  h += '<div class="pp-sec"><div class="pp-sec-h">三、估算（8 题，每题 2 分）</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 20px">';
+  h += '<div class="pp-sec"><div class="pp-sec-h">三、估算（8 题，每题 2 分）</div><div class="pp-py-grid">';
   est.forEach(function(p, i){
     h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10.5pt;line-height:1.5">'
-       + (i+1) + '. ' + esc(p.t) + ' ＿＿＿＿＿'
+       + (i+1) + '. ' + esc(p.t) + ' ＿＿＿＿'
        + (withAns ? ' <span class="pp-ans-inline">' + esc(p.a) + '</span>' : '')
        + '</div>';
   });
@@ -10680,6 +10685,7 @@ function genCalcPaper(u, withAns){
   h += '<div class="pp-sec"><div class="pp-sec-h">四、解决问题（8 题，每题 4 分。先列式，再计算）</div>';
   apps.forEach(function(p, idx){
     h += '<div class="pp-app"><div class="pp-app-q">' + (idx+1) + '. ' + esc(p[0]) + '</div>'
+       + '<div class="pp-app-ans"><span></span><span></span></div>'
        + '<div class="pp-calc-box tall"></div>'
        + (withAns ? '<div class="pp-bs-ans">' + esc(p[1]) + '</div>' : '') + '</div>';
   });
@@ -10718,7 +10724,7 @@ function genCopyPaper(u, withAns){
   /* 单词抄写 — 双列紧凑，全部单词 */
   if (allW.length){
     h += '<div class="pp-sec"><div class="pp-sec-h">一、单词抄写（每个抄写 2 遍，写出中文意思和读法。共 ' + allW.length + ' 个单词）</div>';
-    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 18px">';
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
     allW.forEach(function(w){
       h += '<div class="pp-cp"><div class="pp-cp-en" style="font-size:13px">' + esc(w.en) + '</div>'
          + '<div class="pp-cp-zh" style="font-size:11px">' + esc(w.zh) + '　<span class="pp-cp-pr">' + esc(w.pron) + '</span></div>'
@@ -10760,10 +10766,10 @@ function genWordTest(u, withAns){
   /* 一、看中文写英文（听写）— 全部单词，顺序每日随机 */
   var s1 = _shuffle(allW, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">一、看中文写英文（共 ' + s1.length + ' 题）</div>';
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 20px">';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
   s1.forEach(function(w, i){
     h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10.5pt;line-height:1.5">'
-       + (i+1) + '. ' + esc(w.zh) + ' ＿＿＿＿＿＿'
+       + (i+1) + '. ' + esc(w.zh) + ' ＿＿＿'
        + (withAns ? ' <span class="pp-ans-inline">（' + esc(w.en) + '）</span>' : '')
        + '</div>';
   });
@@ -10772,10 +10778,10 @@ function genWordTest(u, withAns){
   /* 二、看英文写中文 — 全部单词，顺序每日随机 */
   var s2 = _shuffle(allW, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">二、看英文写中文（共 ' + s2.length + ' 题）</div>';
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 20px">';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
   s2.forEach(function(w, i){
     h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10.5pt;line-height:1.5">'
-       + (i+1) + '. ' + esc(w.en) + ' ＿＿＿'
+       + (i+1) + '. ' + esc(w.en) + ' ＿＿'
        + (withAns ? ' <span class="pp-ans-inline">（' + esc(w.zh) + '）</span>' : '')
        + '</div>';
   });
@@ -10798,7 +10804,7 @@ function genWordTest(u, withAns){
     h += '<div class="pp-sec"><div class="pp-sec-h">三、选词填空（共 ' + fills.length + ' 题）</div>';
     h += '<div class="pp-sub" style="font-size:9pt;color:#555;margin-bottom:2mm">词库：'
        + wb.map(function(w){ return esc(w.en); }).join(' / ') + '</div>';
-    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 16px">';
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
     fills.forEach(function(it, i){
       try {
         var re2 = new RegExp('\\b' + it.w.en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b','i');
@@ -10861,11 +10867,11 @@ function genPhraseTest(u, withAns){
   /* 一、英译汉 — 全部句子，顺序每日随机 */
   var s1 = _shuffle(allS, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">一、英译汉（写出中文意思，共 ' + s1.length + ' 题）</div>';
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 16px">';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
   s1.forEach(function(s, i){
     h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10pt;line-height:1.5">'
        + (i+1) + '. ' + esc(s.en)
-       + '<br><span style="display:inline-block;min-width:200px;border-bottom:1px solid #555;height:1em">'
+       + '<br><span style="display:inline-block;width:120px;border-bottom:1px solid #555;height:1em;display:inline-block">'
        + (withAns ? ' <span class="pp-ans-inline">' + esc(s.zh) + '</span>' : '')
        + '</span></div>';
   });
@@ -10874,10 +10880,10 @@ function genPhraseTest(u, withAns){
   /* 二、汉译英 — 全部句子，顺序每日随机 */
   var s2 = _shuffle(allS, rng);
   h += '<div class="pp-sec"><div class="pp-sec-h">二、汉译英（写出英文，共 ' + s2.length + ' 题）</div>';
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 16px">';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
   s2.forEach(function(s, i){
     h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10pt;line-height:1.5">'
-       + (i+1) + '. ' + esc(s.zh) + ' ＿＿＿＿＿＿＿＿＿'
+       + (i+1) + '. ' + esc(s.zh) + ' ＿＿＿'
        + (withAns ? ' <span class="pp-ans-inline">（' + esc(s.en) + '）</span>' : '')
        + '</div>';
   });
@@ -10899,7 +10905,7 @@ function genPhraseTest(u, withAns){
     h += '<div class="pp-sec"><div class="pp-sec-h">三、完成句子（从词库选词填入，共 ' + fills.length + ' 题）</div>';
     h += '<div class="pp-sub" style="font-size:9pt;color:#555;margin-bottom:2mm">词库：'
        + wb.map(function(w){ return esc(w.en); }).join(' / ') + '</div>';
-    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 16px">';
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
     fills.forEach(function(it, i){
       try {
         var re2 = new RegExp('\\b' + it.w.en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b','i');
@@ -10927,7 +10933,7 @@ function genPhraseTest(u, withAns){
   }
   if (sorts.length){
     h += '<div class="pp-sec"><div class="pp-sec-h">四、连词成句（排序成正确顺序，共 ' + sorts.length + ' 题）</div>';
-    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 16px">';
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
     sorts.forEach(function(it, i){
       h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10pt;line-height:1.5">'
          + (i+1) + '. '
@@ -11021,7 +11027,7 @@ function genCharTest(u, withAns){
   s5.slice(0, 16).forEach(function(w, i){
     var zuci = (w.zuci && w.zuci[0]) ? w.zuci[0] : '';
     h += '<div class="pp-q" style="margin-bottom:1mm;font-size:10.5pt;line-height:1.5">'
-       + (i+1) + '. （　　）　　用「' + esc(w.char) + '」字组词示例：＿＿＿＿＿＿＿＿'
+       + (i+1) + '. （　　）　　用「' + esc(w.char) + '」字组词示例：＿＿＿'
        + (withAns && zuci ? ' <span class="pp-ans-inline">（如：' + esc(zuci) + '）</span>' : '')
        + '</div>';
   });
@@ -11064,11 +11070,12 @@ function genCalcMidterm(u, withAns){
     bs.push({ t: nd2 + ' ÷ ' + dv2 + ' =', a: q2 + ' 余 ' + rm });
   }
   h += '<div class="pp-sec"><div class="pp-sec-h">二、用竖式计算（12 题，每题 3 分）</div>';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px 8px">';
   bs.forEach(function(p, idx){
     h += '<div class="pp-bs"><div class="pp-bs-t">' + (idx+1) + '. ' + esc(p.t) + '</div><div class="pp-calc-box"></div>'
        + (withAns ? '<div class="pp-bs-ans">= ' + esc(p.a) + '</div>' : '') + '</div>';
   });
-  h += '</div>';
+  h += '</div></div>';
 
   /* 三、估算（12 题） */
   var est = [];
@@ -11106,6 +11113,7 @@ function genCalcMidterm(u, withAns){
   h += '<div class="pp-sec"><div class="pp-sec-h">四、解决问题（12 题，每题 4 分。先列式，再计算）</div>';
   apps.forEach(function(p, idx){
     h += '<div class="pp-app"><div class="pp-app-q">' + (idx+1) + '. ' + esc(p.q) + '</div>'
+       + '<div class="pp-app-ans"><span></span><span></span></div>'
        + '<div class="pp-calc-box tall"></div>'
        + (withAns ? '<div class="pp-bs-ans">' + esc(p.a) + '</div>' : '') + '</div>';
   });
@@ -11715,9 +11723,9 @@ function ppRules(pfx){
     '.pp-sec{margin-bottom:2mm}',
     '.pp-sec-h{font-size:10pt;font-weight:700;margin-bottom:1mm;border-left:2.5px solid #333;padding-left:1.5mm;page-break-after:avoid;break-after:avoid}',
     '.pp-py-cell,.pp-kc-i,.pp-bs,.pp-app,.pp-cp,.pp-cw{page-break-inside:avoid;break-inside:avoid}',
-    '.pp-q{font-size:10pt;line-height:1.55;margin-bottom:1mm;page-break-inside:avoid;break-inside:avoid}',
+    '.pp-q{font-size:10pt;line-height:1.5;margin-bottom:1mm;page-break-inside:avoid;break-inside:avoid}',
     '.pp-q-n{font-weight:700;margin-right:1mm}',
-    '.pp-opts{margin-left:4mm;margin-top:.5mm;line-height:1.7;display:grid;grid-template-columns:1fr 1fr;gap:0 8mm}',
+    '.pp-opts{margin-left:4mm;margin-top:.5mm;line-height:1.6;display:grid;grid-template-columns:1fr 1fr;gap:0 4mm}',
     '.pp-opt{display:inline-block;white-space:nowrap}',
     '.pp-fill-line{display:inline-block;min-width:22mm;border-bottom:1px solid #666;height:.9em;vertical-align:bottom}',
     '.pp-judge-box{display:inline-block;width:7mm;border-bottom:1px solid #666;text-align:center;margin-left:2mm}',
@@ -11728,28 +11736,35 @@ function ppRules(pfx){
     '.pp-ans-inline{margin-left:18px;font-size:8.5pt;color:#c0392b;margin-top:1px;line-height:1.5}',
     '.pp-ans-inline b{font-weight:700}',
     '.pp-note{font-size:8.5pt;color:#888;margin-top:.5mm}',
-    '.pp-py-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px;margin:2px 0}',
-    '.pp-py-cell{display:flex;align-items:flex-end;gap:8px;font-size:13px;padding:2px 0;line-height:1.4}',
-    '.pp-py-py{min-width:60px;color:#333;font-weight:600}',
-    '.pp-py-blank{flex:1;border-bottom:1px solid #555;height:1.1em;min-width:30px}',
-    '.pp-py-ans{color:#c0392b;font-weight:600}',
-    '.pp-cw{display:flex;align-items:center;gap:10px;padding:2px 0;border-bottom:1px dashed #e6e6e6}',
-    '.pp-cw-ch{font-size:18px;font-weight:700;color:#222;min-width:34px;text-align:center}',
-    '.pp-cw-meta{font-size:12px;color:#666;flex:1}',
-    '.pp-cw-lines{display:flex;gap:10px}',
-    '.pp-cw-lines span{width:48px;border-bottom:1px solid #999;height:1em}',
-    '.pp-kc{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px 12px;font-size:13px}',
-    '.pp-kc-i{display:flex;align-items:center;gap:4px;padding:2px 0}',
-    '.pp-kc-b{flex:1;border-bottom:1px solid #555;min-width:24px}',
-    '.pp-kc-ans{color:#c0392b;font-weight:600}',
-    '.pp-app{padding:4px 0}',
-    '.pp-app-q{font-size:12.5px;margin-bottom:2px;line-height:1.45}',
-    '.pp-cp{padding:3px 0;border-bottom:1px dashed #e6e6e6}',
-    '.pp-cp-en{font-size:14px;font-weight:600;color:#1f3a93}',
-    '.pp-cp-zh{font-size:11px;color:#555;margin:1px 0}',
+    '.pp-bs{padding:1px 0;page-break-inside:avoid;break-inside:avoid}',
+    '.pp-bs-t{font-size:10.5pt;margin-bottom:1px;line-height:1.4}',
+    '.pp-bs-ans{font-size:9pt;color:#c0392b;margin-top:1px}',
+    '.pp-calc-box{border:1px solid #bbb;height:16mm;margin:1px 0 2px}',
+    '.pp-calc-box.tall{height:22mm}',
+    '.pp-app-ans{display:flex;gap:8px;margin:1px 0 0 18px}',
+    '.pp-app-ans span{width:55px;border-bottom:1px solid #555;height:1em;flex:none}',
+    '.pp-py-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px 10px;margin:1px 0}',
+    '.pp-py-cell{display:flex;align-items:flex-end;gap:4px;font-size:12px;padding:1px 0;line-height:1.25;white-space:nowrap}',
+    '.pp-py-py{min-width:auto;color:#333;font-weight:600;white-space:nowrap}',
+    '.pp-py-blank{width:45px;flex:none;border-bottom:1px solid #555;height:1.1em}',
+    '.pp-py-ans{color:#c0392b;font-weight:600;font-size:10px;margin-left:2px;white-space:nowrap}',
+    '.pp-cw{display:flex;align-items:center;gap:6px;padding:1px 0;border-bottom:1px dashed #e6e6e6}',
+    '.pp-cw-ch{font-size:16px;font-weight:700;color:#222;min-width:30px;text-align:center}',
+    '.pp-cw-meta{font-size:11px;color:#666;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.pp-cw-lines{display:flex;gap:6px}',
+    '.pp-cw-lines span{width:40px;border-bottom:1px solid #999;height:1em;flex:none}',
+    '.pp-kc{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:1px 8px;font-size:11px}',
+    '.pp-kc-i{display:flex;align-items:center;gap:2px;padding:1px 0;white-space:nowrap}',
+    '.pp-kc-b{width:14mm;flex:none;border-bottom:1px solid #555;height:1.1em}',
+    '.pp-kc-ans{color:#c0392b;font-weight:600;font-size:10px;margin-left:1px}',
+    '.pp-app{padding:2px 0}',
+    '.pp-app-q{font-size:11px;margin-bottom:1px;line-height:1.35}',
+    '.pp-cp{padding:1px 0;border-bottom:1px dashed #e6e6e6}',
+    '.pp-cp-en{font-size:12px;font-weight:600;color:#1f3a93}',
+    '.pp-cp-zh{font-size:10px;color:#555;margin:0}',
     '.pp-cp-pr{color:#0a7d3b}',
-    '.pp-cp-lines{display:flex;gap:16px;margin-top:2px}',
-    '.pp-cp-lines span{flex:1;max-width:260px;border-bottom:1px solid #999;height:1em}'
+    '.pp-cp-lines{display:flex;gap:8px;margin-top:1px}',
+    '.pp-cp-lines span{width:45px;border-bottom:1px solid #999;height:1em;flex:none}'
   ];
   var out = [];
   for (var i=0;i<r.length;i++){
